@@ -1,20 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 using Livet;
+using Reactive.Bindings.Extensions;
+using TsGui.Operation;
 using TsNode.Interface;
 using TsNode.Preset;
 
 namespace WpfApp1
 {
-    public class PlugViewModel : ViewModel , IPlugViewModel
+    public class PlugViewModel : PresentPlugViewModel
     {
-        public bool TryConnect(ConnectInfo info)
+        private IOperationController _operationController;
+        public PlugViewModel(IOperationController controller)
         {
-            return false;
+            _operationController = controller;
         }
 
-        public IConnectionViewModel StartConnection()
+        public override IConnectionViewModel StartConnectionOverride()
         {
-            return new PresetConnectionViewModel();
+            return new ConnectionViewModel(_operationController);
         }
     }
 }

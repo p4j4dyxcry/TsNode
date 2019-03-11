@@ -18,7 +18,9 @@ namespace TsNode.Controls.Connection
         private readonly ICommand _connectionCreated;
         private readonly SourcePlugType _sourcePlugType;
         private readonly IInputElement _inputElement;
-        private bool IsCreated { get; set; }
+
+        private bool _isCreated;
+
         public bool CanDragStart(object sender, MouseEventArgs args)
         {
             return _connections.All(x=>x!=null);
@@ -26,7 +28,7 @@ namespace TsNode.Controls.Connection
 
         public void OnDrag(object sender, MouseEventArgs args)
         {
-            if (_connectionItemsControl.Items.IsEmpty && IsCreated is false)
+            if (_connectionItemsControl.Items.IsEmpty && _isCreated is false)
             {
                 foreach (var plug in _dragSourcePlugs)
                 {
@@ -57,21 +59,21 @@ namespace TsNode.Controls.Connection
 
             if (args.LeftButton != MouseButtonState.Pressed)
             {
-                if (IsCreated is false)
+                if (_isCreated is false)
                     create_connection();
             }
         }
 
         public void DragEnd(object sender, MouseEventArgs args)
         {
-            if(IsCreated is false)
+            if(_isCreated is false)
                 create_connection();
         }
 
         public void Cancel()
         {
             _connectionItemsControl.Items.Clear();
-            IsCreated = true;
+            _isCreated = true;
         }
 
         private void create_connection()

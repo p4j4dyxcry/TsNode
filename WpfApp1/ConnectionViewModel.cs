@@ -1,23 +1,20 @@
-﻿using Livet;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Reactive.Linq;
+using Livet;
+using Reactive.Bindings.Extensions;
+using TsGui.Operation;
 using TsNode.Interface;
+using TsNode.Preset;
 
 namespace WpfApp1
 {
-    public class ConnectionViewModel : NotificationObject, IConnectionViewModel
+    public class ConnectionViewModel : PresetConnectionViewModel
     {
-        private bool _isSelected;
-        public bool IsSelected
-        {
-            get => _isSelected;
-            set => RaisePropertyChangedIfSet(ref _isSelected, value);
-        }
-
-        public ConnectionViewModel()
+        public ConnectionViewModel( IOperationController controller )
         {
 
         }
-
-        public IPlugViewModel SourcePlug { get; set; }
-        public IPlugViewModel DestPlug { get; set; }
     }
 }

@@ -67,6 +67,11 @@ namespace TsGui.Operation
         /// スタックが更新されたときにイベントが発生する
         /// </summary>
         event Action<object, OperationStackChangedEventArgs> StackChanged;
+
+        /// <summary>
+        /// オペレーション中かどうか
+        /// </summary>
+        bool IsOperating { get; }
     }
 
     public enum OperationStackChangedEvent

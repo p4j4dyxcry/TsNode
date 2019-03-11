@@ -58,4 +58,15 @@ namespace TsNode.Controls
             Point = new Point(x, y);
         }
     }
+
+    //! 選択が変更されたときに発行されるイベント
+    public class SelectionChangedEventArgs : EventArgs
+    {
+        public ISelectable[] ChangedItems { get; }
+
+        public SelectionChangedEventArgs(ISelectable[] changed)
+        {
+            ChangedItems = changed;
+        }
+    }
 }

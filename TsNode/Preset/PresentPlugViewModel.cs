@@ -6,9 +6,14 @@ namespace TsNode.Preset
 {
     public class PresentPlugViewModel : PresetNotification , IPlugViewModel
     {
-        public IConnectionViewModel StartConnection()
+        public virtual IConnectionViewModel StartConnectionOverride()
         {
             return new PresetConnectionViewModel();
+        }
+
+        public IConnectionViewModel StartConnection()
+        {
+            return StartConnectionOverride();
         }
 
         public bool TryConnect(ConnectInfo connectInfo)

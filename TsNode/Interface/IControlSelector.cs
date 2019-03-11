@@ -5,13 +5,18 @@ namespace TsNode.Interface
 {
     public struct SelectInfo
     {
-        public NodeControl[] AllNodes { get; }
-        public NodeControl[] NewSelectNodes { get; }
+        public ISelectable[] AllNodes { get; }
+        public ISelectable[] NewSelectNodes { get; }
 
-        public SelectInfo( NodeControl[] nodes , NodeControl[] newSelectNodes )
+        public ISelectable[] Connections { get; }
+        public ISelectable[] NewConnections { get; }
+
+        public SelectInfo(ISelectable[] nodes , ISelectable[] newSelectNodes , ISelectable[] connections , ISelectable[] newSelectConnections )
         {
             AllNodes = nodes;
             NewSelectNodes = newSelectNodes;
+            Connections = connections;
+            NewConnections = newSelectConnections;
         }
     }
 

@@ -42,6 +42,12 @@ namespace TsGui.Operation
                 _this = mergeableOperation.Merge(controller);
             return controller.Execute(_this);
         }
+        public static IOperation PushTo(this IOperation _this, IOperationController controller)
+        {
+            if (_this is IMergeableOperation mergeableOperation)
+                _this = mergeableOperation.Merge(controller);
+            return controller.Push(_this);
+        }
 
         /// <summary>
         /// 前回のオペレーションと結合します

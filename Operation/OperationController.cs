@@ -85,6 +85,7 @@ namespace TsGui.Operation
 
         private void PreStackChanged()
         {
+            //! Operationの再帰呼び出しを検知するとassert
             Debug.Assert(_preStackChangedCall == 0 , ErrorMessages.InvalidOperation);
             _preStackChangedCall++;
         }
@@ -98,5 +99,7 @@ namespace TsGui.Operation
         #endregion
 
         public IEnumerable<IOperation> Operations => _undoStack;
+
+        public bool IsOperating =>_preStackChangedCall != 0;
     }
 }

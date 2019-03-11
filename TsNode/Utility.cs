@@ -84,6 +84,31 @@ namespace TsNode
             }
             return null;
         }
+
+        public static bool HitTestCircle(this Visual root, Point center , double radius)
+        {
+            var result = false;
+            VisualTreeHelper.HitTest(root, null, 
+                _ => 
+                {
+                    result = true; return HitTestResultBehavior.Stop;
+                }, 
+                new GeometryHitTestParameters(new EllipseGeometry(center,radius,radius)));
+            return result;
+        }
+
+        public static bool HitTestRect(this Visual root, Point center, double width , double height)
+        {
+            var result = false;
+            var rect = new Rect(center.X - width / 2, center.Y - height / 2, width, height);
+            VisualTreeHelper.HitTest(root, null, 
+                _ => 
+                {
+                    result = true; return HitTestResultBehavior.Stop;
+                }, 
+                new GeometryHitTestParameters(new RectangleGeometry(rect)));
+            return result;
+        }
     }
 
     internal static class ItemsControlEx
@@ -98,6 +123,12 @@ namespace TsNode
         public static IEnumerable<ListBoxItem> GetListBoxItems(this ListBox self)
         {
             return GetAsContentControl<ListBoxItem>(self);
+        }
+
+        public static IEnumerable<object> EnumerateItems(this ItemsControl self)
+        {
+            return Enumerable.Range(0, self.Items.Count)
+                .Select(x => self.Items.GetItemAt(x));
         }
     }
 
@@ -126,30 +157,68 @@ namespace TsNode
 
     internal static class SelectUtility
     {
-        public static void AddSelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
+        public static ISelectable[] AddSelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
         {
+            List<ISelectable> result = new List<ISelectable>();
             foreach (var i in targetItems)
+            {
+                if (i.IsSelected is false)
+                    result.Add(i);
                 i.IsSelected = true;
+            }
+            return result.ToArray();
         }
 
-        public static void ToggleSelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
+        public static ISelectable[] ToggleSelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
         {
             foreach (var i in targetItems)
                 i.IsSelected = !i.IsSelected;
+            return targetItems.ToArray();
         }
 
-        public static void SingleSelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
+        public static ISelectable[] SingleSelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
         {
+            List<ISelectable> result = new List<ISelectable>();
+
             var targetItemsArray = targetItems.ToArray();
 
             if (targetItemsArray.Any(x=>x.IsSelected) is false)
             {
                 foreach (var i in allItems)
+                {
+                    if (i.IsSelected)
+                        result.Add(i);
                     i.IsSelected = false;
+                }
             }
 
             foreach (var i in targetItemsArray)
+            {
+                if (i.IsSelected is false)
+                    result.Add(i);
                 i.IsSelected = true;
+            }
+            return result.ToArray();
+        }
+
+        public static ISelectable[] OnlySelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
+        {
+            List<ISelectable> result = new List<ISelectable>();
+
+            var targetItemsArray = targetItems.ToArray();
+
+            foreach (var i in allItems)
+            {
+                bool flag = i.IsSelected;
+                if (targetItemsArray.Contains(i))
+                    i.IsSelected = true;
+                else
+                    i.IsSelected = false;
+
+                if (flag != i.IsSelected)
+                    result.Add(i);
+            }
+            return result.ToArray();
         }
     }
 }

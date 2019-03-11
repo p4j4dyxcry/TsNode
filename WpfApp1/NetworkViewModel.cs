@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using Livet;
 using Reactive.Bindings;
-using Reactive.Bindings.Extensions;
 using TsGui.Operation;
 using TsNode.Controls;
 using TsNode.Interface;
@@ -79,7 +75,7 @@ namespace WpfApp1
 
         public ICommand ConnectCommand => _connectionCreator.ConnectCommand;
         public ICommand StartNewConnectionCommand =>_connectionCreator.StartNewConnectionCommand;
-
+        public ReactiveCommand<SelectionChangedEventArgs> SelectionChangedCommand { get; }
         public ReactiveCommand<CompletedMoveNodeEventArgs> NodeMoveCommand { get; }
 
         private readonly IOperationController _operationController;
@@ -89,20 +85,20 @@ namespace WpfApp1
         {
             _operationController = operationController;
 
-            var node1 = new PresetNodeViewModel() { X = 256 };
-            var node2 = new PresetNodeViewModel() { Y = 256 };
+            var node1 = new NodeViewModel(_operationController) { X = 256 };
+            var node2 = new NodeViewModel(_operationController) { Y = 256 };
             Nodes = new ObservableCollection<INodeViewModel>()
             {
                 node1,
                 node2
             };
-            node1.InputPlugs.Add(new PresentPlugViewModel());
-            node1.InputPlugs.Add(new PresentPlugViewModel());
-            node1.OutputPlugs.Add(new PresentPlugViewModel());
+            node1.InputPlugs.Add(new PlugViewModel(_operationController));
+            node1.InputPlugs.Add(new PlugViewModel(_operationController));
+            node1.OutputPlugs.Add(new PlugViewModel(_operationController));
 
-            node2.InputPlugs.Add(new PresentPlugViewModel());
-            node2.InputPlugs.Add(new PresentPlugViewModel());
-            node2.OutputPlugs.Add(new PresentPlugViewModel());
+            node2.InputPlugs.Add(new PlugViewModel(_operationController));
+            node2.InputPlugs.Add(new PlugViewModel(_operationController));
+            node2.OutputPlugs.Add(new PlugViewModel(_operationController));
 
             Connections = new ObservableCollection<IConnectionViewModel>();
             _connectionCreator = new ConnectionCreator(Connections,_operationController);
@@ -126,6 +122,29 @@ namespace WpfApp1
                     .Build();
                 _operationController.Push(operation);
             });
+
+            SelectionChangedCommand = new ReactiveCommand<SelectionChangedEventArgs>();
+            SelectionChangedCommand.Subscribe(e =>
+            {
+                bool[] selected = e.ChangedItems.Select(x => x.IsSelected).ToArray();
+
+                var operationBuilder = new OperationBuilder();
+                operationBuilder.MakeFromAction(
+                    () =>
+                    {
+                        foreach(var i in Enumerable.Range(0, selected.Length))
+                            e.ChangedItems[i].IsSelected = selected[i];
+                    },
+                    () =>
+                    {
+                        foreach (var i in Enumerable.Range(0, selected.Length))
+                            e.ChangedItems[i].IsSelected = !selected[i];
+                    })
+                    .Name("選択変更")
+                    .Build()
+                    .PushTo(_operationController);
+            });
+
         }
     }
 

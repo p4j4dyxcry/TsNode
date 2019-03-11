@@ -9,21 +9,22 @@ namespace TsNode.Controls.Node
 {
     public class NodeDragController : IDragController
     {
-        private bool IsDrag { get; set; }
         private readonly Point _dragStartPos;
-        private readonly Dictionary<NodeControl, Point> _originalPoints;
+        private readonly IReadOnlyDictionary<NodeControl, Point> _originalPoints;
         private readonly bool _useSnapGrid;
         private readonly int _gridSize;
         private readonly NodeControl[] _selectedNodes;
         private readonly IInputElement _inputElement;
         private readonly ICommand _completedNodeMove;
+
+        private bool _isDrag;
         private bool _isMoved;
 
         public NodeDragController(MouseEventArgs args, NodeControl[] nodes, NodeControl[] selectedNodes, IInputElement sender, int gridSize, bool useSnapGrid, ICommand completedNodeMov)
         {
             if (args.LeftButton == MouseButtonState.Pressed)
             {
-                IsDrag = true;
+                _isDrag = true;
 
                 _dragStartPos = args.GetPosition(sender);
                 _originalPoints = nodes.ToDictionary(x => x , x => new Point(x.X, x.Y));
@@ -44,7 +45,7 @@ namespace TsNode.Controls.Node
 
         public void OnDrag(object sender, MouseEventArgs args)
         {
-            if (IsDrag is false)
+            if (_isDrag is false)
                 return;
             if (args.LeftButton != MouseButtonState.Pressed)
             {
@@ -77,9 +78,9 @@ namespace TsNode.Controls.Node
 
         public void Cancel()
         {
-            if (IsDrag)
+            if (_isDrag)
             {
-                IsDrag = false;
+                _isDrag = false;
                 if (_isMoved)
                 {
                     var initial = _originalPoints

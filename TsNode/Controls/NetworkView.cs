@@ -10,7 +10,7 @@ using TsNode.Interface;
 
 namespace TsNode.Controls
 {
-    public sealed class NetworkView : Control
+    public class NetworkView : Control
     {
         public static readonly DependencyProperty NodesProperty = DependencyProperty.Register(
             nameof(Nodes), typeof(IEnumerable<INodeViewModel>), typeof(NetworkView), new PropertyMetadata(default(IEnumerable<INodeViewModel>)));
@@ -82,14 +82,22 @@ namespace TsNode.Controls
             set { SetValue(CompetedMoveNodeCommandProperty, value); }
         }
 
+        //! コマンドの引数として[SelectionChangedEventArgs]が渡される
+        public static readonly DependencyProperty SelectionChangedCommandProperty = DependencyProperty.Register(
+            nameof(SelectionChangedCommand), typeof(ICommand), typeof(NetworkView), new PropertyMetadata(default(ICommand)));
+
+        public ICommand SelectionChangedCommand
+        {
+            get { return (ICommand)GetValue(SelectionChangedCommandProperty); }
+            set { SetValue(SelectionChangedCommandProperty, value); }
+        }
+
+
         //! 
         private NodeItemsControl _nodeItemsControl;
         private ConnectionItemsControl _connectionItemsControl;
         private ConnectionItemsControl _creatingConnectionItemsControl;
         private Canvas _canvas;
-
-        //! 
-        private IControlSelector ControlSelector { get; set; }
 
         public NetworkView()
         {
@@ -98,7 +106,6 @@ namespace TsNode.Controls
 
         public void Initialize()
         {
-            ControlSelector = MakeControlSelector();
             setup_drag_events();
         }
 
@@ -127,33 +134,53 @@ namespace TsNode.Controls
             };;
         }
 
-        public IControlSelector MakeControlSelector()
+        public virtual IControlSelector MakeControlSelector()
         {
-            return new ControlSelector();
+            return new ControlSelector(SelectionChangedCommand);
         }
 
         public IDragController MakeDragController(MouseEventArgs args)
         {
             if (args.LeftButton == MouseButtonState.Pressed)
             {
-                var nodes = Enumerable.Range(0, _nodeItemsControl.Items.Count)
-                    .Select(x => _nodeItemsControl.FindAssociatedNodeItem(_nodeItemsControl.Items.GetItemAt(x)))
+                var nodes = _nodeItemsControl
+                    .EnumerateItems()
+                    .Select(x => _nodeItemsControl.FindAssociatedNodeItem(x))
                     .ToArray();
 
                 var clickedNodes = nodes
                     .Where(x => x.IsMouseOver)
                     .ToArray();
 
+                var connections = _connectionItemsControl
+                    .FindVisualChildrenWithType<ConnectionShape>()
+                    .ToArray();
+
+                var clickedConnections = connections
+                    .Where(x => x.HitTestCircle(args.GetPosition(_canvas),12))
+                    .ToArray();
+
                 var clickedPlugs = get_mouse_over_plugs(clickedNodes, out var sourcePlugType);
-                
-                ControlSelector.OnSelect(new SelectInfo(nodes, clickedNodes));
+
+                IControlSelector selector = MakeControlSelector();
+                selector.OnSelect(new SelectInfo(
+                    nodes.Select(x=>x.DataContext).OfType<ISelectable>().ToArray(), 
+                    clickedNodes.Select(x => x.DataContext).OfType<ISelectable>().ToArray(),
+                    connections.Select(x => x.DataContext).OfType<ISelectable>().ToArray(),
+                    clickedConnections.Select(x => x.DataContext).OfType<ISelectable>().ToArray()));
 
                 if (clickedPlugs.Any())
                 {
                     return new ConnectionCreateController(args,_canvas,nodes, clickedPlugs, _creatingConnectionItemsControl, CompletedCreateConnectionCommand,StartCreateConnectionCommand, sourcePlugType);
                 }
 
-                return new NodeDragController(args,nodes, nodes.Where(x=>x.IsSelected is true).ToArray(), _canvas, (int)GridSize,UseGridSnap,CompetedMoveNodeCommand);
+                var selectedNodes = nodes
+                    .Where(x => x.IsSelected)
+                    .ToArray();
+                if (selectedNodes.Any())
+                {
+                    return new NodeDragController(args, nodes, selectedNodes, _canvas, (int)GridSize, UseGridSnap, CompetedMoveNodeCommand);
+                }
             }
 
             return null;
