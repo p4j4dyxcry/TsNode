@@ -1,0 +1,93 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:TsNode.Controls;assembly=Controls"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:WpfApp1"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:plug="clr-namespace:TsNode.Controls.Plug;assembly=Controls"
+        Title="MainWindow"
+        Width="800"
+        Height="450"
+        d:DataContext="{d:DesignInstance local:MainWindowVm}"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        mc:Ignorable="d">
+    <Window.DataContext>
+        <local:MainWindowVm />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type local:PlugViewModel}">
+            <Ellipse Width="8"
+                     Height="8"
+                     Fill="Blue" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:NodeViewModel}">
+            <Grid>
+                <Ellipse Width="32"
+                         Height="32"
+                         Fill="Red" />
+                <plug:PlugItemsControl x:Name="PART_InputPlugItemsControl"
+                                       Margin="0,15,0,0"
+                                       HorizontalAlignment="Left"
+                                       ItemsSource="{Binding InputPlugs}" />
+                <plug:PlugItemsControl x:Name="PART_OutputPlugItemsControl"
+                                       Margin="0,15,0,0"
+                                       HorizontalAlignment="Right"
+                                       ItemsSource="{Binding OutputPlugs}" />
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <WrapPanel>
+            <Button Command="{Binding UndoCommand}" Content="Undo" />
+            <Button Command="{Binding RedoCommand}" Content="Redo" />
+        </WrapPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <controls:NetworkView Grid.Column="0"
+                                  Width="4096"
+                                  Height="4096"
+                                  Background="DarkGray"
+                                  CompetedMoveNodeCommand="{Binding NodeMoveCommand}"
+                                  CompletedCreateConnectionCommand="{Binding ConnectCommand}"
+                                  Connections="{Binding Connections}"
+                                  DataContext="{Binding NetworkVm}"
+                                  Nodes="{Binding Nodes}"
+                                  StartCreateConnectionCommand="{Binding StartNewConnectionCommand}" />
+            <ListView Grid.Column="1"
+                      Width="200"
+                      ItemsSource="{Binding Operations}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <WrapPanel>
+                            <WrapPanel.Style>
+                                <Style TargetType="{x:Type WrapPanel}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsRedo}" Value="True">
+                                            <Setter Property="Opacity" Value="0.5" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </WrapPanel.Style>
+
+                            <Button Command="{Binding GotoCommand}" Content="Goto" />
+                            <TextBlock Text="{Binding Name}" />
+                        </WrapPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </Grid>
+</Window>

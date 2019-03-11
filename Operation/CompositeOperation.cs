@@ -1,0 +1,64 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace TsGui.Operation
+{
+    public interface ICompositeOperation : IOperation
+    {
+        ICompositeOperation Add(IOperation operation);
+    }
+
+    /// <summary>
+    /// サブオペレーションを持つオペレーション
+    /// 実行/ロールバック 時にサブオペレーションをまとめて実行
+    /// </summary>
+    public class CompositeOperation : ICompositeOperation
+    {
+        private readonly ICollection<IOperation> _operations = new HashSet<IOperation>();
+
+        public CompositeOperation(params IOperation[] operations)
+        {
+            Add(operations);
+        }
+
+        public string Name { get; set; }
+
+        public void RollForward()
+        {
+            foreach (var operation in _operations)
+                operation.RollForward();
+        }
+
+        public void Rollback()
+        {
+            foreach (var operation in _operations.Reverse())
+                operation.Rollback();
+        }
+
+        /// <summary>
+        /// サブオペレーションを追加
+        /// </summary>
+        public ICompositeOperation Add(IOperation operation)
+        {
+            _operations.Add(operation);
+            return this;
+        }
+        public ICompositeOperation Add(params IOperation[] operations)
+        {
+            foreach (var operation in operations)
+                _operations.Add(operation);
+            return this;
+        }
+
+        public bool Any()
+        {
+            foreach (var operation in _operations.OfType<CompositeOperation>())
+            {
+                if (operation.Any())
+                    return true;
+            }
+
+            return _operations.Any();
+        }
+    }
+}

@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{063ACA49-2EDC-4FF3-9D4B-6CE9ED74CE37}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TsGui</RootNamespace>
+    <AssemblyName>TsGui</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Thread\IWorkerQueue.cs" />
+    <Compile Include="Thread\TaskCanceler.cs" />
+    <Compile Include="Thread\WorkerPool.cs" />
+    <Compile Include="Thread\WorkerThread.cs" />
+    <Compile Include="Collections\InfiniteList.cs" />
+    <Compile Include="Collections\LinqEx.cs" />
+    <Compile Include="Develop\SpeedChecker.cs" />
+    <Compile Include="Operation\CompositeOperation.cs" />
+    <Compile Include="Operation\DelegateOperation.cs" />
+    <Compile Include="Operation\IMergeJudge.cs" />
+    <Compile Include="Operation\Internal\CapacityStack.cs" />
+    <Compile Include="Operation\Internal\ErrorMessages.cs" />
+    <Compile Include="Operation\Internal\FastReflection.cs" />
+    <Compile Include="Operation\Internal\PropertyAccesser.cs" />
+    <Compile Include="Operation\Internal\UndoStack.cs" />
+    <Compile Include="Operation\IOperation.cs" />
+    <Compile Include="Operation\IOperationController.cs" />
+    <Compile Include="Operation\ListOperation.cs" />
+    <Compile Include="Operation\MergeableOperation.cs" />
+    <Compile Include="Operation\OperationBuilder.cs" />
+    <Compile Include="Operation\OperationBuilderInterfaces.cs" />
+    <Compile Include="Operation\OperationBuilderInternal.cs" />
+    <Compile Include="Operation\OperationController.cs" />
+    <Compile Include="Operation\OperationControllerExtensions.cs" />
+    <Compile Include="Operation\OperationExtensions.cs" />
+    <Compile Include="Operation\ThrottleMergeJudge.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

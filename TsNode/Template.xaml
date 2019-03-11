@@ -1,0 +1,74 @@
+﻿<ResourceDictionary x:Class="TsNode.Template"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:node="clr-namespace:TsNode.Controls.Node"
+                    xmlns:controls1="clr-namespace:TsNode.Controls"
+                    xmlns:connection="clr-namespace:TsNode.Controls.Connection"
+                    mc:Ignorable="d">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Preset/PresetTemplate.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style TargetType="{x:Type node:NodeControl}">
+        <Setter Property="X" Value="{Binding X, Mode=TwoWay}" />
+        <Setter Property="Y" Value="{Binding Y, Mode=TwoWay}" />
+        <Setter Property="Canvas.Left" Value="{Binding X, RelativeSource={RelativeSource Self}, Mode=TwoWay}" />
+        <Setter Property="Canvas.Top" Value="{Binding Y, RelativeSource={RelativeSource Self}, Mode=TwoWay}" />
+        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type node:NodeControl}">
+                    <Border BorderThickness="2" CornerRadius="2">
+                        <Border.Style>
+                            <Style TargetType="Border" >
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="BorderBrush" Value="DeepSkyBlue" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <ContentPresenter />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type controls1:NetworkView}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls1:NetworkView">
+                    <ScrollViewer x:Name="PART_ScrollViewer" Focusable="False">
+                        <Canvas x:Name="PART_Canvas"
+                                Width="{TemplateBinding Width}"
+                                Height="{TemplateBinding Height}"
+                                Background="{TemplateBinding Background}">
+                            <!--Grid-->
+                            <controls1:GridRenderer Width="{Binding Width, ElementName=PART_Canvas}"
+                                                   Height="{Binding Height, ElementName=PART_Canvas}"
+                                                   DashA="3"
+                                                   DashB="5"
+                                                   GridInterval="{TemplateBinding GridSize}"
+                                                   IsDrawGrid="True" />
+
+                            <!--実在するConnection-->
+                            <connection:ConnectionItemsControl x:Name="PART_ConnectionItemsControl" ItemsSource="{TemplateBinding Connections}" />
+
+                            <!--作成中のConnection-->
+                            <connection:ConnectionItemsControl x:Name="PART_CreatingConnectionItemsControl" />
+
+                            <!--Node-->
+                            <node:NodeItemsControl x:Name="PART_NodeItemsControl" ItemsSource="{TemplateBinding Nodes}" />
+
+                        </Canvas>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
