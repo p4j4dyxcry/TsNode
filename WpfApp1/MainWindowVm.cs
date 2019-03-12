@@ -89,7 +89,7 @@ namespace WpfApp1
             {
                 bool flag = isFirst;
                 isFirst = false;
-                return flag ? source : source.StartWith(Unit.Default);
+                return flag ? source.StartWith(Unit.Default) : source;
             });
         }
     }
