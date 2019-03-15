@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TsGui.Operation.Internal
+namespace TsGui
 {
     // Getter/Setter
     internal interface IAccessor
@@ -8,12 +8,18 @@ namespace TsGui.Operation.Internal
         object GetValue(object target);
 
         void SetValue(object target, object value);
+
+        bool HasGetter { get; }
+        bool HasSetter { get; }
+
+        Type PropertyType { get; }
     }
 
     internal sealed class PropertyAccessor<TTarget, TProperty> : IAccessor
     {
         private readonly Func<TTarget, TProperty> _getter;
         private readonly Action<TTarget, TProperty> _setter;
+
         public PropertyAccessor(Func<TTarget, TProperty> getter, Action<TTarget, TProperty> setter)
         {
             _getter = getter;
@@ -32,5 +38,10 @@ namespace TsGui.Operation.Internal
         {
             _setter?.Invoke((TTarget)target, (TProperty)value);
         }
+
+        public bool HasGetter => (_getter != null);
+        public bool HasSetter => (_setter != null);
+
+        public Type PropertyType { get; } = typeof(TProperty);
     }
 }

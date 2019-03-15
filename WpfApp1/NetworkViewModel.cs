@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
@@ -9,6 +10,7 @@ using TsGui.Operation;
 using TsNode.Controls;
 using TsNode.Interface;
 using TsNode.Preset;
+using TsProperty;
 
 namespace WpfApp1
 {
@@ -78,6 +80,8 @@ namespace WpfApp1
         public ReactiveCommand<SelectionChangedEventArgs> SelectionChangedCommand { get; }
         public ReactiveCommand<CompletedMoveNodeEventArgs> NodeMoveCommand { get; }
 
+        public ObservableCollection<IProperty> Properties { get; set; }
+
         private readonly IOperationController _operationController;
         private ConnectionCreator _connectionCreator;
 
@@ -140,11 +144,30 @@ namespace WpfApp1
                         foreach (var i in Enumerable.Range(0, selected.Length))
                             e.ChangedItems[i].IsSelected = !selected[i];
                     })
+                    .PostEvent(() => GenerateProperties(Nodes.Where(x => x.IsSelected)))
                     .Name("選択変更")
                     .Build()
                     .PushTo(_operationController);
+                GenerateProperties(Nodes.Where(x => x.IsSelected));
             });
+        }
 
+        public void GenerateProperties(IEnumerable<ISelectable> items)
+        {
+            var selectables = items as ISelectable[] ?? items.ToArray();
+            if (selectables.Any() is false)
+            {
+                Properties = Enumerable.Empty<IProperty>().ToObservableCollection();
+                RaisePropertyChanged(nameof(Properties));
+                return;
+            }
+
+            Properties = new ReflectionPropertyBuilder(selectables.First())
+                .GenerateProperties()
+                .OperationController(_operationController)
+                .Build()
+                .ToObservableCollection();
+            RaisePropertyChanged(nameof(Properties));
         }
     }
 

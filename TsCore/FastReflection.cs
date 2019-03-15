@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace TsGui.Operation.Internal
+namespace TsGui
 {
     public static class FastReflection
     {        
@@ -50,9 +53,55 @@ namespace TsGui.Operation.Internal
         {
             return GetAccessor(_object, property).GetValue( _object);
         }
+
+        public static Type GetPropertyType(object _object, string property)
+        {
+            return GetAccessor(_object, property).PropertyType;
+        }
+
+        public static T GetProperty<T>(object _object, string property)
+        {
+            return (T)GetAccessor(_object, property).GetValue(_object);
+        }
+
+        public static bool ExistsGetter(object _object, string property)
+        {
+            return GetAccessor(_object, property).HasGetter;
+        }
+
+        public static bool ExistsSetter(object _object, string property)
+        {
+            return GetAccessor(_object, property).HasSetter;
+        }
+
         internal static string GetMemberName<T,TProperty>(this Expression<Func<T, TProperty>> expression)
         {
             return ((MemberExpression)expression.Body).Member.Name;
+        }
+
+        private static MethodInfo _regisMethodInfo;
+        private static readonly Dictionary<Type, MethodInfo> _methodCache = new Dictionary<Type, MethodInfo>();
+
+        public static void InvokeGenericMethod(object classInstance , Type type, string methodName,params object[] args)
+        {
+            if (_regisMethodInfo is null)
+            {
+                _regisMethodInfo = classInstance.GetType()
+                    .GetMethods()
+                    .Where(x => x.Name == methodName)
+                    .Where(x => x.IsGenericMethod)
+                    .Where(x => x.GetParameters().Length == args.Length)
+                    .Single(x => x.GetGenericArguments().Length == 1);
+            }
+
+            if (_methodCache.TryGetValue(type, out var genericMethodInfo) is false)
+            {
+                _methodCache[type] =
+                    genericMethodInfo =
+                        _regisMethodInfo.MakeGenericMethod(type);
+            }
+            Debug.Assert(genericMethodInfo != null);
+            genericMethodInfo.Invoke(classInstance, args.Length != 0 ? args : null);
         }
     }
 }

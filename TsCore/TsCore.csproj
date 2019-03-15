@@ -55,8 +55,8 @@
     <Compile Include="Operation\IMergeJudge.cs" />
     <Compile Include="Operation\Internal\CapacityStack.cs" />
     <Compile Include="Operation\Internal\ErrorMessages.cs" />
-    <Compile Include="Operation\Internal\FastReflection.cs" />
-    <Compile Include="Operation\Internal\PropertyAccesser.cs" />
+    <Compile Include="FastReflection.cs" />
+    <Compile Include="PropertyAccesser.cs" />
     <Compile Include="Operation\Internal\UndoStack.cs" />
     <Compile Include="Operation\IOperation.cs" />
     <Compile Include="Operation\IOperationController.cs" />

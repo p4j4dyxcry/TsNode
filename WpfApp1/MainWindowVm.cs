@@ -10,6 +10,7 @@ using Livet.Commands;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using TsGui.Operation;
+using TsProperty;
 
 namespace WpfApp1
 {
@@ -61,7 +62,6 @@ namespace WpfApp1
                 Operations = OperationController.Operations.Concat(OperationController.RollForwardTargets).ToObservableCollection().ToReadOnlyReactiveCollection(x => new OperationVm(x, OperationController));
                 RaisePropertyChanged(nameof(Operations));
             }).AddTo(CompositeDisposable);
-
         }
     }
 

@@ -69,7 +69,6 @@
     <Compile Include="Preset\PresentPlugViewModel.cs" />
     <Compile Include="Preset\PresetConnectionViewModel.cs" />
     <Compile Include="Preset\PresetNotification.cs" />
-    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>

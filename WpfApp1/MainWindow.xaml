@@ -7,9 +7,11 @@
     xmlns:local="clr-namespace:WpfApp1"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:plug="clr-namespace:TsNode.Controls.Plug;assembly=Controls"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:tsProperty="clr-namespace:TsProperty;assembly=TsProperty"
     Title="MainWindow"
-    Width="800"
-    Height="450"
+    Width="1280"
+    Height="780"
     d:DataContext="{d:DesignInstance local:MainWindowVm}"
     mc:Ignorable="d">
     <Window.DataContext>
@@ -56,6 +58,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <controls:NetworkView
                 DataContext="{Binding NetworkVm}"
@@ -92,6 +95,45 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <ItemsControl
+                Grid.Column="2"
+                Width="300"
+                DataContext="{Binding NetworkVm}"
+                ItemsSource="{Binding Properties}">
+                <ItemsControl.Resources >
+                    <DataTemplate DataType="{x:Type tsProperty:ReadOnlyProperty}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="{Binding Name}" Grid.Column="0"/>
+                            <TextBlock Text="{Binding Data}" Grid.Column="1"/>
+                        </Grid>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type tsProperty:BindablePropertyBase}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="{Binding Name}" Grid.Column="0"/>
+                            <TextBlock Text="{Binding Data}" Grid.Column="1"/>
+                        </Grid>
+                    </DataTemplate>
+
+                    <DataTemplate DataType="{x:Type tsProperty:BindableDoubleProperty}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="{Binding Name}" Grid.Column="0"/>
+                            <TextBox Text="{Binding Value , Mode=TwoWay ,UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Width="40"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.Resources>
+            </ItemsControl>
         </Grid>
     </Grid>
 </Window>

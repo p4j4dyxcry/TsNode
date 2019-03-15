@@ -374,5 +374,21 @@ namespace TsGui.Operation
                 return this;
             }
         }
+
+        private class MergeableBuilder<T> : Builder, IMergeableOperationBuilder
+        {
+            private readonly MergeableOperation<T> _mergeableOperation;
+
+            public MergeableBuilder(MergeableOperation<T> operation) : base(operation)
+            {
+                _mergeableOperation = operation;
+            }
+
+            public IMergeableOperationBuilder SetActionName(string executeAction, string rollbackAction)
+            {
+                _mergeableOperation.Name = executeAction;
+                return this;
+            }
+        }
     }
 }

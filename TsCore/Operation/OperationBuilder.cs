@@ -36,6 +36,13 @@ namespace TsGui.Operation
             return new MergeableBuilder(new MergeableOperation(execute, rollback, judge));
         }
 
+        public IMergeableOperationBuilder MakeThrottle<T>(Action<T> execute, T newValue ,T oldValue , object key, TimeSpan convergeTimeSpan)
+        {
+            var judge = new ThrottleMergeJudge<int>(key.GetHashCode(), convergeTimeSpan);
+
+            return new MergeableBuilder<T>(new MergeableOperation<T>(execute, newValue,oldValue, judge));
+        }
+
         public IMergeableOperationBuilder MakeMergeable(Action execute, Action rollback, object key)
         {
             return MakeThrottle(execute, rollback, key, Operation.DefaultMergeSpan);
