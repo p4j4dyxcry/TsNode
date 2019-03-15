@@ -58,6 +58,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <controls:NetworkView
+                DataContext="{Binding NetworkVm}"
                 Grid.Column="0"
                 Width="4096"
                 Height="4096"
@@ -65,7 +66,6 @@
                 CompetedMoveNodeCommand="{Binding NodeMoveCommand}"
                 CompletedCreateConnectionCommand="{Binding ConnectCommand}"
                 Connections="{Binding Connections}"
-                DataContext="{Binding NetworkVm}"
                 Nodes="{Binding Nodes}"
                 SelectionChangedCommand="{Binding SelectionChangedCommand}"
                 StartCreateConnectionCommand="{Binding StartNewConnectionCommand}" />
