@@ -18,30 +18,6 @@
         <local:MainWindowVm />
     </Window.DataContext>
 
-    <Window.Resources>
-        <!--<DataTemplate DataType="{x:Type local:PlugViewModel}">
-            <Ellipse Width="8"
-                     Height="8"
-                     Fill="Blue" />
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type local:NodeViewModel}">
-            <Grid>
-                <Ellipse Width="32"
-                         Height="32"
-                         Fill="Red" />
-                <plug:PlugItemsControl x:Name="PART_InputPlugItemsControl"
-                                       Margin="0,15,0,0"
-                                       HorizontalAlignment="Left"
-                                       ItemsSource="{Binding InputPlugs}" />
-                <plug:PlugItemsControl x:Name="PART_OutputPlugItemsControl"
-                                       Margin="0,15,0,0"
-                                       HorizontalAlignment="Right"
-                                       ItemsSource="{Binding OutputPlugs}" />
-            </Grid>
-        </DataTemplate>-->
-    </Window.Resources>
-
     <Grid>
 
         <Grid.RowDefinitions>

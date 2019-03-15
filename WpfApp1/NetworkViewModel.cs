@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using Livet;
 using Reactive.Bindings;
 using TsGui.Operation;
 using TsNode.Controls;
 using TsNode.Interface;
-using TsNode.Preset;
 using TsProperty;
 
 namespace WpfApp1
