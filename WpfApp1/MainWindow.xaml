@@ -17,7 +17,6 @@
     </Window.DataContext>
 
     <Grid>
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -26,6 +25,15 @@
         <WrapPanel>
             <Button Command="{Binding UndoCommand}" Content="Undo" />
             <Button Command="{Binding RedoCommand}" Content="Redo" />
+            <GroupBox HorizontalAlignment="Left" Height="163" VerticalAlignment="Top" Width="200" Margin="332,130,0,0" >
+                <GroupBox.Header>
+                    <CheckBox Content="ほげほげ" x:Name="hogehoge"/>
+                </GroupBox.Header>
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsEnabled="{Binding ElementName=hogehoge,Path=IsChecked}">
+                    <Label Content="fugafuga[mm]"    HorizontalAlignment="Left" Margin="5,5,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="TextBox_fugafufa"   HorizontalAlignment="Left" Height="22" Margin="50,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                </Grid>
+            </GroupBox>
         </WrapPanel>
 
         <Grid Grid.Row="1">
@@ -74,74 +82,6 @@
                 Width="300"
                 DataContext="{Binding NetworkVm}"
                 ItemsSource="{Binding Properties}">
-                <ItemsControl.Resources >
-                    <DataTemplate DataType="{x:Type tsProperty:ReadOnlyProperty}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="2*"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Content="{Binding Name}" Grid.Column="0"/>
-                            <TextBlock Text="{Binding Data}" Grid.Column="1"/>
-                        </Grid>
-                    </DataTemplate>
-
-                    <DataTemplate DataType="{x:Type tsProperty:BindablePropertyBase}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="2*"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Content="{Binding Name}" Grid.Column="0"/>
-                            <TextBlock Text="{Binding Data}" Grid.Column="1"/>
-                        </Grid>
-                    </DataTemplate>
-
-                    <DataTemplate DataType="{x:Type tsProperty:BindableDoubleProperty}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="2*"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Content="{Binding Name}" Grid.Column="0"/>
-                            <TextBox Text="{Binding Value , Mode=TwoWay ,UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Width="40"/>
-                        </Grid>
-                    </DataTemplate>
-
-                    <DataTemplate DataType="{x:Type tsProperty:BindableIntProperty}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="2*"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Content="{Binding Name}" Grid.Column="0"/>
-                            <TextBox Text="{Binding Value , Mode=TwoWay ,UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Width="40"/>
-                        </Grid>
-                    </DataTemplate>
-
-                    <DataTemplate DataType="{x:Type tsProperty:BindableStringProperty}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="2*"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Content="{Binding Name}" Grid.Column="0"/>
-                            <TextBox Text="{Binding Value , Mode=TwoWay ,UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Width="40"/>
-                        </Grid>
-                    </DataTemplate>
-
-                    <DataTemplate DataType="{x:Type tsProperty:BindableBoolProperty}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="2*"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Content="{Binding Name}" Grid.Column="0"/>
-                            <CheckBox IsChecked="{Binding Value , Mode=TwoWay ,UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Width="40"/>
-                        </Grid>
-                    </DataTemplate>
-
-                </ItemsControl.Resources>
             </ItemsControl>
         </Grid>
     </Grid>

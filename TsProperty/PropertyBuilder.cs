@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using TsGui;
+using TsGui.Collections;
 using TsGui.Operation;
 
 namespace TsProperty
@@ -12,8 +16,8 @@ namespace TsProperty
     public class PropertyBuilder : IPropertyBuilder
     {
         protected object Object { get; }
-        private readonly IList<IProperty> _properties = new List<IProperty>();
-        private IOperationController _operationController;
+        protected readonly List<IProperty> _properties = new List<IProperty>();
+        protected IOperationController _operationController;
 
         public PropertyBuilder(object @object)
         {
@@ -32,7 +36,7 @@ namespace TsProperty
             }
         }
 
-        public IPropertyBuilder OperationController(IOperationController controller)
+        public virtual IPropertyBuilder OperationController(IOperationController controller)
         {
             _operationController = controller;
             return this;
@@ -73,9 +77,9 @@ namespace TsProperty
                 {
                     //! controllerがある場合はOperationとして実行し Undo をサポートする
                     var operationBuilder = new OperationBuilder();
-                    operationBuilder.MakeThrottle(setter, newValue, oldValue,setter.GetHashCode(),TimeSpan.MaxValue)
+                    operationBuilder.MakeThrottle(setter, newValue, oldValue,setter.GetHashCode()^ property.GetHashCode(), TimeSpan.MaxValue)
                         .PostEvent(property.RaiseUpdateValue)
-                        .Name($"{property.Name} New:{newValue}")
+                        .Name($"Property = {property.Name} Value = {newValue}")
                         .Build()
                         .ExecuteTo(_operationController);
                 }
@@ -107,12 +111,26 @@ namespace TsProperty
     {
         private static readonly Dictionary<Type, PropertyInfo[]> _cache = new Dictionary<Type, PropertyInfo[]>();
 
+        private IList<ReflectionPropertyBuilder> _suBuilders = new List<ReflectionPropertyBuilder>();
+
         public ReflectionPropertyBuilder(object @object):base(@object)
         {
         }
 
+        public override IPropertyBuilder OperationController(IOperationController controller)
+        {
+            _operationController = controller;
+            foreach (var suBuilder in _suBuilders)
+            {
+                suBuilder.OperationController(_operationController);
+            }
+
+            return this;
+        }
+
         public ReflectionPropertyBuilder GenerateProperties()
         {
+            _suBuilders.Clear();
             var bindingFlags = BindingFlags.Instance | BindingFlags.Public;
 
             var objectType = Object.GetType();
@@ -126,7 +144,61 @@ namespace TsProperty
             foreach (var propertyName in propertyNames)
             {
                 var propertyType = FastReflection.GetPropertyType(Object, propertyName);
-                FastReflection.InvokeGenericMethod(this, propertyType, nameof(Register),propertyName);
+
+                if (propertyType.GetInterfaces().Contains(typeof(ICollection)))
+                {
+                    var list = FastReflection.GetProperty<ICollection>(Object, propertyName).ToArray<object>();
+
+                    var index = 0;
+                    var group = new List<IProperty>();
+                    foreach (var value in list)
+                    {
+                        var subBuilder = new ReflectionPropertyBuilder(value);
+
+                        var properies = subBuilder
+                            .GenerateProperties()
+                            .OperationController(_operationController)
+                            .Build()
+                            .ToArray();
+
+                        if (properies.Any())
+                        {
+                            group.Add(properies.ToGroupProperty($"{propertyName}[{index++}]"));
+                            _suBuilders.Add(subBuilder);
+                        }
+                    }
+
+                    if (group.Any())
+                    {
+                        _properties.Add(group.ToGroupProperty(propertyName));
+                    }
+                }
+                else if(BindablePropertyFactory.Contain(propertyType) == false)
+                {
+                    var value = FastReflection.GetProperty(Object, propertyName);
+
+                    if (value is null)
+                    {
+                        _properties.Add(new ReadOnlyProperty("null"){Name = propertyName});
+                        continue;
+                    }
+                    var subBuilder = new ReflectionPropertyBuilder(value);
+
+                    var properies = subBuilder
+                        .GenerateProperties()
+                        .OperationController(_operationController)
+                        .Build().ToArray();
+
+                    if (properies.Any())
+                    {
+                        _properties.Add(properies.ToGroupProperty($"{propertyName}"));
+                        _suBuilders.Add(subBuilder);
+                    }
+                }
+                else
+                {
+                    FastReflection.InvokeGenericMethod(this, propertyType, nameof(Register), propertyName);
+                }
             }
             return this;
         }

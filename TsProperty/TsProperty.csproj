@@ -46,17 +46,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IPropertyBuilder.cs" />
+    <Compile Include="LabeledControl.cs" />
     <Compile Include="PropertyBuilder.cs" />
     <Compile Include="Notification.cs" />
     <Compile Include="IProperty.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BindableProperty.cs" />
+    <Compile Include="TypeAbstractionConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TsCore\TsCore.csproj">
       <Project>{063aca49-2edc-4ff3-9d4b-6ce9ed74ce37}</Project>
       <Name>TsCore</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Template.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

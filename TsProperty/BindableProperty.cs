@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Markup;
+using System.Linq;
 
 namespace TsProperty
 {
@@ -21,18 +21,17 @@ namespace TsProperty
         }
     }
 
-    public class ReadOnlyProperty : Notification, IProperty
+    public class ReadOnlyProperty : BindablePropertyBase
     {
-        public string Name { get; set; }
-
         public string Value => Data.ToString();
-
-        public object Data { get; set; }
 
         public ReadOnlyProperty(object data)
         {
             Data = data;
         }
+
+        public override string Name { get; set; }
+        public sealed override object Data { get; set; }
 
         public override string ToString()
         {
@@ -102,7 +101,32 @@ namespace TsProperty
         {
         }
     }
-    
+
+    public class GroupProperty : BindablePropertyBase
+    {
+        public override string Name { get; set; }
+        public override object Data { get; set; }
+
+        public IProperty[] Properties { get;}
+
+        public GroupProperty(IEnumerable<IProperty> properties)
+        {
+            Properties = properties as IProperty[] ?? properties.ToArray();
+        }
+    }
+
+    public static class GroupPropertyExtensions
+    {
+        public static GroupProperty ToGroupProperty(this IEnumerable<IProperty> properties , string name = "")
+        {
+            return new GroupProperty(properties)
+            {
+                Name = name,
+            };
+        }
+    }
+
+
     public class BindablePropertyFactory
     {
         public static Dictionary<Type,Func<object, BindablePropertyBase>> Converter = new Dictionary<Type, Func<object, BindablePropertyBase>>();
@@ -115,18 +139,29 @@ namespace TsProperty
             Register<string>((x) => new BindableStringProperty((x)));
         }
 
+        public static bool Contain<T>()
+        {
+            return Contain(typeof(T));
+        }
+
+        public static bool Contain(Type type)
+        {
+            return Converter.ContainsKey(type);
+        }
+
         public static void Register<T>(Func< Func<T>, BindablePropertyBase> generator)
         {
-            Debug.Assert(Converter.ContainsKey(typeof(T)) is false, $"{typeof(T).Name} は登録済みです。");
+            Debug.Assert(Contain<T>() is false, $"{typeof(T).Name} は登録済みです。");
 
             Converter[typeof(T)] = (x)=> generator.Invoke((Func<T>)(x));
         }
 
         public BindableProperty<T> Generate<T>(Func<T> func)
         {
-            if(Converter.ContainsKey(typeof(T)) is false)
-                return new BindableProperty<T>(func);
-            return Converter[typeof(T)](func) as BindableProperty<T>;
+            if(Contain<T>())
+                return Converter[typeof(T)](func) as BindableProperty<T>;
+
+            return new BindableProperty<T>(func);
         }
     }
 }
