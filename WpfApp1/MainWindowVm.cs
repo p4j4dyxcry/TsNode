@@ -10,7 +10,6 @@ using Livet.Commands;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using TsGui.Operation;
-using TsProperty;
 
 namespace WpfApp1
 {

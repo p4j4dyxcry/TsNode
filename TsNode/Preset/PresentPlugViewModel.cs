@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using TsNode.Interface;
+﻿using TsNode.Interface;
 
 namespace TsNode.Preset
 {
     public class PresentPlugViewModel : PresetNotification , IPlugViewModel
     {
+        public string Name { get; set; } = "Plug1";
+        public int Test { get; set; }
+
         public virtual IConnectionViewModel StartConnectionOverride()
         {
             return new PresetConnectionViewModel();

@@ -1,7 +1,4 @@
-﻿using TsNode.Controls.Connection;
-using TsNode.Controls.Node;
-
-namespace TsNode.Interface
+﻿namespace TsNode.Interface
 {
     public struct SelectInfo
     {
