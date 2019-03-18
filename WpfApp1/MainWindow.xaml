@@ -25,15 +25,6 @@
         <WrapPanel>
             <Button Command="{Binding UndoCommand}" Content="Undo" />
             <Button Command="{Binding RedoCommand}" Content="Redo" />
-            <GroupBox HorizontalAlignment="Left" Height="163" VerticalAlignment="Top" Width="200" Margin="332,130,0,0" >
-                <GroupBox.Header>
-                    <CheckBox Content="ほげほげ" x:Name="hogehoge"/>
-                </GroupBox.Header>
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsEnabled="{Binding ElementName=hogehoge,Path=IsChecked}">
-                    <Label Content="fugafuga[mm]"    HorizontalAlignment="Left" Margin="5,5,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="TextBox_fugafufa"   HorizontalAlignment="Left" Height="22" Margin="50,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                </Grid>
-            </GroupBox>
         </WrapPanel>
 
         <Grid Grid.Row="1">
