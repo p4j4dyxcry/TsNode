@@ -25,6 +25,11 @@ namespace TsGui
             if (propertyInfo == null)
                 return null;
 
+            if (_object.GetType().IsClass == false)
+            {
+                return new StructAccessor(propertyInfo, PublicOnly);
+            }
+
             var getInfo = propertyInfo.GetGetMethod(PublicOnly is false);
             var setInfo = propertyInfo.GetSetMethod(PublicOnly is false);
 
@@ -35,6 +40,7 @@ namespace TsGui
             var setter = setInfo != null? Delegate.CreateDelegate(setterDelegateType, setInfo) : null;
 
             var accessorType = typeof(PropertyAccessor<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType);
+
             return (IAccessor)Activator.CreateInstance(accessorType, getter, setter);
         }
 

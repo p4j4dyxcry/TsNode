@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace TsGui
 {
@@ -43,5 +45,34 @@ namespace TsGui
         public bool HasSetter => (_setter != null);
 
         public Type PropertyType { get; } = typeof(TProperty);
+    }
+
+
+    internal sealed class StructAccessor : IAccessor
+    {
+        private readonly PropertyInfo _propertyInfo;
+        public StructAccessor(PropertyInfo propertyInfo , bool publicOnly)
+        {
+            _propertyInfo = propertyInfo;
+            HasGetter = propertyInfo.GetGetMethod(publicOnly is false) != null;
+            HasSetter = propertyInfo.GetSetMethod(publicOnly is false) != null;
+            PropertyType = _propertyInfo.PropertyType;
+        }
+
+        public object GetValue(object target)
+        {
+            return _propertyInfo.GetValue(target);
+        }
+
+        public void SetValue(object target, object value)
+        {
+            _propertyInfo.SetValue(target,value);
+        }
+
+        public bool HasGetter { get; }
+
+        public bool HasSetter { get; }
+
+        public Type PropertyType { get; }
     }
 }

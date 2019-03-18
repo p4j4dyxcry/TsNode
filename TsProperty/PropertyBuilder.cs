@@ -191,7 +191,7 @@ namespace TsProperty
 
                     if (properies.Any())
                     {
-                        _properties.Add(properies.ToGroupProperty($"{propertyName}"));
+                        _properties.Add(properies.ToGroupProperty($"{propertyName}({propertyType.Name})"));
                         _suBuilders.Add(subBuilder);
                     }
                 }
