@@ -5,6 +5,7 @@ namespace TsGui.Operation
 {
     public interface ICompositeOperation : IOperation
     {
+        IEnumerable<IOperation> Operations { get; }
         ICompositeOperation Add(IOperation operation);
     }
 
@@ -15,6 +16,8 @@ namespace TsGui.Operation
     public class CompositeOperation : ICompositeOperation
     {
         private readonly ICollection<IOperation> _operations = new HashSet<IOperation>();
+
+        public IEnumerable<IOperation> Operations => _operations;
 
         public CompositeOperation(params IOperation[] operations)
         {
@@ -48,17 +51,6 @@ namespace TsGui.Operation
             foreach (var operation in operations)
                 _operations.Add(operation);
             return this;
-        }
-
-        public bool Any()
-        {
-            foreach (var operation in _operations.OfType<CompositeOperation>())
-            {
-                if (operation.Any())
-                    return true;
-            }
-
-            return _operations.Any();
         }
     }
 }

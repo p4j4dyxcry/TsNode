@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using TsGui.Operation.Internal;
 
 namespace TsGui.Operation
 {
@@ -164,12 +163,31 @@ namespace TsGui.Operation
         {
             if (_this == Operation.Empty)
                 return true;
-            if (_this is CompositeOperation _compositeOperation)
-                return _compositeOperation.Any();
+            if (_this is CompositeOperation compositeOperation)
+                return compositeOperation.GetAllOperation().All(x=>x.IsEmpty());
             return false;
         }
+
+        /// <summary>
+        /// オペレーションが null または空か
+        /// </summary>
+        public static bool IsNullOrEmpty(this IOperation _this)
+        {
+            if (_this is null)
+                return true;
+            return IsEmpty(_this);
+        }
+
+
+        /// <summary>
+        /// オペレーションが空でないかどうか
+        /// </summary>
+        public static bool IsNotEmpty(this IOperation _this)
+        {
+            return _this.IsEmpty() is false;
+        }
     }
-    
+
     /// <summary>
     /// リスト操作オペレーション拡張
     /// </summary>
@@ -247,6 +265,28 @@ namespace TsGui.Operation
         public static ICompositeOperation Union(this IOperation _this, IEnumerable<IOperation> operations)
         {
             return Union(_this, operations.ToArray());
+        }
+
+        /// <summary>
+        /// 全てのオペレーションを展開して取得
+        /// </summary>
+        public static IEnumerable<IOperation> GetAllOperation(this ICompositeOperation compositeOperation)
+        {
+            var list = new List<IOperation>();
+
+            foreach (var operation in compositeOperation.Operations)
+            {
+                if (operation is ICompositeOperation compositeOperation2)
+                {
+                    list.AddRange(compositeOperation2.GetAllOperation());
+                }
+                else
+                {
+                    list.Add(operation);
+                }
+            }
+
+            return list;
         }
     }
 }

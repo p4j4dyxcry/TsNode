@@ -85,16 +85,11 @@ namespace TsNode.Controls.Connection
             if (d is ConnectionShape shape)
             {
                 shape.un_bind_node(shape._sourcePlugControl, shape._associationSourceNode, shape.UpdateSourcePointFromNode);
-                shape._sourcePlugControl = shape
-                    .FindVisualParentWithType<NetworkView>()
-                    .FindChildWithDataContext<PlugControl>(e.NewValue);
+                shape._sourcePlugControl = shape.find_plug_by_datacontext(e.NewValue);
+
                 shape.bind_node(shape._sourcePlugControl, shape._associationSourceNode, shape.UpdateSourcePointFromNode);
 
-                if (shape._destPlugControl is null)
-                {
-                    shape.DestX = shape.SourceX;
-                    shape.DestY = shape.SourceY;
-                }
+                shape.setup_plug_start_point();
             }
         }
         private static void OnDestPlugChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -102,17 +97,32 @@ namespace TsNode.Controls.Connection
             if (d is ConnectionShape shape)
             {
                 shape.un_bind_node(shape._destPlugControl, shape._associationDestNode,shape.UpdateDestPointFromNode);
-                shape._destPlugControl = shape
-                    .FindVisualParentWithType<NetworkView>()
-                    .FindChildWithDataContext<PlugControl>(e.NewValue);
+                shape._destPlugControl = shape.find_plug_by_datacontext(e.NewValue);
+
                 shape.bind_node(shape._destPlugControl, shape._associationDestNode, shape.UpdateDestPointFromNode);
 
-                if (shape._sourcePlugControl is null)
-                {
-                    shape.SourceX = shape.DestX;
-                    shape.SourceY = shape.DestY;
-                }
+                shape.setup_plug_start_point();
             }
+        }
+
+        private void setup_plug_start_point()
+        {
+            if (_sourcePlugControl is null)
+            {
+                SourceX = DestX;
+                SourceY = DestY;
+            }
+            else if (_destPlugControl is null)
+            {
+                DestX = SourceX;
+                DestY = SourceY;
+            }
+        }
+
+        private PlugControl find_plug_by_datacontext(object dataContext)
+        {
+            return this.FindVisualParentWithType<NetworkView>()
+                       .FindChildWithDataContext<PlugControl>(dataContext);
         }
 
         private void bind_node(PlugControl plug, HashSet<NodeControl> hashSet, Action<object, UpdateNodePointArgs> bindFunc)

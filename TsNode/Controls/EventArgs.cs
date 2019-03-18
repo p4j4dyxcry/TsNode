@@ -11,8 +11,6 @@ namespace TsNode.Controls
         Output
     }
 
-    //! イベントの命名は　トリガ　→　動詞　→　名詞　とする
-
     //! コネクションの生成開始時に発行されるイベント
     public class StartCreateConnectionEventArgs : EventArgs
     {

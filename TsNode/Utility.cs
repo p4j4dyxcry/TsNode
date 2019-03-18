@@ -159,7 +159,7 @@ namespace TsNode
     {
         public static ISelectable[] AddSelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
         {
-            List<ISelectable> result = new List<ISelectable>();
+            var result = new List<ISelectable>();
             foreach (var i in targetItems)
             {
                 if (i.IsSelected is false)
@@ -171,14 +171,15 @@ namespace TsNode
 
         public static ISelectable[] ToggleSelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
         {
-            foreach (var i in targetItems)
+            var itemsArray = targetItems as ISelectable[] ?? targetItems.ToArray();
+            foreach (var i in itemsArray)
                 i.IsSelected = !i.IsSelected;
-            return targetItems.ToArray();
+            return itemsArray;
         }
 
         public static ISelectable[] SingleSelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
         {
-            List<ISelectable> result = new List<ISelectable>();
+            var result = new List<ISelectable>();
 
             var targetItemsArray = targetItems.ToArray();
 
@@ -203,7 +204,7 @@ namespace TsNode
 
         public static ISelectable[] OnlySelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
         {
-            List<ISelectable> result = new List<ISelectable>();
+            var result = new List<ISelectable>();
 
             var targetItemsArray = targetItems.ToArray();
 

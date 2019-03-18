@@ -12,7 +12,7 @@ namespace TsNode.Controls.Node
     public class NodeControl : ContentControl , ISelectable
     {
         public static readonly DependencyProperty IsSelectedProperty = DependencyProperty.Register(
-            nameof(IsSelected), typeof(bool), typeof(NodeControl), new PropertyMetadata(default(bool), OnIsSelectedChanged));
+            nameof(IsSelected), typeof(bool), typeof(NodeControl), new PropertyMetadata(default(bool)));
 
 
         public bool IsSelected
@@ -39,8 +39,6 @@ namespace TsNode.Controls.Node
             set => SetValue(YProperty, value);
         }
 
-        private NodeItemsControl _parent;
-
         public static void OnPointsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is NodeControl nodeControl)
@@ -52,28 +50,21 @@ namespace TsNode.Controls.Node
             }
         }
 
-        public static void OnIsSelectedChanged(DependencyObject d , DependencyPropertyChangedEventArgs e)
-        {
-            if (d is NodeControl nodeControl)
-            {
-                if (e.OldValue != e.NewValue)
-                {
-                    if (nodeControl._parent is null)
-                        nodeControl._parent = nodeControl.FindVisualParentWithType<NodeItemsControl>();
-                    nodeControl._parent.RaiseSelectionChanged(nodeControl, new EventArgs());
-                }
-            }
-        }
-
         public event Action<object, UpdateNodePointArgs> UpdatePoints;
 
         private PlugItemsControl _inputPlugItemsControl;
         private PlugItemsControl _outputPlugItemsControl;
+
+        private static readonly string PART_InputPlugItemsControl  = nameof(PART_InputPlugItemsControl);
+        private static readonly string PART_OutputPlugItemsControl = nameof(PART_OutputPlugItemsControl);
+
         public IEnumerable<PlugControl> GetInputPlugs()
         {
             if (_inputPlugItemsControl is null)
-                _inputPlugItemsControl = this.FindChildWithName<PlugItemsControl>("PART_InputPlugItemsControl");
-            Debug.Assert(_inputPlugItemsControl != null);
+            {
+                _inputPlugItemsControl = this.FindChildWithName<PlugItemsControl>(PART_InputPlugItemsControl);
+                Debug.Assert(_inputPlugItemsControl != null, $"NodeのDataTemplateに{PART_InputPlugItemsControl}という名前のPlugItemsControlを実装する必要があります。");
+            }
 
             return _inputPlugItemsControl.FindVisualChildrenWithType<PlugControl>().ToArray();
         }
@@ -81,9 +72,10 @@ namespace TsNode.Controls.Node
         public IEnumerable<PlugControl> GetOutputPlugs()
         {
             if (_outputPlugItemsControl is null)
-                _outputPlugItemsControl = this.FindChildWithName<PlugItemsControl>("PART_OutputPlugItemsControl");
-            Debug.Assert(_outputPlugItemsControl != null);
-
+            {
+                _outputPlugItemsControl = this.FindChildWithName<PlugItemsControl>(PART_OutputPlugItemsControl);
+                Debug.Assert(_outputPlugItemsControl != null, $"NodeのDataTemplateに{PART_OutputPlugItemsControl}という名前のPlugItemsControlを実装する必要があります。");
+            }
             return _outputPlugItemsControl.FindVisualChildrenWithType<PlugControl>().ToArray();
         }
     }

@@ -6,8 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:WpfApp1"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:plug="clr-namespace:TsNode.Controls.Plug;assembly=Controls"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:tsProperty="clr-namespace:TsProperty;assembly=TsProperty"
     Title="MainWindow"
     Width="1280"

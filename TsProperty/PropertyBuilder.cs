@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using TsGui;
 using TsGui.Operation;
-using TsGui.Operation.Internal;
 
 namespace TsProperty
 {
@@ -74,7 +73,7 @@ namespace TsProperty
                 {
                     //! controllerがある場合はOperationとして実行し Undo をサポートする
                     var operationBuilder = new OperationBuilder();
-                    var operation = operationBuilder.MakeThrottle(setter, newValue, oldValue,setter.GetHashCode(),TimeSpan.MaxValue)
+                    operationBuilder.MakeThrottle(setter, newValue, oldValue,setter.GetHashCode(),TimeSpan.MaxValue)
                         .PostEvent(property.RaiseUpdateValue)
                         .Name($"{property.Name} New:{newValue}")
                         .Build()

@@ -16,12 +16,11 @@ namespace WpfApp1
     {
         public ReactiveCommand<CompletedCreateConnectionEventArgs> ConnectCommand { get; }
         public ReactiveCommand<StartCreateConnectionEventArgs> StartNewConnectionCommand { get; }
-        private IOperationController _operator = null;
-        private IOperation _removeOperation = Operation.Empty;
 
         public ConnectionCreator(ObservableCollection<IConnectionViewModel> connecions , IOperationController @operator)
         {
-            _operator = @operator;
+            var removeOperation = Operation.Empty;
+
             ConnectCommand = new ReactiveCommand<CompletedCreateConnectionEventArgs>();
             ConnectCommand.Subscribe((e) =>
             {
@@ -35,19 +34,19 @@ namespace WpfApp1
 
                 operation.Name = "コネクション接続";
 
-                if (_removeOperation == Operation.Empty)
-                    operation.ExecuteTo(_operator);
+                if (removeOperation.IsEmpty())
+                    operation.ExecuteTo(@operator);
                 else
-                    operation.ExecuteAndCombineTop(_operator);
+                    operation.ExecuteAndCombineTop(@operator);
             });
 
             StartNewConnectionCommand = new ReactiveCommand<StartCreateConnectionEventArgs>();
             StartNewConnectionCommand.Subscribe((e) =>
             {
-                _removeOperation = make_remove_duplication_plugs_operation(e.SenderPlugs);
+                removeOperation = make_remove_duplication_plugs_operation(e.SenderPlugs);
 
-                if (_removeOperation != Operation.Empty)
-                    _removeOperation.ExecuteTo(_operator);
+                if (removeOperation.IsNotEmpty())
+                    removeOperation.ExecuteTo(@operator);
 
             });
 
@@ -78,7 +77,13 @@ namespace WpfApp1
         public ReactiveCommand<SelectionChangedEventArgs> SelectionChangedCommand { get; }
         public ReactiveCommand<CompletedMoveNodeEventArgs> NodeMoveCommand { get; }
 
-        public ObservableCollection<IProperty> Properties { get; set; }
+        private ObservableCollection<IProperty> _properties;
+
+        public ObservableCollection<IProperty> Properties
+        {
+            get => _properties;
+            set => RaisePropertyChangedIfSet(ref _properties, value);
+        }
 
         private readonly IOperationController _operationController;
         private ConnectionCreator _connectionCreator;
@@ -156,7 +161,6 @@ namespace WpfApp1
             if (selectables.Any() is false)
             {
                 Properties = Enumerable.Empty<IProperty>().ToObservableCollection();
-                RaisePropertyChanged(nameof(Properties));
                 return;
             }
 
@@ -165,7 +169,6 @@ namespace WpfApp1
                 .OperationController(_operationController)
                 .Build()
                 .ToObservableCollection();
-            RaisePropertyChanged(nameof(Properties));
         }
     }
 

@@ -40,7 +40,7 @@ namespace TsNode.Controls.Node
 
         public bool CanDragStart(object sender, MouseEventArgs args)
         {
-            return _selectedNodes.Any();
+            return _selectedNodes.Any() && _isDrag;
         }
 
         public void OnDrag(object sender, MouseEventArgs args)

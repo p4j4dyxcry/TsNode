@@ -8,6 +8,9 @@ using TsNode.Interface;
 
 namespace TsNode.Controls.Connection
 {
+    /// <summary>
+    /// ドラッグでコネクションを作成するコントローラ
+    /// </summary>
     public class ConnectionCreateController : IDragController
     {
         private readonly IConnectionViewModel[] _connections;
@@ -28,6 +31,7 @@ namespace TsNode.Controls.Connection
 
         public void OnDrag(object sender, MouseEventArgs args)
         {
+            //! 作成中仮コネクションの作成(1度だけ)
             if (_connectionItemsControl.Items.IsEmpty && _isCreated is false)
             {
                 foreach (var plug in _dragSourcePlugs)
@@ -54,23 +58,25 @@ namespace TsNode.Controls.Connection
                     connection.SourceX = point.X;
                     connection.SourceY = point.Y;
                 }
-
             }
 
             if (args.LeftButton != MouseButtonState.Pressed)
             {
-                if (_isCreated is false)
-                    create_connection();
+                create_connection();
             }
         }
 
         public void DragEnd(object sender, MouseEventArgs args)
         {
-            if(_isCreated is false)
-                create_connection();
+            create_connection();
         }
 
         public void Cancel()
+        {
+            _created();            
+        }
+
+        private void _created()
         {
             _connectionItemsControl.Items.Clear();
             _isCreated = true;
@@ -78,6 +84,9 @@ namespace TsNode.Controls.Connection
 
         private void create_connection()
         {
+            if (_isCreated)
+                return;
+
             var targetPlugs = _nodes
                 .SelectMany(x => _sourcePlugType == SourcePlugType.Input ? x.GetOutputPlugs() : x.GetInputPlugs() )
                 .Where(x => x.IsMouseOver)
@@ -103,9 +112,12 @@ namespace TsNode.Controls.Connection
                 }
             }
 
-            Cancel();
+            _created();
         }
 
+        /// <summary>
+        /// ctor
+        /// </summary>
         public ConnectionCreateController(
             MouseEventArgs args , 
             IInputElement sender, 

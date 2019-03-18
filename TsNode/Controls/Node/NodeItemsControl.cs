@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace TsNode.Controls.Node
@@ -14,13 +13,6 @@ namespace TsNode.Controls.Node
 
         protected override bool IsItemItsOwnContainerOverride(object item)
             => item is NodeControl;
-
-        public event Action<object, System.EventArgs> SelectionChanged;
-
-        public void RaiseSelectionChanged(object sender , System.EventArgs args)
-        {
-            SelectionChanged?.Invoke(sender,args);
-        }
 
         public NodeItemsControl()
         {

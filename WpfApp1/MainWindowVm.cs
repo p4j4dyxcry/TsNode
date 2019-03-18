@@ -36,7 +36,7 @@ namespace WpfApp1
         public ReactiveCommand UndoCommand { get; }
         public ReactiveCommand RedoCommand { get; }
 
-        public ReadOnlyReactiveCollection<OperationVm> Operations { get; set; }
+        public ObservableCollection<OperationVm> Operations { get; set; }
 
         public MainWindowVm()
         {
@@ -59,7 +59,11 @@ namespace WpfApp1
 
             OperationController.StackChangedAsObservable().Subscribe(_=>
             {
-                Operations = OperationController.Operations.Concat(OperationController.RollForwardTargets).ToObservableCollection().ToReadOnlyReactiveCollection(x => new OperationVm(x, OperationController));
+                Operations = OperationController
+                    .Operations.Concat(OperationController.RollForwardTargets)
+                    .Select(x => new OperationVm(x, OperationController))
+                    .ToObservableCollection();
+
                 RaisePropertyChanged(nameof(Operations));
             }).AddTo(CompositeDisposable);
         }

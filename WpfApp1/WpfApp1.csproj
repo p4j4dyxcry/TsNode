@@ -100,10 +100,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\TsProperty\TsProperty.csproj">
-      <Project>{187f9734-9651-4cf6-af96-5f4ccbb4688a}</Project>
-      <Name>TsProperty</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TsCore\TsCore.csproj">
       <Project>{063aca49-2edc-4ff3-9d4b-6ce9ed74ce37}</Project>
       <Name>TsCore</Name>
@@ -111,6 +107,10 @@
     <ProjectReference Include="..\TsNode\TsNode.csproj">
       <Project>{7120b89a-f7f8-4a34-a048-e57b028f0d2a}</Project>
       <Name>TsNode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TsProperty\TsProperty.csproj">
+      <Project>{187f9734-9651-4cf6-af96-5f4ccbb4688a}</Project>
+      <Name>TsProperty</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

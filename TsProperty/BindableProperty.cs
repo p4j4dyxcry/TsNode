@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Markup;
 
 namespace TsProperty
@@ -108,10 +109,17 @@ namespace TsProperty
 
         static BindablePropertyFactory()
         {
-            Converter[typeof(double)] = (x) => new BindableDoubleProperty(((Func<double>)(x)));
-            Converter[typeof(int)   ] = (x) => new BindableIntProperty(((Func<int>) (x)));
-            Converter[typeof(string)] = (x) => new BindableStringProperty(((Func<string>)(x)));
-            Converter[typeof(bool)  ] = (x) => new BindableBoolProperty(((Func<bool>)(x)));
+            Register<bool>((x) => new BindableBoolProperty((x)));
+            Register<double>((x) => new BindableDoubleProperty((x)));
+            Register<int>((x) => new BindableIntProperty((x)));
+            Register<string>((x) => new BindableStringProperty((x)));
+        }
+
+        public static void Register<T>(Func< Func<T>, BindablePropertyBase> generator)
+        {
+            Debug.Assert(Converter.ContainsKey(typeof(T)) is false, $"{typeof(T).Name} は登録済みです。");
+
+            Converter[typeof(T)] = (x)=> generator.Invoke((Func<T>)(x));
         }
 
         public BindableProperty<T> Generate<T>(Func<T> func)
