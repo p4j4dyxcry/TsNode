@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TsNode", "TsNode\TsNode.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TsCore", "TsCore\TsCore.csproj", "{063ACA49-2EDC-4FF3-9D4B-6CE9ED74CE37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TsProperty", "..\TsProperty\TsProperty.csproj", "{187F9734-9651-4CF6-AF96-5F4CCBB4688A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TsProperty", "TsProperty\TsProperty.csproj", "{187F9734-9651-4CF6-AF96-5F4CCBB4688A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
