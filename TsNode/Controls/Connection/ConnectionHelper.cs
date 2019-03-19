@@ -14,6 +14,7 @@ namespace TsNode.Controls.Connection
             public Point CenterToEnd { get; set; }
         }
 
+        //! ベジェ曲線のコントロールポイントを計算する
         internal static BezierConnectionInfo CalcBezierInfo(double sourceX, double sourceY, double destX, double destY)
         {
             var source = new Vector(sourceX, sourceY);
@@ -27,7 +28,7 @@ namespace TsNode.Controls.Connection
             var sourceCenter = new Point
             {
                 X = isSourceLarge ?
-                    source.X + (source.X - dest.X) * invScaler
+                      source.X + (source.X - dest.X) * invScaler
                     : source.X - (source.X - dest.X) * scaler,
                 Y = source.Y
             };
@@ -35,7 +36,7 @@ namespace TsNode.Controls.Connection
             var destCenter = new Point
             {
                 X = isSourceLarge ?
-                    dest.X - (source.X - dest.X) * invScaler
+                      dest.X   - (source.X - dest.X) * invScaler
                     : source.X - (source.X - dest.X) * invScaler,
                 Y = dest.Y
             };
@@ -51,7 +52,8 @@ namespace TsNode.Controls.Connection
                 CenterToEnd = destCenter
             };
         }
-
+    
+        //! ベジェ曲線のジオメトリを作成する
         internal static Geometry MakeBezierPathGeometry(BezierConnectionInfo bezierInfo)
         {
             PathFigure MakePath(Point start, Point center, Point end)

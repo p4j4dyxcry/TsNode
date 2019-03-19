@@ -13,6 +13,7 @@
         <ResourceDictionary Source="Preset/PresetTemplate.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+    <!--  Node Control  -->
     <Style TargetType="{x:Type node:NodeControl}">
         <Setter Property="X" Value="{Binding X, Mode=TwoWay}" />
         <Setter Property="Y" Value="{Binding Y, Mode=TwoWay}" />
@@ -39,6 +40,7 @@
         </Setter>
     </Style>
 
+    <!--  Network View  -->
     <Style TargetType="{x:Type controls1:NetworkView}">
         <Setter Property="Template">
             <Setter.Value>
@@ -53,7 +55,8 @@
                             Width="{TemplateBinding Width}"
                             Height="{TemplateBinding Height}"
                             Background="{TemplateBinding Background}">
-                            <!--  Grid  -->
+
+                            <!--  背景のGrid  -->
                             <controls1:GridRenderer
                                 Width="{Binding Width, ElementName=PART_Canvas}"
                                 Height="{Binding Height, ElementName=PART_Canvas}"

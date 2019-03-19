@@ -12,9 +12,27 @@ namespace WpfApp1
             _operationController = controller;
         }
 
-        public override IConnectionViewModel StartConnectionOverride()
+        public override IConnectionDataContext StartConnectionOverride()
         {
             return new ConnectionViewModel(_operationController);
+        }
+    }
+
+    public class PlugViewModel2 : PlugViewModel
+    {
+        public string Name { get; set; }
+
+        public PlugViewModel2(IOperationController controller) : base(controller)
+        {
+        }
+    }
+
+    public class PlugViewModel3 : PlugViewModel
+    {
+        public int Data { get; set; }
+
+        public PlugViewModel3(IOperationController controller) : base(controller)
+        {
         }
     }
 }

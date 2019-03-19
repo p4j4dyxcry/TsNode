@@ -13,20 +13,20 @@ namespace TsNode.Controls
     public class NetworkView : Control
     {
         public static readonly DependencyProperty NodesProperty = DependencyProperty.Register(
-            nameof(Nodes), typeof(IEnumerable<INodeViewModel>), typeof(NetworkView), new PropertyMetadata(default(IEnumerable<INodeViewModel>)));
+            nameof(Nodes), typeof(IEnumerable<INodeDataContext>), typeof(NetworkView), new PropertyMetadata(default(IEnumerable<INodeDataContext>)));
 
-        public IEnumerable<INodeViewModel> Nodes
+        public IEnumerable<INodeDataContext> Nodes
         {
-            get => (IEnumerable<INodeViewModel>) GetValue(NodesProperty);
+            get => (IEnumerable<INodeDataContext>) GetValue(NodesProperty);
             set => SetValue(NodesProperty, value);
         }
 
         public static readonly DependencyProperty ConnectionsProperty = DependencyProperty.Register(
-            nameof(Connections), typeof(IEnumerable<IConnectionViewModel>), typeof(NetworkView), new PropertyMetadata(default(IEnumerable<IConnectionViewModel>)));
+            nameof(Connections), typeof(IEnumerable<IConnectionDataContext>), typeof(NetworkView), new PropertyMetadata(default(IEnumerable<IConnectionDataContext>)));
 
-        public IEnumerable<IConnectionViewModel> Connections
+        public IEnumerable<IConnectionDataContext> Connections
         {
-            get => (IEnumerable<IConnectionViewModel>) GetValue(ConnectionsProperty);
+            get => (IEnumerable<IConnectionDataContext>) GetValue(ConnectionsProperty);
             set => SetValue(ConnectionsProperty, value);
         }
 
@@ -134,6 +134,7 @@ namespace TsNode.Controls
             };;
         }
 
+        // セレクタを取得する/オーバーライドすることで選択処理を独自実装可能
         public virtual IControlSelector MakeControlSelector()
         {
             return new ControlSelector(SelectionChangedCommand);
@@ -141,51 +142,86 @@ namespace TsNode.Controls
 
         public IDragController MakeDragController(MouseEventArgs args)
         {
+            //! 左クリックに反応
             if (args.LeftButton == MouseButtonState.Pressed)
             {
+                // NodeItemsControlsからすべてのノードを取得する
                 var nodes = _nodeItemsControl
                     .EnumerateItems()
                     .Select(x => _nodeItemsControl.FindAssociatedNodeItem(x))
                     .ToArray();
 
+                // 取得したノードからクリックしたノードを取得する
                 var clickedNodes = nodes
                     .Where(x => x.IsMouseOver)
                     .ToArray();
 
+                // ConnectionItemsControlからコネクションを集める
                 var connections = _connectionItemsControl
                     .FindVisualChildrenWithType<ConnectionShape>()
                     .ToArray();
 
+                // クリックしたコネクションを集める
                 var clickedConnections = connections
                     .Where(x => x.HitTestCircle(args.GetPosition(_canvas),12))
                     .ToArray();
 
+                // クリックしたノードの中でプラグがクリックされているものを集める
                 var clickedPlugs = get_mouse_over_plugs(clickedNodes, out var sourcePlugType);
 
+                // 選択処理を行うセレクタを生成する
                 IControlSelector selector = MakeControlSelector();
-                selector.OnSelect(new SelectInfo(
-                    nodes.Select(x=>x.DataContext).OfType<ISelectable>().ToArray(), 
+
+                var selectInfo = new SelectInfo(
+                    nodes.Select(x => x.DataContext).OfType<ISelectable>().ToArray(),
                     clickedNodes.Select(x => x.DataContext).OfType<ISelectable>().ToArray(),
                     connections.Select(x => x.DataContext).OfType<ISelectable>().ToArray(),
-                    clickedConnections.Select(x => x.DataContext).OfType<ISelectable>().ToArray()));
+                    clickedConnections.Select(x => x.DataContext).OfType<ISelectable>().ToArray());
 
+                // 選択状態を設定する
+                selector.OnSelect(selectInfo);
+
+                // プラグをクリックしている場合はConnectionCreateControllerを作成する
                 if (clickedPlugs.Any())
                 {
-                    return new ConnectionCreateController(args,_canvas,nodes, clickedPlugs, _creatingConnectionItemsControl, CompletedCreateConnectionCommand,StartCreateConnectionCommand, sourcePlugType);
+                    var setupArgs = new ConnectionCreateControllerSetupArgs(
+                        _canvas,
+                        args,
+                        nodes,
+                        clickedPlugs,
+                        _creatingConnectionItemsControl,
+                        CompletedCreateConnectionCommand,
+                        StartCreateConnectionCommand,
+                        sourcePlugType);
+
+                    return new ConnectionCreateController(setupArgs);
                 }
 
                 var selectedNodes = nodes
                     .Where(x => x.IsSelected)
                     .ToArray();
+
+                // ノードを選択している場合はNodeDragControllerを作成する
                 if (selectedNodes.Any())
                 {
-                    return new NodeDragController(args, nodes, selectedNodes, _canvas, (int)GridSize, UseGridSnap, CompetedMoveNodeCommand);
+                    var setupArgs = new NodeDragControllerSetupArgs(_canvas,
+                                                                    args,
+                                                                    selectedNodes,
+                                                                    CompetedMoveNodeCommand)
+                    {
+                        GridSize = (int)this.GridSize,
+                        UseSnapGrid = this.UseGridSnap,
+                    };
+
+                    return new NodeDragController(setupArgs);
                 }
             }
 
+            // その他の場合はコントローラを作成しない ( つまりドラッグイベント無し )
             return null;
         }
 
+        //クリックしたプラグ一覧を取得する(一覧と言っているが基本的には一つ)
         private PlugControl[] get_mouse_over_plugs(NodeControl[] nodes, out SourcePlugType sourcePlugType)
         {
             sourcePlugType = SourcePlugType.Output;

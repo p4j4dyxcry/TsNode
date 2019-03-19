@@ -2,14 +2,17 @@
 
 namespace TsNode.Preset
 {
-    public class PresentPlugViewModel : PresetNotification , IPlugViewModel
+    /// <summary>
+    /// 最低限実装のPlugVieModel
+    /// </summary>
+    public class PresentPlugViewModel : PresetNotification , IPlugDataContext
     {
-        public virtual IConnectionViewModel StartConnectionOverride()
+        public virtual IConnectionDataContext StartConnectionOverride()
         {
             return new PresetConnectionViewModel();
         }
 
-        public IConnectionViewModel StartConnection()
+        public IConnectionDataContext StartConnection()
         {
             return StartConnectionOverride();
         }

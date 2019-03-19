@@ -53,11 +53,11 @@
     <Compile Include="Controls\EventArgs.cs" />
     <Compile Include="Controls\GridRenderer.cs" />
     <Compile Include="Interface\IConnectTarget.cs" />
-    <Compile Include="Interface\IConnectionViewModel.cs" />
+    <Compile Include="Interface\IConnectionDataContext.cs" />
     <Compile Include="Interface\IControlSelector.cs" />
     <Compile Include="Interface\IDragController.cs" />
-    <Compile Include="Interface\INodeViewModel.cs" />
-    <Compile Include="Interface\IPlugViewModel.cs" />
+    <Compile Include="Interface\INodeDataContext.cs" />
+    <Compile Include="Interface\IPlugDataContext.cs" />
     <Compile Include="Interface\ISelectable.cs" />
     <Compile Include="Controls\Node\NodeDragController.cs" />
     <Compile Include="Controls\Node\NodeItemsControl.cs" />

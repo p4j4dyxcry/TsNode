@@ -14,9 +14,9 @@ namespace TsNode.Controls
     //! コネクションの生成開始時に発行されるイベント
     public class StartCreateConnectionEventArgs : EventArgs
     {
-        public IPlugViewModel[] SenderPlugs { get; }
+        public IPlugDataContext[] SenderPlugs { get; }
 
-        public StartCreateConnectionEventArgs(IPlugViewModel[] startPlugs)
+        public StartCreateConnectionEventArgs(IPlugDataContext[] startPlugs)
         {
             SenderPlugs = startPlugs;
         }
@@ -25,21 +25,21 @@ namespace TsNode.Controls
     //! コネクションの生成確定時に発行されるイベント
     public class CompletedCreateConnectionEventArgs : EventArgs
     {
-        public IConnectionViewModel ConnectionViewModel { get; }
+        public IConnectionDataContext ConnectionDataContext { get; }
 
-        public CompletedCreateConnectionEventArgs(IConnectionViewModel connectionViewModel )
+        public CompletedCreateConnectionEventArgs(IConnectionDataContext connectionDataContext )
         {
-            ConnectionViewModel = connectionViewModel;
+            ConnectionDataContext = connectionDataContext;
         }
     }
 
     //! ノード移動開始時に発行されるイベント
     public class CompletedMoveNodeEventArgs : EventArgs
     {
-        public IReadOnlyDictionary<INodeViewModel, Point> InitialNodePoints { get; }
-        public IReadOnlyDictionary<INodeViewModel, Point> CompletedNodePoints { get; }
+        public IReadOnlyDictionary<INodeDataContext, Point> InitialNodePoints { get; }
+        public IReadOnlyDictionary<INodeDataContext, Point> CompletedNodePoints { get; }
 
-        public CompletedMoveNodeEventArgs(IReadOnlyDictionary<INodeViewModel, Point> initial , IReadOnlyDictionary<INodeViewModel,Point> completed)
+        public CompletedMoveNodeEventArgs(IReadOnlyDictionary<INodeDataContext, Point> initial , IReadOnlyDictionary<INodeDataContext,Point> completed)
         {
             InitialNodePoints = initial;
             CompletedNodePoints = completed;

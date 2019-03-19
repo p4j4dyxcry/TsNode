@@ -9,13 +9,64 @@ using TsNode.Interface;
 namespace TsNode.Controls.Connection
 {
     /// <summary>
+    /// コネクション作成のドラッグコントローラ
+    /// </summary>
+    public class ConnectionCreateControllerSetupArgs
+    {
+        //! コネクションの相対座標を計算するためのコントロール
+        public IInputElement BaseControl { get; }
+
+        //! マウスイベント
+        public MouseEventArgs Args { get; }
+
+        //! ノード一覧 (接続確定を決めるために利用)
+        public NodeControl[] Nodes { get; }
+
+        //! ドラッグ開始プラグ(基本的には1つだが拡張性を持たせるために複数利用できるようにしている)
+        public PlugControl[] SourcePlugs { get; }
+
+        //! 作成中のコネクションのビューを格納する器 (実コネクションと分離するため)
+        public ConnectionItemsControl CreatingConnectionItemsControl { get; }
+
+        //! コネクション作成開始コマンド
+        public ICommand ConnectionCreated { get; }
+
+        //! コネクション作成完了コマンド
+        public ICommand StartConnectionCreated { get; }
+
+        //! ドラッグ元プラグのタイプ
+        public SourcePlugType SourcePlugType { get; }
+
+        public ConnectionCreateControllerSetupArgs(
+            IInputElement baseControl,
+            MouseEventArgs args,
+            NodeControl[] nodes,
+            PlugControl[] sourcePlugs,
+            ConnectionItemsControl connectionItemsControl,
+            ICommand connectionCreated,
+            ICommand startConnectionCreated,
+            SourcePlugType sourcePlugType)
+        {
+            Args = args;
+            BaseControl = baseControl;
+            Nodes = nodes;
+            SourcePlugs = sourcePlugs;
+            CreatingConnectionItemsControl = connectionItemsControl;
+            ConnectionCreated = connectionCreated;
+            StartConnectionCreated = startConnectionCreated;
+            SourcePlugType = sourcePlugType;
+        }
+
+    }
+
+    /// <summary>
     /// ドラッグでコネクションを作成するコントローラ
     /// </summary>
     public class ConnectionCreateController : IDragController
     {
-        private readonly IConnectionViewModel[] _connections;
-        private readonly IPlugViewModel[] _dragSourcePlugs;
-        private readonly Dictionary<IPlugViewModel, IConnectionViewModel> _plugToConnectionViewModels;
+        private readonly IConnectionDataContext[] _connections;
+        private readonly IPlugDataContext[] _sourcePlugs;
+        private readonly Dictionary<IPlugDataContext, IConnectionDataContext> _plugToConnectionDataContexts;
         private readonly ConnectionItemsControl _connectionItemsControl;
         private readonly NodeControl[] _nodes;
         private readonly ICommand _connectionCreated;
@@ -34,9 +85,9 @@ namespace TsNode.Controls.Connection
             //! 作成中仮コネクションの作成(1度だけ)
             if (_connectionItemsControl.Items.IsEmpty && _isCreated is false)
             {
-                foreach (var plug in _dragSourcePlugs)
+                foreach (var plug in _sourcePlugs)
                 {
-                    var connection = _plugToConnectionViewModels[plug];
+                    var connection = _plugToConnectionDataContexts[plug];
                     if (_sourcePlugType == SourcePlugType.Input)
                         connection.DestPlug = plug;
                     else
@@ -97,17 +148,18 @@ namespace TsNode.Controls.Connection
 
             if (connectTarget != null)
             {
-                if (_dragSourcePlugs.All(x => connectTarget.TryConnect(
+                if (_sourcePlugs.All(x => connectTarget.TryConnect(
                     new ConnectInfo()
                     {
                         Sender = x,
                         SenderType = _sourcePlugType,
-                        Connection = _plugToConnectionViewModels[x]
+                        Connection = _plugToConnectionDataContexts[x]
                     })))
                 {
-                    foreach (var dragSourcePlug in _dragSourcePlugs)
+                    // ドラッグ完了コマンド
+                    foreach (var dragSourcePlug in _sourcePlugs)
                     {
-                        _connectionCreated?.Execute(new CompletedCreateConnectionEventArgs(_plugToConnectionViewModels[dragSourcePlug]));
+                        _connectionCreated?.Execute(new CompletedCreateConnectionEventArgs(_plugToConnectionDataContexts[dragSourcePlug]));
                     }
                 }
             }
@@ -115,38 +167,29 @@ namespace TsNode.Controls.Connection
             _created();
         }
 
-        /// <summary>
-        /// ctor
-        /// </summary>
-        public ConnectionCreateController(
-            MouseEventArgs args , 
-            IInputElement sender, 
-            NodeControl[] allNodes , 
-            PlugControl[] dragPlugs , 
-            ConnectionItemsControl connectionItemsControl , 
-            ICommand connectionCreated ,
-            ICommand startConnectionCreated, 
-            SourcePlugType sourcePlugType )
+        //! コンストラクタ / ドラッグ開始
+        public ConnectionCreateController(ConnectionCreateControllerSetupArgs setupArgs)
         {
-            _nodes = allNodes;
-            _inputElement = sender;
+            _nodes = setupArgs.Nodes;
+            _inputElement = setupArgs.BaseControl;
 
-            _dragSourcePlugs = dragPlugs
+            _sourcePlugs = setupArgs.SourcePlugs
                 .Select(x => x.DataContext)
-                .OfType<IPlugViewModel>()
+                .OfType<IPlugDataContext>()
                 .ToArray();
 
-            _plugToConnectionViewModels = _dragSourcePlugs
+            _plugToConnectionDataContexts = _sourcePlugs
                 .ToDictionary(x => x, x => x.StartConnection());
 
-            _connections = _plugToConnectionViewModels
+            _connections = _plugToConnectionDataContexts
                 .Select(x => x.Value)
                 .ToArray();
 
-            _connectionItemsControl = connectionItemsControl;
-            _connectionCreated = connectionCreated;
-            _sourcePlugType = sourcePlugType;
-            startConnectionCreated?.Execute(new StartCreateConnectionEventArgs(_dragSourcePlugs));
+            _connectionItemsControl = setupArgs.CreatingConnectionItemsControl;
+            _connectionCreated = setupArgs.ConnectionCreated;
+            _sourcePlugType = setupArgs.SourcePlugType;
+
+            setupArgs.StartConnectionCreated?.Execute(new StartCreateConnectionEventArgs(_sourcePlugs));
         }
     }
 }

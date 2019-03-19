@@ -17,19 +17,20 @@ namespace WpfApp1
         public ReactiveCommand<CompletedCreateConnectionEventArgs> ConnectCommand { get; }
         public ReactiveCommand<StartCreateConnectionEventArgs> StartNewConnectionCommand { get; }
 
-        public ConnectionCreator(ObservableCollection<IConnectionViewModel> connecions , IOperationController @operator)
+        public ConnectionCreator(ObservableCollection<IConnectionDataContext> connecions , IOperationController @operator)
         {
             var removeOperation = Operation.Empty;
 
+            //! コネクション接続完了コマンド
             ConnectCommand = new ReactiveCommand<CompletedCreateConnectionEventArgs>();
             ConnectCommand.Subscribe((e) =>
             {
                 var operation = make_remove_duplication_plugs_operation(new[]
                     {
-                        e.ConnectionViewModel.DestPlug,
-                        e.ConnectionViewModel.SourcePlug
+                        e.ConnectionDataContext.DestPlug,
+                        e.ConnectionDataContext.SourcePlug
                     })
-                    .CombineOperations(connecions.ToAddOperation(e.ConnectionViewModel))
+                    .CombineOperations(connecions.ToAddOperation(e.ConnectionDataContext))
                     .ToCompositeOperation();
 
                 operation.Name = "コネクション接続";
@@ -40,6 +41,7 @@ namespace WpfApp1
                     operation.ExecuteAndCombineTop(@operator);
             });
 
+            //! コネクション接続開始コマンド
             StartNewConnectionCommand = new ReactiveCommand<StartCreateConnectionEventArgs>();
             StartNewConnectionCommand.Subscribe((e) =>
             {
@@ -50,7 +52,8 @@ namespace WpfApp1
 
             });
 
-            IOperation make_remove_duplication_plugs_operation(IPlugViewModel[] plugs)
+            //! コネクション削除
+            IOperation make_remove_duplication_plugs_operation(IPlugDataContext[] plugs)
             {
                 var removeConnections = connecions.Where(x => plugs?.Contains(x.DestPlug) is true ||
                                                                plugs?.Contains(x.SourcePlug) is true).ToArray();
@@ -68,15 +71,25 @@ namespace WpfApp1
 
     public sealed class NetworkViewModel : ViewModel
     {
-        public ObservableCollection<INodeViewModel> Nodes { get; set; }
+        //! ノード
+        public ObservableCollection<INodeDataContext> Nodes { get; set; }
 
-        public ObservableCollection<IConnectionViewModel> Connections { get; set; }
+        //! コネクション
+        public ObservableCollection<IConnectionDataContext> Connections { get; set; }
 
+        //! コネクションドラッグ完了
         public ICommand ConnectCommand => _connectionCreator.ConnectCommand;
+
+        //! コネクションドラッグ開始
         public ICommand StartNewConnectionCommand =>_connectionCreator.StartNewConnectionCommand;
+
+        //! 選択変更
         public ReactiveCommand<SelectionChangedEventArgs> SelectionChangedCommand { get; }
+
+        //! ノード移動
         public ReactiveCommand<CompletedMoveNodeEventArgs> NodeMoveCommand { get; }
 
+        //! 選択中の　ノード / コネクション　のプロパティ一覧
         private ObservableCollection<IProperty> _properties;
 
         public ObservableCollection<IProperty> Properties
@@ -92,22 +105,34 @@ namespace WpfApp1
         {
             _operationController = operationController;
 
-            var node1 = new NodeViewModel(_operationController) { X = 256 };
-            var node2 = new NodeViewModel(_operationController) { Y = 256 };
-            Nodes = new ObservableCollection<INodeViewModel>()
+            var node1 = new NodeViewModel(_operationController) { X = 30 , Y = 20 };
+            var node2 = new NodeViewModel2(_operationController) { X = 130, Y = 20 };
+            var node3 = new NodeViewModel3(_operationController) { X = 130, Y = 60 };
+            Nodes = new ObservableCollection<INodeDataContext>()
             {
                 node1,
-                node2
+                node2,
+                node3,
             };
             node1.InputPlugs.Add(new PlugViewModel(_operationController));
-            node1.InputPlugs.Add(new PlugViewModel(_operationController));
+            node1.InputPlugs.Add(new PlugViewModel2(_operationController));
             node1.OutputPlugs.Add(new PlugViewModel(_operationController));
+            node1.OutputPlugs.Add(new PlugViewModel2(_operationController));
+            node1.OutputPlugs.Add(new PlugViewModel3(_operationController));
 
             node2.InputPlugs.Add(new PlugViewModel(_operationController));
-            node2.InputPlugs.Add(new PlugViewModel(_operationController));
-            node2.OutputPlugs.Add(new PlugViewModel(_operationController));
+            node2.InputPlugs.Add(new PlugViewModel2(_operationController));
+            node2.OutputPlugs.Add(new PlugViewModel3(_operationController));
+            node2.OutputPlugs.Add(new PlugViewModel3(_operationController));
 
-            Connections = new ObservableCollection<IConnectionViewModel>();
+            node3.InputPlugs.Add(new PlugViewModel(_operationController));
+            node3.InputPlugs.Add(new PlugViewModel2(_operationController));
+            node3.OutputPlugs.Add(new PlugViewModel3(_operationController));
+            node3.OutputPlugs.Add(new PlugViewModel3(_operationController));
+            node3.OutputPlugs.Add(new PlugViewModel3(_operationController));
+            node3.OutputPlugs.Add(new PlugViewModel3(_operationController));
+
+            Connections = new ObservableCollection<IConnectionDataContext>();
             _connectionCreator = new ConnectionCreator(Connections,_operationController);
 
             NodeMoveCommand = new ReactiveCommand<CompletedMoveNodeEventArgs>();

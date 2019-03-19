@@ -11,6 +11,8 @@ namespace TsNode.Controls.Connection
 {
     public class ConnectionShape : Shape, ISelectable
     {
+        #region 座標
+
         public static readonly DependencyProperty SourceXProperty = DependencyProperty.Register(
             nameof(SourceX), typeof(double), typeof(ConnectionShape), new FrameworkPropertyMetadata(default(double), FrameworkPropertyMetadataOptions.AffectsRender));
 
@@ -47,23 +49,29 @@ namespace TsNode.Controls.Connection
             set => SetValue(DestYProperty, value);
         }
 
-        public static readonly DependencyProperty SourcePlugProperty = DependencyProperty.Register(
-            nameof(SourcePlug), typeof(IPlugViewModel), typeof(ConnectionShape), new PropertyMetadata(default(IPlugViewModel), OnSourcePlugChanged));
+        #endregion
 
-        public IPlugViewModel SourcePlug
+        #region Plug
+
+        public static readonly DependencyProperty SourcePlugProperty = DependencyProperty.Register(
+            nameof(SourcePlug), typeof(IPlugDataContext), typeof(ConnectionShape), new PropertyMetadata(default(IPlugDataContext), OnSourcePlugChanged));
+
+        public IPlugDataContext SourcePlug
         {
-            get => (IPlugViewModel) GetValue(SourcePlugProperty);
+            get => (IPlugDataContext) GetValue(SourcePlugProperty);
             set => SetValue(SourcePlugProperty, value);
         }
 
         public static readonly DependencyProperty DestPlugProperty = DependencyProperty.Register(
-            nameof(DestPlug), typeof(IPlugViewModel), typeof(ConnectionShape), new PropertyMetadata(default(IPlugViewModel),OnDestPlugChanged));
+            nameof(DestPlug), typeof(IPlugDataContext), typeof(ConnectionShape), new PropertyMetadata(default(IPlugDataContext),OnDestPlugChanged));
 
-        public IPlugViewModel DestPlug
+        public IPlugDataContext DestPlug
         {
-            get => (IPlugViewModel) GetValue(DestPlugProperty);
+            get => (IPlugDataContext) GetValue(DestPlugProperty);
             set => SetValue(DestPlugProperty, value);
         }
+
+        #endregion
 
         public static readonly DependencyProperty IsSelectedProperty = DependencyProperty.Register(
             nameof(IsSelected), typeof(bool), typeof(ConnectionShape));
@@ -80,31 +88,40 @@ namespace TsNode.Controls.Connection
         private PlugControl _sourcePlugControl;
         private PlugControl _destPlugControl;
 
+        //! SourcePlugが更新された
         public static void OnSourcePlugChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is ConnectionShape shape)
             {
+                // 古いノードの座標イベントへのバインドを解除する
                 shape.un_bind_node(shape._sourcePlugControl, shape._associationSourceNode, shape.UpdateSourcePointFromNode);
                 shape._sourcePlugControl = shape.find_plug_by_datacontext(e.NewValue);
 
+                // ノードの座標が更新されたらSourcePointを再計算する
                 shape.bind_node(shape._sourcePlugControl, shape._associationSourceNode, shape.UpdateSourcePointFromNode);
 
                 shape.setup_plug_start_point();
             }
         }
+        
+        //! DestPlugが更新された
         private static void OnDestPlugChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is ConnectionShape shape)
             {
+                // 古いノードの座標イベントへのバインドを解除する
                 shape.un_bind_node(shape._destPlugControl, shape._associationDestNode,shape.UpdateDestPointFromNode);
                 shape._destPlugControl = shape.find_plug_by_datacontext(e.NewValue);
 
+                // ノードの座標が更新されたらDestPointを再計算する
                 shape.bind_node(shape._destPlugControl, shape._associationDestNode, shape.UpdateDestPointFromNode);
 
                 shape.setup_plug_start_point();
             }
         }
 
+        //! 片方がのプラグがバインドされもう片方がnullのときにSourceとDestを一時的に統一する
+        //  これをしないと数フレーム線が飛ぶので目にうるさい
         private void setup_plug_start_point()
         {
             if (_sourcePlugControl is null)
@@ -119,12 +136,14 @@ namespace TsNode.Controls.Connection
             }
         }
 
+        // プラグのDataContextからPlugControlを検索する 
         private PlugControl find_plug_by_datacontext(object dataContext)
         {
             return this.FindVisualParentWithType<NetworkView>()
                        .FindChildWithDataContext<PlugControl>(dataContext);
         }
 
+        // プラグの親ノードを検索し座標イベントの移動に指定したイベントを張り付ける
         private void bind_node(PlugControl plug, HashSet<NodeControl> hashSet, Action<object, UpdateNodePointArgs> bindFunc)
         {
             if (plug is null)
@@ -138,6 +157,7 @@ namespace TsNode.Controls.Connection
             bindFunc?.Invoke(plug.ParentNode, new UpdateNodePointArgs(plug.ParentNode.X, plug.ParentNode.Y));
         }
 
+        // プラグの親ノードを検索し座標イベントの移動から指定したイベントを削除する
         private void un_bind_node(PlugControl plug, HashSet<NodeControl> hashSet ,Action<object,UpdateNodePointArgs> bindFunc)
         {
             if (plug is null)
@@ -150,6 +170,7 @@ namespace TsNode.Controls.Connection
             }
         }
 
+        // ノードへのイベント割り当てを解除する
         private void un_bind_all()
         {
             foreach (var nodeControl in _associationSourceNode)
@@ -161,6 +182,7 @@ namespace TsNode.Controls.Connection
             return;
         }
 
+        // Source座標を更新する
         private void UpdateSourcePointFromNode(object sender , UpdateNodePointArgs e)
         {
             var relativePoint = _sourcePlugControl.GetNodeFromPoint(new Point(6, 6));
@@ -168,6 +190,7 @@ namespace TsNode.Controls.Connection
             SourceY = relativePoint.Y + e.Point.Y;
         }
 
+        // Dest座標を更新する
         private void UpdateDestPointFromNode(object sender, UpdateNodePointArgs e)
         {
             var relativePoint = _destPlugControl.GetNodeFromPoint(new Point(6, 6));
@@ -177,6 +200,7 @@ namespace TsNode.Controls.Connection
 
         public ConnectionShape()
         {
+            // Viewが破棄されたときにノードへのイベントが割り当たっていれば解除する
             Unloaded += (s, e) => { un_bind_all(); };
         }
 
@@ -184,6 +208,7 @@ namespace TsNode.Controls.Connection
         {
             get
             {
+                // 開始点 / 終了点から 形状を決める
                 var info = ConnectionHelper.CalcBezierInfo(SourceX, SourceY, DestX, DestY);
                 return ConnectionHelper.MakeBezierPathGeometry(info);
             }

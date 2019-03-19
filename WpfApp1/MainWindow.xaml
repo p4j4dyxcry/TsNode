@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:TsNode.Controls;assembly=Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:local="clr-namespace:WpfApp1"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tsProperty="clr-namespace:TsProperty;assembly=TsProperty"
@@ -12,20 +13,20 @@
     Height="780"
     d:DataContext="{d:DesignInstance local:MainWindowVm}"
     mc:Ignorable="d">
+
     <Window.DataContext>
         <local:MainWindowVm />
     </Window.DataContext>
+
+    <i:Interaction.Behaviors>
+        <local:UndoRedoKeyBehabior RedoCommand="{Binding RedoCommand}" UndoCommand="{Binding UndoCommand}" />
+    </i:Interaction.Behaviors>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
-        <WrapPanel>
-            <Button Command="{Binding UndoCommand}" Content="Undo" />
-            <Button Command="{Binding RedoCommand}" Content="Redo" />
-        </WrapPanel>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -34,7 +35,6 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <controls:NetworkView
-                DataContext="{Binding NetworkVm}"
                 Grid.Column="0"
                 Width="4096"
                 Height="4096"
@@ -42,9 +42,11 @@
                 CompetedMoveNodeCommand="{Binding NodeMoveCommand}"
                 CompletedCreateConnectionCommand="{Binding ConnectCommand}"
                 Connections="{Binding Connections}"
+                DataContext="{Binding NetworkVm}"
                 Nodes="{Binding Nodes}"
                 SelectionChangedCommand="{Binding SelectionChangedCommand}"
                 StartCreateConnectionCommand="{Binding StartNewConnectionCommand}" />
+            <!--  Undo Redo  -->
             <ListView
                 Grid.Column="1"
                 Width="200"
@@ -68,12 +70,12 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <!--  ProperyView  -->
             <ItemsControl
                 Grid.Column="2"
                 Width="300"
                 DataContext="{Binding NetworkVm}"
-                ItemsSource="{Binding Properties}">
-            </ItemsControl>
+                ItemsSource="{Binding Properties}" />
         </Grid>
     </Grid>
 </Window>

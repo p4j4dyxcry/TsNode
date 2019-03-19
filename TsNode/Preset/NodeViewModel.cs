@@ -6,7 +6,10 @@ using TsNode.Interface;
 
 namespace TsNode.Preset
 {
-    public class PresetNodeViewModel : PresetNotification, INodeViewModel
+    /// <summary>
+    /// 最低限実装のNodeVieModel
+    /// </summary>
+    public class PresetNodeViewModel : PresetNotification, INodeDataContext
     {
         private double _x;
 
@@ -32,15 +35,15 @@ namespace TsNode.Preset
             set => RaisePropertyChangedIfSet(ref _isSelected, value);
         }
 
-        public ObservableCollection<IPlugViewModel> InputPlugs { get; set; } = new ObservableCollection<IPlugViewModel>();
-        public ObservableCollection<IPlugViewModel> OutputPlugs { get; set; } = new ObservableCollection<IPlugViewModel>();
+        public ObservableCollection<IPlugDataContext> InputPlugs { get; set; } = new ObservableCollection<IPlugDataContext>();
+        public ObservableCollection<IPlugDataContext> OutputPlugs { get; set; } = new ObservableCollection<IPlugDataContext>();
 
-        public IEnumerable<IPlugViewModel> GetInputPlugs()
+        public IEnumerable<IPlugDataContext> GetInputPlugs()
         {
             return InputPlugs;
         }
 
-        public IEnumerable<IPlugViewModel> GetOutputPlugs()
+        public IEnumerable<IPlugDataContext> GetOutputPlugs()
         {
             return OutputPlugs;
         }

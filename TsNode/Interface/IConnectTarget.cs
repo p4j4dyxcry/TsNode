@@ -4,9 +4,9 @@ namespace TsNode.Interface
 {
     public struct ConnectInfo
     {
-        public IPlugViewModel Sender { get; set; }
+        public IPlugDataContext Sender { get; set; }
         public SourcePlugType SenderType { get; set; }
-        public IConnectionViewModel Connection { get; set; }
+        public IConnectionDataContext Connection { get; set; }
     }
 
     public interface IConnectTarget

@@ -126,6 +126,7 @@ namespace TsProperty
             return this;
         }
 
+        //TODO 整理
         public ReflectionPropertyBuilder GenerateProperties()
         {
             _suBuilders.Clear();
@@ -191,6 +192,10 @@ namespace TsProperty
                     {
                         _properties.Add(properies.ToGroupProperty($"{propertyName}({propertyType.Name})"));
                         _suBuilders.Add(subBuilder);
+                    }
+                    else
+                    {
+                        FastReflection.InvokeGenericMethod(this, propertyType, nameof(Register), propertyName);
                     }
                 }
                 else

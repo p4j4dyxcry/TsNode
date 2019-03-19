@@ -9,12 +9,14 @@ using TsNode.Interface;
 
 namespace TsNode.Controls.Node
 {
+    /// <summary>
+    /// ノードを扱うコントロール
+    /// </summary>
     public class NodeControl : ContentControl , ISelectable
     {
         public static readonly DependencyProperty IsSelectedProperty = DependencyProperty.Register(
             nameof(IsSelected), typeof(bool), typeof(NodeControl), new PropertyMetadata(default(bool)));
-
-
+        
         public bool IsSelected
         {
             get => (bool) GetValue(IsSelectedProperty);
@@ -50,14 +52,17 @@ namespace TsNode.Controls.Node
             }
         }
 
+        //! 座標が更新されたときに発行されるイベント
         public event Action<object, UpdateNodePointArgs> UpdatePoints;
 
+        // cache
         private PlugItemsControl _inputPlugItemsControl;
         private PlugItemsControl _outputPlugItemsControl;
 
         private static readonly string PART_InputPlugItemsControl  = nameof(PART_InputPlugItemsControl);
         private static readonly string PART_OutputPlugItemsControl = nameof(PART_OutputPlugItemsControl);
 
+        //! 入力プラグを取得する
         public IEnumerable<PlugControl> GetInputPlugs()
         {
             if (_inputPlugItemsControl is null)
@@ -69,6 +74,7 @@ namespace TsNode.Controls.Node
             return _inputPlugItemsControl.FindVisualChildrenWithType<PlugControl>().ToArray();
         }
 
+        //! 出力プラグを取得する
         public IEnumerable<PlugControl> GetOutputPlugs()
         {
             if (_outputPlugItemsControl is null)

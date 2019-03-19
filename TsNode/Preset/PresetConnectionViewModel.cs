@@ -2,7 +2,10 @@
 
 namespace TsNode.Preset
 {
-    public class PresetConnectionViewModel : PresetNotification, IConnectionViewModel
+    /// <summary>
+    /// 最低限実装のConnectionVieModel
+    /// </summary>
+    public class PresetConnectionViewModel : PresetNotification, IConnectionDataContext
     {
         private bool _isSelected;
 
@@ -11,16 +14,16 @@ namespace TsNode.Preset
             get => _isSelected;
             set => RaisePropertyChangedIfSet(ref _isSelected, value);
         }
-        private IPlugViewModel _sourcePlug;
+        private IPlugDataContext _sourcePlug;
 
-        public IPlugViewModel SourcePlug
+        public IPlugDataContext SourcePlug
         {
             get => _sourcePlug;
             set => RaisePropertyChangedIfSet(ref _sourcePlug, value);
         }
 
-        private IPlugViewModel _destPlug;
-        public IPlugViewModel DestPlug
+        private IPlugDataContext _destPlug;
+        public IPlugDataContext DestPlug
         {
             get => _destPlug;
             set => RaisePropertyChangedIfSet(ref _destPlug, value);

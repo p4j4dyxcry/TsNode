@@ -4,6 +4,9 @@ using System.Runtime.CompilerServices;
 
 namespace TsNode.Preset
 {
+    /// <summary>
+    /// 最低限実装の通知オブジェクト
+    /// </summary>
     public class PresetNotification : INotifyPropertyChanged
     {
         protected bool RaisePropertyChangedIfSet<T>(ref T source,T value, [CallerMemberName] string propertyName = null)

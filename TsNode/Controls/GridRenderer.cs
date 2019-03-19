@@ -80,6 +80,8 @@ namespace TsNode.Controls
         }
 
         private Pen _pen;
+
+        // 背景テクスチャブラシの作成
         private void make_pen()
         {
             var width = double.IsNaN(Width)   ? ActualWidth  : Width;
@@ -125,6 +127,7 @@ namespace TsNode.Controls
 
         public GridRenderer()
         {
+            //サイズが更新されたら背景テクスチャブラシを作り直す
             SizeChanged += (s, e) => make_pen();
         }
     }

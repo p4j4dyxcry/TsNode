@@ -13,6 +13,7 @@ using TsGui.Operation;
 
 namespace WpfApp1
 {
+    // Undo / Redo Command ViewModel
     public class OperationVm  : NotificationObject
     {
         public string Name { get; }
@@ -35,12 +36,14 @@ namespace WpfApp1
         public ReactiveCommand UndoCommand { get; }
         public ReactiveCommand RedoCommand { get; }
 
+        // Undo / Redo バッファ
         public ObservableCollection<OperationVm> Operations { get; set; }
 
         public MainWindowVm()
         {
             NetworkVm = new NetworkViewModel(OperationController);
 
+            // Undo Command
             UndoCommand =
                 OperationController
                     .StackChangedAsObservable()
@@ -48,6 +51,7 @@ namespace WpfApp1
                     .ToReactiveCommand();
             UndoCommand.Subscribe(() => OperationController.Undo());
 
+            //! Redo Command
             RedoCommand =
                 OperationController
                     .StackChangedAsObservable()
@@ -55,7 +59,7 @@ namespace WpfApp1
                     .ToReactiveCommand();
             RedoCommand.Subscribe(() => OperationController.Redo());
 
-
+            //! Undo / Redoが行われたときに Undo / Redo ViewModelを生成する
             OperationController.StackChangedAsObservable().Subscribe(_=>
             {
                 Operations = OperationController
@@ -68,7 +72,7 @@ namespace WpfApp1
         }
     }
 
-
+    // OperationSystemをRxにつなげるための拡張機能
     public static class OperationControllerEx
     {
         public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> self)
@@ -76,6 +80,7 @@ namespace WpfApp1
             return new ObservableCollection<T>(self);
         }
 
+        // IOperationController をIObservable<Unit>に変換
         public static IObservable<Unit> StackChangedAsObservable(this IOperationController self)
         {
             return Observable
