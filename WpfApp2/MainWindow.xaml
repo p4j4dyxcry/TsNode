@@ -1,0 +1,35 @@
+﻿<Window
+    x:Class="WpfApp2.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:TsNode.Controls;assembly=TsNode"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:WpfApp2"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MainWindow"
+    Width="1024"
+    Height="768"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/TsNode;component/Template.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <local:MainWindowViewModel />
+    </Window.DataContext>
+
+    <Grid>
+        <controls:NetworkView
+            Width="4096"
+            Height="4096"
+            Background="LightGray"
+            CompletedCreateConnectionCommand="{Binding ConnectedCommand}"
+            Connections="{Binding Connections}"
+            Nodes="{Binding Nodes}"
+            StartCreateConnectionCommand="{Binding ConnectStartCommand}" />
+    </Grid>
+</Window>

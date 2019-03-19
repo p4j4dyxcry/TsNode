@@ -3,7 +3,7 @@
 namespace TsNode.Preset
 {
     /// <summary>
-    /// 最低限実装のConnectionVieModel
+    /// 実装サンプル
     /// </summary>
     public class PresetConnectionViewModel : PresetNotification, IConnectionDataContext
     {

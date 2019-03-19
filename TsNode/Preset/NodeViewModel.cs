@@ -7,7 +7,7 @@ using TsNode.Interface;
 namespace TsNode.Preset
 {
     /// <summary>
-    /// 最低限実装のNodeVieModel
+    /// 実装サンプル
     /// </summary>
     public class PresetNodeViewModel : PresetNotification, INodeDataContext
     {

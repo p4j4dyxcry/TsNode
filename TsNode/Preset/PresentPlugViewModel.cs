@@ -3,7 +3,7 @@
 namespace TsNode.Preset
 {
     /// <summary>
-    /// 最低限実装のPlugVieModel
+    /// 実装サンプル
     /// </summary>
     public class PresentPlugViewModel : PresetNotification , IPlugDataContext
     {

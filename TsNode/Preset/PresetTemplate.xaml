@@ -8,6 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:plug="clr-namespace:TsNode.Controls.Plug"
     mc:Ignorable="d">
+
+    <!--  実装サンプルです  -->
     <DataTemplate DataType="{x:Type local:PresetNodeViewModel}">
         <Grid>
             <Border

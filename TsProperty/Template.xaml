@@ -1,29 +1,30 @@
-﻿<ResourceDictionary x:Class="TsProperty.Template"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:TsProperty"
-             mc:Ignorable="d" >
+﻿<ResourceDictionary
+    x:Class="TsProperty.Template"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:TsProperty"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
 
     <Style TargetType="local:LabeledControl">
-        <Setter Property="LabelWidth" Value="120"/>
+        <Setter Property="LabelWidth" Value="120" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:LabeledControl}">
-                    <Border BorderBrush="Black" BorderThickness="0,0,0,0.1" >
-                        <Grid Background="{TemplateBinding Background}" Margin="0,2">
+                    <Border BorderBrush="Black" BorderThickness="0,0,0,0.1">
+                        <Grid Margin="0,2" Background="{TemplateBinding Background}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Label
                                 Grid.Column="0"
-                                BorderBrush="Black"
-                                HorizontalAlignment="Left"
                                 Width="{Binding LabelWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=local:LabeledControl}}"
+                                HorizontalAlignment="Left"
+                                BorderBrush="Black"
                                 Content="{Binding Label, RelativeSource={RelativeSource FindAncestor, AncestorType=local:LabeledControl}}" />
-                            <ContentPresenter Grid.Column="1" HorizontalAlignment="Stretch"/>
+                            <ContentPresenter Grid.Column="1" HorizontalAlignment="Stretch" />
                         </Grid>
                     </Border>
                 </ControlTemplate>
@@ -33,44 +34,47 @@
 
     <DataTemplate DataType="{x:Type local:BindablePropertyBase}">
         <local:LabeledControl Label="{Binding Name}">
-            <TextBlock Text="{Binding Data}"/>
+            <TextBlock Text="{Binding Data}" />
         </local:LabeledControl>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type local:ReadOnlyProperty}">
         <local:LabeledControl Label="{Binding Name}">
-            <TextBlock Text="{Binding Data}"/>
+            <TextBlock Text="{Binding Data}" />
         </local:LabeledControl>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type local:BindableDoubleProperty}">
         <local:LabeledControl Label="{Binding Name}">
-            <TextBox Text="{Binding Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </local:LabeledControl>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type local:BindableIntProperty}">
         <local:LabeledControl Label="{Binding Name}">
-            <TextBox Text="{Binding Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </local:LabeledControl>
 
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type local:BindableStringProperty}">
         <local:LabeledControl Label="{Binding Name}">
-            <TextBox Text="{Binding Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </local:LabeledControl>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type local:BindableBoolProperty}">
         <local:LabeledControl Label="{Binding Name}">
-            <CheckBox IsEnabled="{Binding Value}" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            <CheckBox
+                VerticalAlignment="Center"
+                VerticalContentAlignment="Center"
+                IsEnabled="{Binding Value}" />
         </local:LabeledControl>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type local:GroupProperty}">
         <Expander Header="{Binding Name}">
-            <ItemsControl ItemsSource="{Binding Properties}" Margin="16,0,0,0"/>
+            <ItemsControl Margin="16,0,0,0" ItemsSource="{Binding Properties}" />
         </Expander>
     </DataTemplate>
 
