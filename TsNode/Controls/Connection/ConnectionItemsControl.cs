@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace TsNode.Controls.Connection
@@ -11,6 +12,11 @@ namespace TsNode.Controls.Connection
             {
                 VisualTree = new FrameworkElementFactory(typeof(Canvas))
             };
+        }
+
+        public ConnectionShape[] GetConnectionShapes()
+        {
+            return this.FindVisualChildrenWithType<ConnectionShape>().ToArray();
         }
     }
 }

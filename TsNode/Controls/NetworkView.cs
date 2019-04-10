@@ -4,8 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TsNode.Controls.Connection;
+using TsNode.Controls.DragBuilder;
 using TsNode.Controls.Node;
-using TsNode.Controls.Plug;
 using TsNode.Interface;
 
 namespace TsNode.Controls
@@ -87,8 +87,8 @@ namespace TsNode.Controls
 
         public ICommand CompetedMoveNodeCommand
         {
-            get { return (ICommand) GetValue(CompetedMoveNodeCommandProperty); }
-            set { SetValue(CompetedMoveNodeCommandProperty, value); }
+            get => (ICommand) GetValue(CompetedMoveNodeCommandProperty);
+            set => SetValue(CompetedMoveNodeCommandProperty, value);
         }
 
         //! コマンドの引数として[SelectionChangedEventArgs]が渡される
@@ -97,8 +97,8 @@ namespace TsNode.Controls
 
         public ICommand SelectionChangedCommand
         {
-            get { return (ICommand)GetValue(SelectionChangedCommandProperty); }
-            set { SetValue(SelectionChangedCommandProperty, value); }
+            get => (ICommand)GetValue(SelectionChangedCommandProperty);
+            set => SetValue(SelectionChangedCommandProperty, value);
         }
 
 
@@ -154,111 +154,40 @@ namespace TsNode.Controls
             //! 左クリックに反応
             if (args.LeftButton == MouseButtonState.Pressed)
             {
-                // NodeItemsControlsからすべてのノードを取得する
-                var nodes = _nodeItemsControl
-                    .EnumerateItems()
-                    .Select(x => _nodeItemsControl.FindAssociatedNodeItem(x))
-                    .ToArray();
-
-                // 取得したノードからクリックしたノードを取得する
-                var clickedNodes = nodes
-                    .Where(x => x.IsMouseOver)
-                    .ToArray();
-
-                // ConnectionItemsControlからコネクションを集める
-                var connections = _connectionItemsControl
-                    .FindVisualChildrenWithType<ConnectionShape>()
-                    .ToArray();
+                var nodes = _nodeItemsControl.GetNodes();
+                var clickedNodes = _nodeItemsControl.GetNodes(x => x.IsMouseOver);
+                var connections = _connectionItemsControl.GetConnectionShapes();
 
                 // クリックしたコネクションを集める
                 var clickedConnections = connections
-                    .Where(x => x.HitTestCircle(args.GetPosition(_canvas),12))
+                    .Where(x => x.HitTestCircle(args.GetPosition(_canvas), 12))
                     .ToArray();
-
-                // クリックしたノードの中でプラグがクリックされているものを集める
-                var clickedPlugs = get_mouse_over_plugs(clickedNodes, out var sourcePlugType);
 
                 // 選択処理を行うセレクタを生成する
                 IControlSelector selector = MakeControlSelector();
 
                 var selectInfo = new SelectInfo(
-                    nodes.Select(x => x.DataContext).OfType<ISelectable>().ToArray(),
-                    clickedNodes.Select(x => x.DataContext).OfType<ISelectable>().ToArray(),
-                    connections.Select(x => x.DataContext).OfType<ISelectable>().ToArray(),
-                    clickedConnections.Select(x => x.DataContext).OfType<ISelectable>().ToArray());
+                    nodes.ToSelectableDataContext(),
+                    clickedNodes.ToSelectableDataContext(),
+                    connections.ToSelectableDataContext(),
+                    clickedConnections.ToSelectableDataContext());
 
                 // 選択状態を設定する
                 selector.OnSelect(selectInfo);
 
-                // プラグをクリックしている場合はConnectionCreateControllerを作成する
-                if (clickedPlugs.Any())
-                {
-                    var setupArgs = new ConnectionCreateControllerSetupArgs(
-                        _canvas,
-                        args,
-                        nodes,
-                        clickedPlugs,
-                        _creatingConnectionItemsControl,
-                        CompletedCreateConnectionCommand,
-                        StartCreateConnectionCommand,
-                        sourcePlugType);
-
-                    return new ConnectionCreateController(setupArgs);
-                }
-
-                var selectedNodes = nodes
-                    .Where(x => x.IsSelected)
-                    .ToArray();
-
-                // ノードを選択している場合はNodeDragControllerを作成する
-                if (selectedNodes.Any())
-                {
-                    var setupArgs = new NodeDragControllerSetupArgs(_canvas,
-                                                                    args,
-                                                                    selectedNodes,
-                                                                    CompetedMoveNodeCommand)
-                    {
-                        GridSize = (int)this.GridSize,
-                        UseSnapGrid = this.UseGridSnap,
-                    };
-
-                    return new NodeDragController(setupArgs);
-                }
-
-                // 選択に何もないので範囲選択を開始する
-                {
-                    var setupArgs = new SelectionRectDragControllerSetupArgs(_canvas,args,nodes,connections)
-                    {
-                        SelectionChangedCommand = SelectionChangedCommand,
-                        RectangleStyle = SelectionRectangleStyle
-                    };
-                    return new SelectionRectDragController(setupArgs);
-                }
+                var builder = new DragControllerBuilder(args, _canvas, nodes, connections);
+                return builder
+                    .AddBuildTarget(new ConnectionDragBuild(builder, 0, _creatingConnectionItemsControl))
+                    .AddBuildTarget(new NodeDragBuild(builder, 1, UseGridSnap, (int) GridSize))
+                    .AddBuildTarget(new RectSelectionDragBuild(builder, 2, SelectionRectangleStyle))
+                    .SetConnectionCommand(StartCreateConnectionCommand, CompletedCreateConnectionCommand)
+                    .SetSelectionChangedCommand(SelectionChangedCommand)
+                    .SetNodeDragControllerBuilder(CompetedMoveNodeCommand)
+                    .Build();
             }
-
+            
             // その他の場合はコントローラを作成しない ( つまりドラッグイベント無し )
             return null;
-        }
-
-        //クリックしたプラグ一覧を取得する(一覧と言っているが基本的には一つ)
-        private PlugControl[] get_mouse_over_plugs(NodeControl[] nodes, out SourcePlugType sourcePlugType)
-        {
-            sourcePlugType = SourcePlugType.Output;
-            var plugs = nodes
-                .SelectMany(x => x.GetOutputPlugs())
-                .Where(x => x.IsMouseOver)
-                .ToArray();
-
-            if (plugs.Length is 0)
-            {
-                sourcePlugType = SourcePlugType.Input;
-                plugs = nodes
-                    .SelectMany(x => x.GetInputPlugs())
-                    .Where(x => x.IsMouseOver)
-                    .ToArray();
-            }
-
-            return plugs;
         }
 
         public override void OnApplyTemplate()

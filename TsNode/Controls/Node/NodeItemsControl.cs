@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace TsNode.Controls.Node
@@ -20,6 +22,14 @@ namespace TsNode.Controls.Node
             {
                 VisualTree = new FrameworkElementFactory(typeof(Canvas))
             };
+        }
+
+        public NodeControl[] GetNodes(Func<NodeControl,bool> function = null)
+        {
+            return this.EnumerateItems()
+                .Select(FindAssociatedNodeItem)
+                .Where(x=>function?.Invoke(x) ?? true)
+                .ToArray();
         }
     }
 }

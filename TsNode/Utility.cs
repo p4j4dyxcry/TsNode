@@ -139,8 +139,6 @@ namespace TsNode
         }
     }
 
-
-
     internal static class ItemsControlEx
     {
         public static IEnumerable<T> GetAsContentControl<T>(this ItemsControl self) where T : FrameworkElement
@@ -250,6 +248,19 @@ namespace TsNode
                     result.Add(i);
             }
             return result.ToArray();
+        }
+    }
+
+    internal static class SelectableExtensions
+    {
+        public static ISelectable[] ToSelectable<T>(this IEnumerable<T> enumerable)
+        {
+            return enumerable.OfType<ISelectable>().ToArray();
+        }
+
+        public static ISelectable[] ToSelectableDataContext(this IEnumerable<FrameworkElement> enumerable)
+        {
+            return enumerable.Select(x=>x.DataContext).OfType<ISelectable>().ToArray();
         }
     }
 }

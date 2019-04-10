@@ -34,15 +34,15 @@ namespace TsNode.Controls
 
     public class SelectionRectDragController : IDragController
     {
-        private Point _startPoint = new Point();
-        private Rect _rect = new Rect();
+        private Point _startPoint;
+        private Rect _rect;
 
         private readonly Panel _panel;
         private readonly NodeControl[] _nodes;
         private readonly ConnectionShape[] _connections;
         private bool _canceled;
 
-        private static readonly Rectangle _rectangle = new Rectangle();
+        private static readonly Rectangle Rectangle = new Rectangle();
         private static Style _defaultStyle ;
         private ICommand SelectionChangedCommand { get; }
 
@@ -62,20 +62,20 @@ namespace TsNode.Controls
             if (args.BaseControl.Style != null)
             {
                Debug.Assert(args.BaseControl.Style.TargetType == typeof(Rectangle));
-               _rectangle.Style = args.BaseControl.Style;
+               Rectangle.Style = args.BaseControl.Style;
             }
             else // デフォルトスタイルを利用する
             {
                 if (_defaultStyle is null)
                     _defaultStyle = make_default_style();
-                _rectangle.Style = _defaultStyle;
+                Rectangle.Style = _defaultStyle;
             }
 
-            Canvas.SetLeft(_rectangle, _startPoint.X);
-            Canvas.SetTop(_rectangle, _startPoint.Y);
-            _rectangle.Width = 1;
-            _rectangle.Height = 1;
-            _panel.Children.Add(_rectangle);
+            Canvas.SetLeft(Rectangle, _startPoint.X);
+            Canvas.SetTop(Rectangle, _startPoint.Y);
+            Rectangle.Width = 1;
+            Rectangle.Height = 1;
+            _panel.Children.Add(Rectangle);
         }
 
         private Style make_default_style()
@@ -130,10 +130,10 @@ namespace TsNode.Controls
                 _rect.Width = Math.Max(currentPoint.X, _startPoint.X) - _rect.X;
                 _rect.Height = Math.Max(currentPoint.Y, _startPoint.Y) - _rect.Y;
 
-                Canvas.SetLeft(_rectangle,_rect.X);
-                Canvas.SetTop(_rectangle, _rect.Y);
-                _rectangle.Width  = _rect.Width;
-                _rectangle.Height = _rect.Height;
+                Canvas.SetLeft(Rectangle,_rect.X);
+                Canvas.SetTop(Rectangle, _rect.Y);
+                Rectangle.Width  = _rect.Width;
+                Rectangle.Height = _rect.Height;
             }
 
         }
@@ -169,8 +169,8 @@ namespace TsNode.Controls
 
             _canceled = true;
 
-            if (_panel.Children.Contains(_rectangle))
-                _panel.Children.Remove(_rectangle);
+            if (_panel.Children.Contains(Rectangle))
+                _panel.Children.Remove(Rectangle);
 
             if (isSelect)
                 OnSelect();

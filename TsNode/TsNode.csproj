@@ -45,11 +45,15 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\DragBuilder\ConnectionDragBuild.cs" />
     <Compile Include="Controls\Connection\ConnectionShape.cs" />
     <Compile Include="Controls\Connection\ConnectionCreateController.cs" />
     <Compile Include="Controls\Connection\ConnectionItemsControl.cs" />
     <Compile Include="Controls\Connection\ConnectionHelper.cs" />
     <Compile Include="Controls\ControlSelector.cs" />
+    <Compile Include="Controls\DragBuilder\DragControllerBuilder.cs" />
+    <Compile Include="Controls\DragBuilder\NodeDragBuild.cs" />
+    <Compile Include="Controls\DragBuilder\RectSelectionDragBuild.cs" />
     <Compile Include="Controls\EventArgs.cs" />
     <Compile Include="Controls\GridRenderer.cs" />
     <Compile Include="Controls\SelectionRectDragController.cs" />
