@@ -49,7 +49,7 @@ namespace WpfApp1
                     .StackChangedAsObservable()
                     .Select(x => OperationController.CanUndo)
                     .ToReactiveCommand();
-            UndoCommand.Subscribe(() => OperationController.Undo());
+            UndoCommand.Subscribe(OperationController.Undo);
 
             //! Redo Command
             RedoCommand =
@@ -57,7 +57,7 @@ namespace WpfApp1
                     .StackChangedAsObservable()
                     .Select(x => OperationController.CanRedo)
                     .ToReactiveCommand();
-            RedoCommand.Subscribe(() => OperationController.Redo());
+            RedoCommand.Subscribe(OperationController.Redo);
 
             //! Undo / Redoが行われたときに Undo / Redo ViewModelを生成する
             OperationController.StackChangedAsObservable().Subscribe(_=>

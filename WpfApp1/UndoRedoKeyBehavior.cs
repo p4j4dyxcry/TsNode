@@ -4,10 +4,10 @@ using System.Windows.Interactivity;
 
 namespace WpfApp1
 {
-    public class UndoRedoKeyBehabior : Behavior<FrameworkElement>
+    public class UndoRedoKeyBehavior : Behavior<FrameworkElement>
     {
         public static readonly DependencyProperty UndoCommandProperty = DependencyProperty.Register(
-            nameof(UndoCommand), typeof(ICommand), typeof(UndoRedoKeyBehabior), new PropertyMetadata(default(ICommand)));
+            nameof(UndoCommand), typeof(ICommand), typeof(UndoRedoKeyBehavior), new PropertyMetadata(default(ICommand)));
 
         public ICommand UndoCommand
         {
@@ -16,7 +16,7 @@ namespace WpfApp1
         }
 
         public static readonly DependencyProperty RedoCommandProperty = DependencyProperty.Register(
-            nameof(RedoCommand), typeof(ICommand), typeof(UndoRedoKeyBehabior), new PropertyMetadata(default(ICommand)));
+            nameof(RedoCommand), typeof(ICommand), typeof(UndoRedoKeyBehavior), new PropertyMetadata(default(ICommand)));
 
         public ICommand RedoCommand
         {

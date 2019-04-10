@@ -52,6 +52,7 @@
     <Compile Include="Controls\ControlSelector.cs" />
     <Compile Include="Controls\EventArgs.cs" />
     <Compile Include="Controls\GridRenderer.cs" />
+    <Compile Include="Controls\SelectionRectDragController.cs" />
     <Compile Include="Interface\IConnectTarget.cs" />
     <Compile Include="Interface\IConnectionDataContext.cs" />
     <Compile Include="Interface\IControlSelector.cs" />
@@ -81,12 +82,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TsCore\TsCore.csproj">
-      <Project>{063aca49-2edc-4ff3-9d4b-6ce9ed74ce37}</Project>
-      <Name>TsCore</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

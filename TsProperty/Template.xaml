@@ -68,7 +68,7 @@
             <CheckBox
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
-                IsEnabled="{Binding Value}" />
+                IsChecked="{Binding Value , Mode=TwoWay}" />
         </local:LabeledControl>
     </DataTemplate>
 

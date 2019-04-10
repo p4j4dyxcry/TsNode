@@ -19,7 +19,7 @@
     </Window.DataContext>
 
     <i:Interaction.Behaviors>
-        <local:UndoRedoKeyBehabior RedoCommand="{Binding RedoCommand}" UndoCommand="{Binding UndoCommand}" />
+        <local:UndoRedoKeyBehavior RedoCommand="{Binding RedoCommand}" UndoCommand="{Binding UndoCommand}" />
     </i:Interaction.Behaviors>
 
     <Grid>

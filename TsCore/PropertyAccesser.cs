@@ -3,7 +3,6 @@ using System.Reflection;
 
 namespace TsGui
 {
-    // Getter/Setter
     internal interface IAccessor
     {
         object GetValue(object target);
