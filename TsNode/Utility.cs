@@ -11,7 +11,7 @@ namespace TsNode
 {
     internal static class VisualTreeExtensions
     {
-        public static TParent FindVisualParentWithType<TParent>(this FrameworkElement childElement)
+        public static TParent FindVisualParentWithType<TParent>(this DependencyObject childElement)
             where TParent : class
         {
             FrameworkElement parentElement = (FrameworkElement)VisualTreeHelper.GetParent(childElement);
@@ -29,12 +29,12 @@ namespace TsNode
             return null;
         }
 
-        public static IEnumerable<TChild> FindVisualChildrenWithType<TChild>(this FrameworkElement root) 
+        public static IEnumerable<TChild> FindVisualChildrenWithType<TChild>(this DependencyObject root) 
             where TChild : FrameworkElement
         {
             var children = Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(root)).Select(x => VisualTreeHelper.GetChild(root, x)).ToArray();
 
-            foreach (var child in children.OfType<FrameworkElement>())
+            foreach (var child in children)
             {
                 if (child is TChild t)
                     yield return t;
@@ -109,7 +109,37 @@ namespace TsNode
                 new GeometryHitTestParameters(new RectangleGeometry(rect)));
             return result;
         }
+
+        public static bool HitTestRect(this Visual root, Rect rect)
+        {
+            var result = false;
+            VisualTreeHelper.HitTest(root, null,
+                _ =>
+                {
+                    result = true; return HitTestResultBehavior.Stop;
+                },
+                new GeometryHitTestParameters(new RectangleGeometry(rect)));
+            return result;
+        }
+
+        public static IEnumerable<T> GetHitTestChildrenWithRect<T>(this Visual root, Rect rect) where T : Visual
+        {
+            var result = new List<DependencyObject>();
+            VisualTreeHelper.HitTest(root, null,
+                x =>
+                {
+                    result.Add(x.VisualHit);
+                    return HitTestResultBehavior.Continue;
+                },
+                new GeometryHitTestParameters(new RectangleGeometry(rect)));
+
+            return result.Select(x => x.FindVisualParentWithType<T>())
+                .Where(x => x != null)
+                .Distinct();
+        }
     }
+
+
 
     internal static class ItemsControlEx
     {

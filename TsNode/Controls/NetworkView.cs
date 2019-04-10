@@ -55,6 +55,15 @@ namespace TsNode.Controls
         public static readonly DependencyProperty CompletedCreateConnectionCommandProperty = DependencyProperty.Register(
             nameof(CompletedCreateConnectionCommand), typeof(ICommand), typeof(NetworkView), new PropertyMetadata(default(ICommand)));
 
+        public static readonly DependencyProperty SelectionRectangleStyleProperty = DependencyProperty.Register(
+            nameof(SelectionRectangleStyle), typeof(Style), typeof(NetworkView), new PropertyMetadata(default(Style)));
+
+        public Style SelectionRectangleStyle
+        {
+            get => (Style) GetValue(SelectionRectangleStyleProperty);
+            set => SetValue(SelectionRectangleStyleProperty, value);
+        }
+
         //! コマンドの引数として[CompletedCreateConnectionEventArgs]が渡される
         public ICommand CompletedCreateConnectionCommand
         {
@@ -214,6 +223,16 @@ namespace TsNode.Controls
                     };
 
                     return new NodeDragController(setupArgs);
+                }
+
+                // 選択に何もないので範囲選択を開始する
+                {
+                    var setupArgs = new SelectionRectDragControllerSetupArgs(_canvas,args,nodes,connections)
+                    {
+                        SelectionChangedCommand = SelectionChangedCommand,
+                        RectangleStyle = SelectionRectangleStyle
+                    };
+                    return new SelectionRectDragController(setupArgs);
                 }
             }
 
