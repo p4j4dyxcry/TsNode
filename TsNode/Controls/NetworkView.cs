@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TsNode.Controls.Connection;
-using TsNode.Controls.DragBuilder;
+using TsNode.Controls.Drag;
 using TsNode.Controls.Node;
 using TsNode.Interface;
 
@@ -140,7 +140,7 @@ namespace TsNode.Controls
             {
                 //! コントローラによるドラッグ処理を完了する
                 currentDragObject?.DragEnd(s, e);
-            };;
+            };
         }
 
         // セレクタを取得する/オーバーライドすることで選択処理を独自実装可能
@@ -175,6 +175,8 @@ namespace TsNode.Controls
                 // 選択状態を設定する
                 selector.OnSelect(selectInfo);
 
+                // ! ドラッグコントローラを作成する
+                //   複雑な条件に対応できるように
                 var builder = new DragControllerBuilder(args, _canvas, nodes, connections);
                 return builder
                     .AddBuildTarget(new ConnectionDragBuild(builder, 0, _creatingConnectionItemsControl))

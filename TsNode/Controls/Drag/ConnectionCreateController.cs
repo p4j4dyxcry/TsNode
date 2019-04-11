@@ -2,11 +2,12 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using TsNode.Controls.Connection;
 using TsNode.Controls.Node;
 using TsNode.Controls.Plug;
 using TsNode.Interface;
 
-namespace TsNode.Controls.Connection
+namespace TsNode.Controls.Drag
 {
     /// <summary>
     /// コネクション作成のドラッグコントローラ

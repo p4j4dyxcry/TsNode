@@ -170,18 +170,6 @@ namespace TsNode.Controls.Connection
             }
         }
 
-        // ノードへのイベント割り当てを解除する
-        private void un_bind_all()
-        {
-            foreach (var nodeControl in _associationSourceNode)
-                nodeControl.UpdatePoints -= UpdateSourcePointFromNode;
-
-            foreach (var nodeControl in _associationDestNode)
-                nodeControl.UpdatePoints -= UpdateDestPointFromNode;
-
-            return;
-        }
-
         // Source座標を更新する
         private void UpdateSourcePointFromNode(object sender , UpdateNodePointArgs e)
         {
@@ -196,12 +184,6 @@ namespace TsNode.Controls.Connection
             var relativePoint = _destPlugControl.GetNodeFromPoint(new Point(6, 6));
             DestX = relativePoint.X + e.Point.X;
             DestY = relativePoint.Y + e.Point.Y;
-        }
-
-        public ConnectionShape()
-        {
-            // Viewが破棄されたときにノードへのイベントが割り当たっていれば解除する
-            Unloaded += (s, e) => { un_bind_all(); };
         }
 
         protected override Geometry DefiningGeometry

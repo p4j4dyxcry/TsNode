@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using TsNode.Interface;
 
-namespace TsNode.Controls.DragBuilder
+namespace TsNode.Controls.Drag
 {
     public class RectSelectionDragBuild : IDragControllerBuild
     {

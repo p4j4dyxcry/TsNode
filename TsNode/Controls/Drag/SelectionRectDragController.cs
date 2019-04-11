@@ -10,7 +10,7 @@ using TsNode.Controls.Connection;
 using TsNode.Controls.Node;
 using TsNode.Interface;
 
-namespace TsNode.Controls
+namespace TsNode.Controls.Drag
 {
     public class SelectionRectDragControllerSetupArgs
     {
@@ -61,8 +61,8 @@ namespace TsNode.Controls
             //! オプション引数としてStyleが渡されている場合はStyleを適用する
             if (args.BaseControl.Style != null)
             {
-               Debug.Assert(args.BaseControl.Style.TargetType == typeof(Rectangle));
-               Rectangle.Style = args.BaseControl.Style;
+               Debug.Assert(args.RectangleStyle.TargetType == typeof(Rectangle));
+               Rectangle.Style = args.RectangleStyle;
             }
             else // デフォルトスタイルを利用する
             {

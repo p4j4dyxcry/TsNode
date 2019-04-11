@@ -1,8 +1,7 @@
 ﻿using System.Linq;
-using TsNode.Controls.Node;
 using TsNode.Interface;
 
-namespace TsNode.Controls.DragBuilder
+namespace TsNode.Controls.Drag
 {
     public class NodeDragBuild : IDragControllerBuild
     {

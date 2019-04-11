@@ -6,7 +6,7 @@ using TsNode.Controls.Connection;
 using TsNode.Controls.Node;
 using TsNode.Interface;
 
-namespace TsNode.Controls.DragBuilder
+namespace TsNode.Controls.Drag
 {
     public interface IDragControllerBuild
     {
@@ -17,6 +17,9 @@ namespace TsNode.Controls.DragBuilder
         IDragController Build();
     }
 
+    /// <summary>
+    /// ドラッグコントローラを作成するビルダークラス
+    /// </summary>
     public class DragControllerBuilder 
     {
         public Panel InputElement { get; }
@@ -49,6 +52,7 @@ namespace TsNode.Controls.DragBuilder
             SelectedNodes = Nodes.Where(x => x.IsSelected).ToArray();
             SelectedConnections = ConnectionShapes.Where(x => x.IsSelected).ToArray();
         }
+
         public DragControllerBuilder AddBuildTarget(IDragControllerBuild controller)
         {
             BuildTargets.Add(controller);
@@ -74,6 +78,11 @@ namespace TsNode.Controls.DragBuilder
             return this;
         }
 
+        /// <summary>
+        /// ドラッグコントローラを作成します
+        /// 登録されたドラッグコントローラのPriority順に生成チェックを行い最初に生成に成功したコントローラを返します。
+        /// </summary>
+        /// <returns></returns>
         public IDragController Build()
         {
             foreach (var buildTarget in BuildTargets.OrderBy(x=>x.Priority))

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using TsNode.Controls.Node;
 using TsNode.Interface;
 
-namespace TsNode.Controls.Node
+namespace TsNode.Controls.Drag
 {
     /// <summary>
     /// NodeDragControllerのセットアップデータ

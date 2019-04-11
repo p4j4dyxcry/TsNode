@@ -4,7 +4,7 @@ using TsNode.Controls.Node;
 using TsNode.Controls.Plug;
 using TsNode.Interface;
 
-namespace TsNode.Controls.DragBuilder
+namespace TsNode.Controls.Drag
 {
     internal class ConnectionDragBuild : IDragControllerBuild
     {

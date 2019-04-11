@@ -45,18 +45,18 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\DragBuilder\ConnectionDragBuild.cs" />
+    <Compile Include="Controls\Drag\ConnectionDragBuild.cs" />
     <Compile Include="Controls\Connection\ConnectionShape.cs" />
-    <Compile Include="Controls\Connection\ConnectionCreateController.cs" />
+    <Compile Include="Controls\Drag\ConnectionCreateController.cs" />
     <Compile Include="Controls\Connection\ConnectionItemsControl.cs" />
     <Compile Include="Controls\Connection\ConnectionHelper.cs" />
     <Compile Include="Controls\ControlSelector.cs" />
-    <Compile Include="Controls\DragBuilder\DragControllerBuilder.cs" />
-    <Compile Include="Controls\DragBuilder\NodeDragBuild.cs" />
-    <Compile Include="Controls\DragBuilder\RectSelectionDragBuild.cs" />
+    <Compile Include="Controls\Drag\DragControllerBuilder.cs" />
+    <Compile Include="Controls\Drag\NodeDragBuild.cs" />
+    <Compile Include="Controls\Drag\RectSelectionDragBuild.cs" />
     <Compile Include="Controls\EventArgs.cs" />
     <Compile Include="Controls\GridRenderer.cs" />
-    <Compile Include="Controls\SelectionRectDragController.cs" />
+    <Compile Include="Controls\Drag\SelectionRectDragController.cs" />
     <Compile Include="Interface\IConnectTarget.cs" />
     <Compile Include="Interface\IConnectionDataContext.cs" />
     <Compile Include="Interface\IControlSelector.cs" />
@@ -64,7 +64,7 @@
     <Compile Include="Interface\INodeDataContext.cs" />
     <Compile Include="Interface\IPlugDataContext.cs" />
     <Compile Include="Interface\ISelectable.cs" />
-    <Compile Include="Controls\Node\NodeDragController.cs" />
+    <Compile Include="Controls\Drag\NodeDragController.cs" />
     <Compile Include="Controls\Node\NodeItemsControl.cs" />
     <Compile Include="Preset\NodeViewModel.cs" />
     <Compile Include="Controls\Plug\PlugControl.cs" />
