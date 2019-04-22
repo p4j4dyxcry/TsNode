@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using TsNode.Interface;
 
 namespace TsNode.Controls.Drag
@@ -20,7 +21,7 @@ namespace TsNode.Controls.Drag
 
         public bool TryBuild()
         {
-            return true;
+            return _dragControllerBuilder.MouseEventArgs.LeftButton == MouseButtonState.Pressed;
         }
 
         public IDragController Build()
