@@ -45,11 +45,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls1:NetworkView">
-                    <ScrollViewer
+                    <!--<ScrollViewer
                         x:Name="PART_ScrollViewer"
                         Focusable="False"
                         HorizontalScrollBarVisibility="Auto"
-                        VerticalScrollBarVisibility="Auto">
+                        VerticalScrollBarVisibility="Auto">-->
                         <Canvas
                             x:Name="PART_Canvas"
                             Width="{TemplateBinding Width}"
@@ -75,7 +75,7 @@
                             <node:NodeItemsControl x:Name="PART_NodeItemsControl" ItemsSource="{TemplateBinding Nodes}" />
 
                         </Canvas>
-                    </ScrollViewer>
+                    <!--</ScrollViewer>-->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -30,12 +30,12 @@
                         <Grid>
                             <plug:PlugItemsControl
                                 x:Name="PART_InputPlugItemsControl"
-                                Margin="-9,0,0,0"
+                                Margin="-9,8,0,8"
                                 HorizontalAlignment="Left"
                                 ItemsSource="{Binding InputPlugs}" />
                             <plug:PlugItemsControl
                                 x:Name="PART_OutputPlugItemsControl"
-                                Margin="0,0,-9,0"
+                                Margin="0,8,-9,8"
                                 HorizontalAlignment="Right"
                                 ItemsSource="{Binding OutputPlugs}" />
                         </Grid>
@@ -47,12 +47,12 @@
 
     <DataTemplate DataType="{x:Type local:PresentPlugViewModel}">
         <Border
-            Width="15"
+            Width="12"
             Height="12"
             Margin="0,1,0,3"
             Background="LightGray"
             BorderThickness="2"
-            CornerRadius="1">
+            CornerRadius="10">
             <Border.Style>
                 <Style TargetType="Border">
                     <Style.Setters>

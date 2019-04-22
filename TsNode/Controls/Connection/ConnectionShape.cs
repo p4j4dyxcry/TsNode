@@ -97,10 +97,12 @@ namespace TsNode.Controls.Connection
                 shape.un_bind_node(shape._sourcePlugControl, shape._associationSourceNode, shape.UpdateSourcePointFromNode);
                 shape._sourcePlugControl = shape.find_plug_by_datacontext(e.NewValue);
 
-                // ノードの座標が更新されたらSourcePointを再計算する
-                shape.bind_node(shape._sourcePlugControl, shape._associationSourceNode, shape.UpdateSourcePointFromNode);
-
-                shape.setup_plug_start_point();
+                if (shape._sourcePlugControl != null)
+                {
+                    // ノードの座標が更新されたらSourcePointを再計算する
+                    shape.bind_node(shape._sourcePlugControl, shape._associationSourceNode, shape.UpdateSourcePointFromNode);
+                    shape.setup_plug_start_point();
+                }
             }
         }
         
@@ -113,10 +115,12 @@ namespace TsNode.Controls.Connection
                 shape.un_bind_node(shape._destPlugControl, shape._associationDestNode,shape.UpdateDestPointFromNode);
                 shape._destPlugControl = shape.find_plug_by_datacontext(e.NewValue);
 
-                // ノードの座標が更新されたらDestPointを再計算する
-                shape.bind_node(shape._destPlugControl, shape._associationDestNode, shape.UpdateDestPointFromNode);
-
-                shape.setup_plug_start_point();
+                if (shape._destPlugControl != null)
+                {
+                    // ノードの座標が更新されたらDestPointを再計算する
+                    shape.bind_node(shape._destPlugControl, shape._associationDestNode, shape.UpdateDestPointFromNode);
+                    shape.setup_plug_start_point();
+                }
             }
         }
 
@@ -184,6 +188,24 @@ namespace TsNode.Controls.Connection
             var relativePoint = _destPlugControl.GetNodeFromPoint(new Point(6, 6));
             DestX = relativePoint.X + e.Point.X;
             DestY = relativePoint.Y + e.Point.Y;
+        }
+
+        // プラグに不正な状態があれば修正する
+        public void FixIncorrectState()
+        {
+            if (_sourcePlugControl is null && SourcePlug != null)
+            {
+                _sourcePlugControl = find_plug_by_datacontext(SourcePlug);
+                bind_node(_sourcePlugControl, _associationSourceNode, UpdateSourcePointFromNode);
+                setup_plug_start_point();
+            }
+
+            if (_destPlugControl is null && DestPlug != null)
+            {
+                _destPlugControl = find_plug_by_datacontext(DestPlug);
+                bind_node(_destPlugControl, _associationDestNode, UpdateDestPointFromNode);
+                setup_plug_start_point();
+            }
         }
 
         protected override Geometry DefiningGeometry
