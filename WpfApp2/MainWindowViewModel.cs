@@ -83,7 +83,7 @@ namespace WpfApp2
             var node2 = new PresetNodeViewModel()
             {
                 X = 100,
-                Y = 50,
+                Y = 500,
                 InputPlugs = new ObservableCollection<IPlugDataContext>
                 {
                     new PresentPlugViewModel(),
@@ -114,6 +114,14 @@ namespace WpfApp2
             Nodes.Add(node1);
             Nodes.Add(node2);
             Nodes.Add(node3);
+
+            var connection = new PresetConnectionViewModel()
+            {
+                SourcePlug =node1.OutputPlugs.First(),
+                DestPlug   = node3.InputPlugs.First(),
+            };
+            
+            Connections.Add(connection);
         }
     }
 }

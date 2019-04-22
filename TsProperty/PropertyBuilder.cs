@@ -109,7 +109,7 @@ namespace TsProperty
     {
         private static readonly Dictionary<Type, PropertyInfo[]> _cache = new Dictionary<Type, PropertyInfo[]>();
 
-        private IList<ReflectionPropertyBuilder> _suBuilders = new List<ReflectionPropertyBuilder>();
+        private readonly IList<ReflectionPropertyBuilder> _suBuilders = new List<ReflectionPropertyBuilder>();
 
         public ReflectionPropertyBuilder(object @object):base(@object)
         {

@@ -46,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IPropertyBuilder.cs" />
-    <Compile Include="LabeledControl.cs" />
     <Compile Include="PropertyBuilder.cs" />
     <Compile Include="Notification.cs" />
     <Compile Include="IProperty.cs" />
@@ -55,6 +54,10 @@
     <Compile Include="TypeAbstractionConverter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TsControls\TsControls.csproj">
+      <Project>{d3247084-4a3a-4d7c-8c4b-e8c082a5acef}</Project>
+      <Name>TsControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TsCore\TsCore.csproj">
       <Project>{063aca49-2edc-4ff3-9d4b-6ce9ed74ce37}</Project>
       <Name>TsCore</Name>

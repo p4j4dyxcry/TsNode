@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TsProperty", "TsProperty\Ts
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp2", "WpfApp2\WpfApp2.csproj", "{1301D78A-75A9-4C06-93FF-69C9565A0A4B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TsControls", "TsControls\TsControls.csproj", "{D3247084-4A3A-4D7C-8C4B-E8C082A5ACEF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{1301D78A-75A9-4C06-93FF-69C9565A0A4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1301D78A-75A9-4C06-93FF-69C9565A0A4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1301D78A-75A9-4C06-93FF-69C9565A0A4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3247084-4A3A-4D7C-8C4B-E8C082A5ACEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3247084-4A3A-4D7C-8C4B-E8C082A5ACEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3247084-4A3A-4D7C-8C4B-E8C082A5ACEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3247084-4A3A-4D7C-8C4B-E8C082A5ACEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

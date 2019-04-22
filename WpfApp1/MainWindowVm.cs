@@ -39,6 +39,8 @@ namespace WpfApp1
         // Undo / Redo バッファ
         public ObservableCollection<OperationVm> Operations { get; set; }
 
+        public ReactiveProperty<OperationVm> SelectedOperation { get; }
+
         public MainWindowVm()
         {
             NetworkVm = new NetworkViewModel(OperationController);
@@ -69,6 +71,14 @@ namespace WpfApp1
 
                 RaisePropertyChanged(nameof(Operations));
             }).AddTo(CompositeDisposable);
+
+            SelectedOperation = new ReactiveProperty<OperationVm>().AddTo(CompositeDisposable);
+
+            SelectedOperation
+                .Where(x => x != null)
+                .Subscribe(x => x.GotoCommand?.Execute(null))
+                .AddTo(CompositeDisposable);
+
         }
     }
 

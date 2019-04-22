@@ -5,71 +5,47 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:TsProperty"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="clr-namespace:TsControls.Controls;assembly=TsControls"
     mc:Ignorable="d">
 
-    <Style TargetType="local:LabeledControl">
-        <Setter Property="LabelWidth" Value="120" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:LabeledControl}">
-                    <Border BorderBrush="Black" BorderThickness="0,0,0,0.1">
-                        <Grid Margin="0,2" Background="{TemplateBinding Background}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Label
-                                Grid.Column="0"
-                                Width="{Binding LabelWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=local:LabeledControl}}"
-                                HorizontalAlignment="Left"
-                                BorderBrush="Black"
-                                Content="{Binding Label, RelativeSource={RelativeSource FindAncestor, AncestorType=local:LabeledControl}}" />
-                            <ContentPresenter Grid.Column="1" HorizontalAlignment="Stretch" />
-                        </Grid>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <DataTemplate DataType="{x:Type local:BindablePropertyBase}">
-        <local:LabeledControl Label="{Binding Name}">
+        <controls:LabeledControl Label="{Binding Name}" Margin="16,0,1,0">
             <TextBlock Text="{Binding Data}" />
-        </local:LabeledControl>
+        </controls:LabeledControl>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type local:ReadOnlyProperty}">
-        <local:LabeledControl Label="{Binding Name}">
+    <DataTemplate DataType="{x:Type local:ReadOnlyProperty}" >
+        <controls:LabeledControl Label="{Binding Name}" Margin="16,0,1,0">
             <TextBlock Text="{Binding Data}" />
-        </local:LabeledControl>
+        </controls:LabeledControl>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type local:BindableDoubleProperty}">
-        <local:LabeledControl Label="{Binding Name}">
+        <controls:LabeledControl Label="{Binding Name}" Margin="16,0,1,0">
             <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        </local:LabeledControl>
+        </controls:LabeledControl>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type local:BindableIntProperty}">
-        <local:LabeledControl Label="{Binding Name}">
+        <controls:LabeledControl Label="{Binding Name}" Margin="16,0,1,0">
             <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        </local:LabeledControl>
+        </controls:LabeledControl>
 
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type local:BindableStringProperty}">
-        <local:LabeledControl Label="{Binding Name}">
+        <controls:LabeledControl Label="{Binding Name}" Margin="16,0,1,0">
             <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        </local:LabeledControl>
+        </controls:LabeledControl>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type local:BindableBoolProperty}">
-        <local:LabeledControl Label="{Binding Name}">
+        <controls:LabeledControl Label="{Binding Name}" Margin="16,0,1,0">
             <CheckBox
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
                 IsChecked="{Binding Value , Mode=TwoWay}" />
-        </local:LabeledControl>
+        </controls:LabeledControl>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type local:GroupProperty}">

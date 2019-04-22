@@ -1,0 +1,23 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:TsControls.Controls">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Internal/Styles.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlockDarkStyle}"/>
+    <Style TargetType="TextBox" BasedOn="{StaticResource TextBoxDarkStyle}"/>
+    <Style TargetType="controls:SelectableTextBlock" BasedOn="{StaticResource SelectableTextBlockDarkStyle}"/>
+    <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}"/>
+    <Style TargetType="ListView" BasedOn="{StaticResource ListViewDarkStyle}"/>
+    <Style TargetType="ListBox" BasedOn="{StaticResource ListBoxDarkStyle}"/>
+    <Style TargetType="ScrollViewer" BasedOn="{StaticResource ScrollViewerDarkStyle}"/>
+    <Style TargetType="ToolTip" BasedOn="{StaticResource TooltipDarkStyle}"/>
+    <Style TargetType="Button" BasedOn="{StaticResource ButtonDarkStyle}"/>
+    <Style TargetType="ItemsControl" BasedOn="{StaticResource ItemsControlDarkStyle}"/>
+    <Style TargetType="controls:LabeledControl" BasedOn="{StaticResource LabeledControlDarkStyle}"/>
+    <Style TargetType="Expander" BasedOn="{StaticResource ExpanderDarkStyle}"/>
+    <Style TargetType="CheckBox" BasedOn="{StaticResource CheckBoxDarkStyle}"/>
+    <Style TargetType="GridSplitter" BasedOn="{StaticResource GridSplitterDarkStyle}"/>
+
+</ResourceDictionary>

@@ -11,6 +11,7 @@
     Title="MainWindow"
     Width="1280"
     Height="780"
+    Background="{StaticResource DarkBrush}"    
     d:DataContext="{d:DesignInstance local:MainWindowVm}"
     mc:Ignorable="d">
 
@@ -22,23 +23,19 @@
         <local:UndoRedoKeyBehavior RedoCommand="{Binding RedoCommand}" UndoCommand="{Binding UndoCommand}" />
     </i:Interaction.Behaviors>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400*" MinWidth="50"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="200*" MinWidth="50"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="200*" MinWidth="50"/>
+        </Grid.ColumnDefinitions>
+        <Expander Header="ノード" IsExpanded="True">
             <controls:NetworkView
-                Grid.Column="0"
                 Width="4096"
                 Height="4096"
-                Background="DarkGray"
+                Background="{StaticResource LightDarkBrush}"
                 CompetedMoveNodeCommand="{Binding NodeMoveCommand}"
                 CompletedCreateConnectionCommand="{Binding ConnectCommand}"
                 Connections="{Binding Connections}"
@@ -46,11 +43,12 @@
                 Nodes="{Binding Nodes}"
                 SelectionChangedCommand="{Binding SelectionChangedCommand}"
                 StartCreateConnectionCommand="{Binding StartNewConnectionCommand}" />
-            <!--  Undo Redo  -->
-            <ListView
-                Grid.Column="1"
-                Width="200"
-                ItemsSource="{Binding Operations}">
+        </Expander>
+        <GridSplitter Width="4" Grid.Column="1" HorizontalAlignment="Stretch"/>
+
+        <!--  Undo Redo  -->
+        <Expander Header="ヒストリー" Grid.Column="2" IsExpanded="True" Background="{StaticResource DarkBrush}">
+            <ListView ItemsSource="{Binding Operations}" SelectionMode="Single" SelectedItem="{Binding SelectedOperation.Value}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <WrapPanel>
@@ -63,19 +61,20 @@
                                     </Style.Triggers>
                                 </Style>
                             </WrapPanel.Style>
-
-                            <Button Command="{Binding GotoCommand}" Content="Goto" />
                             <TextBlock Text="{Binding Name}" />
                         </WrapPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <!--  ProperyView  -->
-            <ItemsControl
-                Grid.Column="2"
-                Width="300"
-                DataContext="{Binding NetworkVm}"
-                ItemsSource="{Binding Properties}" />
-        </Grid>
+        </Expander>
+        <GridSplitter Width="4" Grid.Column="3" HorizontalAlignment="Stretch"/>
+
+        <!--  ProperyView  -->
+        <Expander Header="プロパティ" Grid.Column="4" IsExpanded="True" Background="{StaticResource DarkBrush}">
+            <ItemsControl DockPanel.Dock="Bottom"
+            DataContext="{Binding NetworkVm}"
+            ItemsSource="{Binding Properties}" />
+        </Expander>
+
     </Grid>
 </Window>

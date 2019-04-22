@@ -1,0 +1,10 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Brushes.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style BasedOn="{StaticResource {x:Type ToolTip}}" TargetType="ToolTip" x:Key="TooltipDarkStyle">
+        <Setter Property="Background" Value="{StaticResource DarkBrush}" />
+    </Style>
+</ResourceDictionary>
