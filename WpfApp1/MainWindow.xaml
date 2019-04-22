@@ -11,9 +11,12 @@
     Title="MainWindow"
     Width="1280"
     Height="780"
-    Background="{StaticResource DarkBrush}"    
     d:DataContext="{d:DesignInstance local:MainWindowVm}"
+    Background="{StaticResource DarkBrush}"
     mc:Ignorable="d">
+    <Window.InputBindings>
+        <KeyBinding Key="F5" Command="{Binding RefreshViewModelCommand}" />
+    </Window.InputBindings>
 
     <Window.DataContext>
         <local:MainWindowVm />
@@ -23,13 +26,13 @@
         <local:UndoRedoKeyBehavior RedoCommand="{Binding RedoCommand}" UndoCommand="{Binding UndoCommand}" />
     </i:Interaction.Behaviors>
 
-    <Grid >
+    <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="400*" MinWidth="50"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="200*" MinWidth="50"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="200*" MinWidth="50"/>
+            <ColumnDefinition Width="400*" MinWidth="50" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="200*" MinWidth="50" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="200*" MinWidth="50" />
         </Grid.ColumnDefinitions>
         <Expander Header="ノード" IsExpanded="True">
             <controls:NetworkView
@@ -44,11 +47,21 @@
                 SelectionChangedCommand="{Binding SelectionChangedCommand}"
                 StartCreateConnectionCommand="{Binding StartNewConnectionCommand}" />
         </Expander>
-        <GridSplitter Width="4" Grid.Column="1" HorizontalAlignment="Stretch"/>
+        <GridSplitter
+            Grid.Column="1"
+            Width="4"
+            HorizontalAlignment="Stretch" />
 
         <!--  Undo Redo  -->
-        <Expander Header="ヒストリー" Grid.Column="2" IsExpanded="True" Background="{StaticResource DarkBrush}">
-            <ListView ItemsSource="{Binding Operations}" SelectionMode="Single" SelectedItem="{Binding SelectedOperation.Value}">
+        <Expander
+            Grid.Column="2"
+            Background="{StaticResource DarkBrush}"
+            Header="ヒストリー"
+            IsExpanded="True">
+            <ListView
+                ItemsSource="{Binding Operations}"
+                SelectedItem="{Binding SelectedOperation.Value}"
+                SelectionMode="Single">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <WrapPanel>
@@ -67,13 +80,21 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Expander>
-        <GridSplitter Width="4" Grid.Column="3" HorizontalAlignment="Stretch"/>
+        <GridSplitter
+            Grid.Column="3"
+            Width="4"
+            HorizontalAlignment="Stretch" />
 
         <!--  ProperyView  -->
-        <Expander Header="プロパティ" Grid.Column="4" IsExpanded="True" Background="{StaticResource DarkBrush}">
-            <ItemsControl DockPanel.Dock="Bottom"
-            DataContext="{Binding NetworkVm}"
-            ItemsSource="{Binding Properties}" />
+        <Expander
+            Grid.Column="4"
+            Background="{StaticResource DarkBrush}"
+            Header="プロパティ"
+            IsExpanded="True">
+            <ItemsControl
+                DataContext="{Binding NetworkVm}"
+                DockPanel.Dock="Bottom"
+                ItemsSource="{Binding Properties}" />
         </Expander>
 
     </Grid>

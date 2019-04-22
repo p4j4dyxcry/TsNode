@@ -56,7 +56,7 @@ namespace WpfApp1
             IOperation make_remove_duplication_plugs_operation(IPlugDataContext[] plugs)
             {
                 var removeConnections = connecions.Where(x => plugs?.Contains(x.DestPlug) is true ||
-                                                               plugs?.Contains(x.SourcePlug) is true).ToArray();
+                                                              plugs?.Contains(x.SourcePlug) is true).ToArray();
 
                 if (removeConnections.Length is 0)
                     return Operation.Empty;
@@ -107,7 +107,7 @@ namespace WpfApp1
 
             var node1 = new NodeViewModel(_operationController) { X = 30 , Y = 20 };
             var node2 = new NodeViewModel2(_operationController) { X = 130, Y = 20 };
-            var node3 = new NodeViewModel3(_operationController) { X = 130, Y = 60 };
+            var node3 = new NodeViewModel3(_operationController) { X = 300, Y = 400 };
             Nodes = new ObservableCollection<INodeDataContext>()
             {
                 node1,
@@ -133,6 +133,13 @@ namespace WpfApp1
             node3.OutputPlugs.Add(new PlugViewModel3(_operationController));
 
             Connections = new ObservableCollection<IConnectionDataContext>();
+
+            Connections.Add(new ConnectionViewModel(operationController)
+            {
+                SourcePlug = node2.OutputPlugs.First(),
+                DestPlug = node3.InputPlugs.First(),
+            });
+
             _connectionCreator = new ConnectionCreator(Connections,_operationController);
 
             NodeMoveCommand = new ReactiveCommand<CompletedMoveNodeEventArgs>();

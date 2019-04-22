@@ -36,6 +36,8 @@ namespace WpfApp1
         public ReactiveCommand UndoCommand { get; }
         public ReactiveCommand RedoCommand { get; }
 
+        public ReactiveCommand RefreshViewModelCommand { get; }
+
         // Undo / Redo バッファ
         public ObservableCollection<OperationVm> Operations { get; set; }
 
@@ -78,6 +80,16 @@ namespace WpfApp1
                 .Where(x => x != null)
                 .Subscribe(x => x.GotoCommand?.Execute(null))
                 .AddTo(CompositeDisposable);
+
+            RefreshViewModelCommand = new ReactiveCommand().AddTo(CompositeDisposable);
+            RefreshViewModelCommand.Subscribe(
+                () =>
+                {
+                    OperationController.Flush();
+                    NetworkVm = new NetworkViewModel(OperationController);
+
+                    RaisePropertyChanged(nameof(NetworkVm));
+                }).AddTo(CompositeDisposable);
 
         }
     }

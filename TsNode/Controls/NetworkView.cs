@@ -116,7 +116,6 @@ namespace TsNode.Controls
         public void Initialize()
         {
             setup_drag_events();
-            setup_update_layout_events();
         }
 
         private void setup_drag_events()
@@ -141,15 +140,6 @@ namespace TsNode.Controls
             {
                 //! コントローラによるドラッグ処理を完了する
                 currentDragObject?.DragEnd(s, e);
-            };
-        }
-
-        private void setup_update_layout_events()
-        {
-            LayoutUpdated += (s, e) =>
-            {
-                foreach (var connection in _connectionItemsControl.GetConnectionShapes())
-                    connection.FixIncorrectState();
             };
         }
 

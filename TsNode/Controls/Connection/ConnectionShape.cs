@@ -93,16 +93,17 @@ namespace TsNode.Controls.Connection
         {
             if (d is ConnectionShape shape)
             {
-                // 古いノードの座標イベントへのバインドを解除する
-                shape.un_bind_node(shape._sourcePlugControl, shape._associationSourceNode, shape.UpdateSourcePointFromNode);
-                shape._sourcePlugControl = shape.find_plug_by_datacontext(e.NewValue);
-
-                if (shape._sourcePlugControl != null)
+                //! 座標の更新はBindingのタイミングで行わないと正常な値にならないことがある
+                shape.BeginInvoke(() =>
                 {
+                    // 古いノードの座標イベントへのバインドを解除する
+                    shape.un_bind_node(shape._sourcePlugControl, shape._associationSourceNode, shape.UpdateSourcePointFromNode);
+                    shape._sourcePlugControl = shape.find_plug_by_datacontext(e.NewValue);
+
                     // ノードの座標が更新されたらSourcePointを再計算する
                     shape.bind_node(shape._sourcePlugControl, shape._associationSourceNode, shape.UpdateSourcePointFromNode);
                     shape.setup_plug_start_point();
-                }
+                },System.Windows.Threading.DispatcherPriority.DataBind);
             }
         }
         
@@ -111,16 +112,17 @@ namespace TsNode.Controls.Connection
         {
             if (d is ConnectionShape shape)
             {
-                // 古いノードの座標イベントへのバインドを解除する
-                shape.un_bind_node(shape._destPlugControl, shape._associationDestNode,shape.UpdateDestPointFromNode);
-                shape._destPlugControl = shape.find_plug_by_datacontext(e.NewValue);
-
-                if (shape._destPlugControl != null)
+                //! 座標の更新はBindingのタイミングで行わないと正常な値にならないことがある
+                shape.BeginInvoke(() =>
                 {
+                    // 古いノードの座標イベントへのバインドを解除する
+                    shape.un_bind_node(shape._destPlugControl, shape._associationDestNode, shape.UpdateDestPointFromNode);
+                    shape._destPlugControl = shape.find_plug_by_datacontext(e.NewValue);
+
                     // ノードの座標が更新されたらDestPointを再計算する
                     shape.bind_node(shape._destPlugControl, shape._associationDestNode, shape.UpdateDestPointFromNode);
                     shape.setup_plug_start_point();
-                }
+                },System.Windows.Threading.DispatcherPriority.DataBind);
             }
         }
 
@@ -140,10 +142,13 @@ namespace TsNode.Controls.Connection
             }
         }
 
+        //! 作成中のコネクションタイミングによってはは親のNetworkViewが見つからないことがある
+        private NetworkView _cache;
+
         // プラグのDataContextからPlugControlを検索する 
         private PlugControl find_plug_by_datacontext(object dataContext)
         {
-            return this.FindVisualParentWithType<NetworkView>()
+            return (_cache ?? (_cache = this.FindVisualParentWithType<NetworkView>()))
                        .FindChildWithDataContext<PlugControl>(dataContext);
         }
 
@@ -188,24 +193,6 @@ namespace TsNode.Controls.Connection
             var relativePoint = _destPlugControl.GetNodeFromPoint(new Point(6, 6));
             DestX = relativePoint.X + e.Point.X;
             DestY = relativePoint.Y + e.Point.Y;
-        }
-
-        // プラグに不正な状態があれば修正する
-        public void FixIncorrectState()
-        {
-            if (_sourcePlugControl is null && SourcePlug != null)
-            {
-                _sourcePlugControl = find_plug_by_datacontext(SourcePlug);
-                bind_node(_sourcePlugControl, _associationSourceNode, UpdateSourcePointFromNode);
-                setup_plug_start_point();
-            }
-
-            if (_destPlugControl is null && DestPlug != null)
-            {
-                _destPlugControl = find_plug_by_datacontext(DestPlug);
-                bind_node(_destPlugControl, _associationDestNode, UpdateDestPointFromNode);
-                setup_plug_start_point();
-            }
         }
 
         protected override Geometry DefiningGeometry

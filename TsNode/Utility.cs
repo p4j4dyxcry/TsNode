@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 using TsNode.Interface;
 
 namespace TsNode
@@ -167,6 +168,14 @@ namespace TsNode
             if (_this.CanFreeze & _this.IsFrozen is false)
                 _this.Freeze();
             return _this;
+        }
+    }
+
+    internal static class DispathcerObjectEx
+    {
+        public static void BeginInvoke(this DispatcherObject _this, Action action , DispatcherPriority priority = DispatcherPriority.Normal)
+        {
+            _this?.Dispatcher?.BeginInvoke(priority, action);
         }
     }
 
