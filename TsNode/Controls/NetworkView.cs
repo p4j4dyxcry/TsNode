@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using TsNode.Controls.Connection;
 using TsNode.Controls.Drag;
@@ -10,6 +12,10 @@ using TsNode.Interface;
 
 namespace TsNode.Controls
 {
+    [TemplatePart(Name = "PART_Canvas", Type = typeof(Canvas))]
+    [TemplatePart(Name = "PART_NodeItemsControl", Type = typeof(NodeItemsControl))]
+    [TemplatePart(Name = "PART_ConnectionItemsControl", Type = typeof(ConnectionItemsControl))]
+    [TemplatePart(Name = "PART_CreatingConnectionItemsControl", Type = typeof(ConnectionItemsControl))]
     public class NetworkView : Control
     {
         public static readonly DependencyProperty NodesProperty = DependencyProperty.Register(
@@ -33,6 +39,15 @@ namespace TsNode.Controls
         public IEnumerable<NodeControl> SelectedItems => Enumerable.Range(0, _nodeItemsControl.Items.Count)
             .Select(x => _nodeItemsControl.FindAssociatedNodeItem(_nodeItemsControl.Items.GetItemAt(x)))
             .Where(x=>x.IsSelected);
+
+        public static readonly DependencyProperty CanvasSizeProperty = DependencyProperty.Register(
+            nameof(CanvasSize), typeof(double), typeof(NetworkView), new PropertyMetadata(default(double)));
+
+        public double CanvasSize
+        {
+            get => (double) GetValue(CanvasSizeProperty);
+            set => SetValue(CanvasSizeProperty, value);
+        }
 
         public static readonly DependencyProperty GridSizeProperty = DependencyProperty.Register(
             nameof(GridSize), typeof(double), typeof(NetworkView), new PropertyMetadata(24.0d));
@@ -108,10 +123,6 @@ namespace TsNode.Controls
         private ConnectionItemsControl _creatingConnectionItemsControl;
         private Canvas _canvas;
 
-        public NetworkView()
-        {
-            Initialize();
-        }
 
         public void Initialize()
         {
@@ -121,13 +132,22 @@ namespace TsNode.Controls
         private void setup_drag_events()
         {
             IDragController currentDragObject = null;
+           
             PreviewMouseDown += (s, e) =>
             {
                 //! コントローラが処理中だった場合はキャンセルする
                 currentDragObject?.Cancel();
+                currentDragObject = null;
+
+                if (_canvas.ContainChildren(e.OriginalSource as FrameworkElement) is false &&
+                    (e.OriginalSource is ScrollViewer) is false)
+                    return;
  
                 //! ドラッグ開始時に適切なドラッグコントローラを作成
                 currentDragObject = MakeDragController(e);
+
+                if (currentDragObject != null && _canvas.IsMouseCaptured is false)
+                    _canvas.CaptureMouse();
             };
 
             PreviewMouseMove += (s, e) =>
@@ -140,8 +160,12 @@ namespace TsNode.Controls
             {
                 //! コントローラによるドラッグ処理を完了する
                 currentDragObject?.DragEnd(s, e);
+
+                if (_canvas.IsMouseCaptured)
+                    _canvas.ReleaseMouseCapture();
             };
         }
+
 
         // セレクタを取得する/オーバーライドすることで選択処理を独自実装可能
         public virtual IControlSelector MakeControlSelector()
@@ -201,9 +225,10 @@ namespace TsNode.Controls
             _canvas = this.FindTemplate<Canvas>("PART_Canvas");
             _connectionItemsControl = this.FindTemplate<ConnectionItemsControl>("PART_ConnectionItemsControl");
             _creatingConnectionItemsControl = this.FindTemplate<ConnectionItemsControl>("PART_CreatingConnectionItemsControl");
-
             //! Setup Events
             // ...
+
+            Initialize();
         }
     }
 }

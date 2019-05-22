@@ -12,6 +12,9 @@ namespace TsNode.Controls.Node
     /// <summary>
     /// ノードを扱うコントロール
     /// </summary>
+    [TemplatePart(Name = "PART_InputPlugItemsControl", Type = typeof(PlugItemsControl))]
+    [TemplatePart(Name = "PART_OutputPlugItemsControl", Type = typeof(PlugItemsControl))]
+
     public class NodeControl : ContentControl , ISelectable
     {
         public static readonly DependencyProperty IsSelectedProperty = DependencyProperty.Register(

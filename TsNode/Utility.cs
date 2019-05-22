@@ -86,6 +86,27 @@ namespace TsNode
             return null;
         }
 
+        public static bool ContainChildren(this FrameworkElement root, FrameworkElement @object)
+        {
+            if (@object is null)
+                return false;
+
+            if (root == @object)
+                return true;
+
+            var children = Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(root)).Select(x => VisualTreeHelper.GetChild(root, x)).OfType<FrameworkElement>().ToArray();
+
+            foreach (var child in children)
+            {
+                if (child == @object)
+                    return true;
+
+                if (child.ContainChildren(@object))
+                    return true;
+            }
+            return false;
+        }
+
         public static bool HitTestCircle(this Visual root, Point center , double radius)
         {
             var result = false;
