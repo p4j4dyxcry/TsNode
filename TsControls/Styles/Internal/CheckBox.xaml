@@ -31,7 +31,7 @@
                                 CornerRadius="3">
                             <Path x:Name="CheckPath"
                                   Data="M 500 200 L 400 300 L 350 250 "
-                                  Stretch="Fill"
+                                  Stretch="Uniform"                                  
                                   Margin="2,-2,-2,2"
                                   StrokeThickness="2"
                                   Stroke="{TemplateBinding Foreground}"/>
