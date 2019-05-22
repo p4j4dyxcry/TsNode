@@ -114,6 +114,9 @@ namespace TsNode.Controls.Drag
             if (_canceled)
                 return;
 
+            if (_panel.IsMouseCaptured is false)
+                _panel.CaptureMouse();
+
             if (args.RightButton == MouseButtonState.Pressed)
                 cancel_internal(false);
 
@@ -174,6 +177,9 @@ namespace TsNode.Controls.Drag
 
             if (isSelect)
                 OnSelect();
+
+            if (_panel.IsMouseCaptured)
+                _panel.ReleaseMouseCapture();
         }
 
         public void Cancel()
