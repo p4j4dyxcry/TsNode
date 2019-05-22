@@ -83,9 +83,6 @@ namespace TsNode.Controls.Drag
 
         public void OnDrag(object sender, MouseEventArgs args)
         {
-            if(_inputElement.IsMouseCaptured is false && _isCreated is false)
-                _inputElement.CaptureMouse();
-
             //! 作成中仮コネクションの作成(1度だけ)
             if (_connectionItemsControl.Items.IsEmpty && _isCreated is false)
             {
@@ -135,9 +132,6 @@ namespace TsNode.Controls.Drag
         {
             _connectionItemsControl.Items.Clear();
             _isCreated = true;
-
-            if (_inputElement.IsMouseCaptured)
-                _inputElement.ReleaseMouseCapture();
         }
 
         private void create_connection()

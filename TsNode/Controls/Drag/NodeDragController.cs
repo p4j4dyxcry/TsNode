@@ -100,9 +100,6 @@ namespace TsNode.Controls.Drag
         // ドラッグ中の処理
         public void OnDrag(object sender, MouseEventArgs args)
         {
-            if (_inputElement.IsMouseCaptured is false)
-                _inputElement.CaptureMouse();
-
             if (_isDrag is false)
                 return;
 
@@ -156,8 +153,6 @@ namespace TsNode.Controls.Drag
                     _completedNodeMove?.Execute(new CompletedMoveNodeEventArgs(initial, completed));
                 }
             }
-            if (_inputElement.IsMouseCaptured)
-                _inputElement.ReleaseMouseCapture();
         }
 
         public void Cancel()
