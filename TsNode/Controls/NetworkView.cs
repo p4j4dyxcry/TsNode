@@ -145,9 +145,6 @@ namespace TsNode.Controls
  
                 //! ドラッグ開始時に適切なドラッグコントローラを作成
                 currentDragObject = MakeDragController(e);
-
-                if (currentDragObject != null && _canvas.IsMouseCaptured is false)
-                    _canvas.CaptureMouse();
             };
 
             PreviewMouseMove += (s, e) =>
@@ -160,9 +157,6 @@ namespace TsNode.Controls
             {
                 //! コントローラによるドラッグ処理を完了する
                 currentDragObject?.DragEnd(s, e);
-
-                if (_canvas.IsMouseCaptured)
-                    _canvas.ReleaseMouseCapture();
             };
         }
 
