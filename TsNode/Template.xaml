@@ -72,19 +72,19 @@
                                 <node:NodeItemsControl x:Name="PART_NodeItemsControl" ItemsSource="{TemplateBinding Nodes}" />
                             </Canvas>
                         </Canvas>
-                        <Slider
+                        <ScrollBar
                             x:Name="PART_XSlider"
                             Width="256"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
-                            Background="#404040" />
-                        <Slider
+                            Background="#404040"
+                            Orientation="Horizontal" />
+                        <ScrollBar
                             x:Name="PART_YSlider"
                             Height="256"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             Background="#404040"
-                            IsDirectionReversed="True"
                             Orientation="Vertical" />
                     </Grid>
 

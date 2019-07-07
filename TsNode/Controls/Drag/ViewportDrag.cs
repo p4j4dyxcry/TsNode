@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using TsNode.Interface;
 
 namespace TsNode.Controls.Drag
@@ -30,6 +23,9 @@ namespace TsNode.Controls.Drag
 
         public void OnDrag(object sender, MouseEventArgs args)
         {
+            if (args.MiddleButton != MouseButtonState.Pressed)
+                return;
+
             var offset = args.GetPosition(NetworkView) - MouseStart;
 
             NetworkView.Translate(offset.X, offset.Y);
@@ -41,11 +37,11 @@ namespace TsNode.Controls.Drag
         private Point MouseStart { get; set; }
         private NetworkView NetworkView { get; }
         private FrameworkElement _inputElement;
-        public ViewportDrag(NetworkView networkView , MouseEventArgs mouseEventArgs , FrameworkElement target)
+        public ViewportDrag(NetworkView networkView , MouseEventArgs mouseEventArgs)
         {
-            MouseStart = mouseEventArgs.GetPosition(target);
+            MouseStart = mouseEventArgs.GetPosition(networkView);
             NetworkView = networkView;
-            _inputElement = target;
+            _inputElement = networkView;
         }
     }
 }
