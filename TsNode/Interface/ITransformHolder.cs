@@ -58,6 +58,10 @@ namespace TsNode.Interface
         {
             self.TranslateMatrix.Y = offsetY;
         }
+        public static void TranslateY(this ITransformHolder self, double offsetY)
+        {
+            self.TranslateMatrix.Y += offsetY;
+        }
 
         public static Point GetTranslateToPosition(this ITransformHolder self)
         {

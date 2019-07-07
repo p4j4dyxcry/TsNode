@@ -26,22 +26,17 @@ namespace TsNode.Controls.Drag
             if (args.MiddleButton != MouseButtonState.Pressed)
                 return;
 
-            var offset = args.GetPosition(NetworkView) - MouseStart;
-
+            var offset = args.GetPosition(NetworkView) - PrevPosition;
+            PrevPosition = args.GetPosition(NetworkView);
             NetworkView.Translate(offset.X, offset.Y);
-            NetworkView.GridUpdate();
-
-            MouseStart = args.GetPosition(NetworkView);
         }
 
-        private Point MouseStart { get; set; }
+        private Point PrevPosition { get; set; }
         private NetworkView NetworkView { get; }
-        private FrameworkElement _inputElement;
         public ViewportDrag(NetworkView networkView , MouseEventArgs mouseEventArgs)
         {
-            MouseStart = mouseEventArgs.GetPosition(networkView);
+            PrevPosition = mouseEventArgs.GetPosition(networkView);
             NetworkView = networkView;
-            _inputElement = networkView;
         }
     }
 }

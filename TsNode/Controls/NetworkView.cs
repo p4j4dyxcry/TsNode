@@ -125,61 +125,20 @@ namespace TsNode.Controls
         private ConnectionItemsControl _creatingConnectionItemsControl;
         private Canvas _canvas;
 
+        public ScaleTransform ScaleMatrix { get; } = new ScaleTransform(1, 1);
+        public TranslateTransform TranslateMatrix { get; } = new TranslateTransform(0, 0);
+
         public void Initialize()
         {
             setup_drag_events();
 
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(0.1);
-            timer.Tick += (s,e)=> UpdateCanvasSize();
-            timer.Start();
+            SetupWheel();
+            SetupTestScrollBar();
         }
 
         private void setup_drag_events()
         {
-            IDragController currentDragObject = null;
-            double scale = 1.0f;
-            double maxScale = 4.0f;
-            double minScale = 0.25f;
-
-            double oneDelta = 1.2;
-
-            var scaleTaeget = this.FindChildWithName<FrameworkElement>("PART_ItemsHost");
-
-            var transformGroup = new TransformGroup();
-
-            transformGroup.Children.Add(ScaleMatrix);
-            transformGroup.Children.Add(TranslateMatrix);
-
-            scaleTaeget.RenderTransform = transformGroup; 
-
-            PreviewMouseWheel += (s, e) =>
-            {
-                var delta = e.Delta < 0 ? 1.0 / oneDelta : oneDelta;
-
-                if (Keyboard.IsKeyDown(Key.LeftCtrl) is false)
-                {
-
-                    return;
-                }
-
-                scale *= delta;
-
-                if (scale >= maxScale)
-                    scale = maxScale;
-
-                if (scale <= minScale)
-                    scale = minScale;
-
-                if (scaleTaeget != null)
-                {
-                    var mouse = Mouse.GetPosition(_canvas);
-                    this.Scale(scale, mouse.X, mouse.Y);
-                    this.GridUpdate();
-                    //GridUpdate();
-                }
-            };
-
+            IDragController currentDragObject = null;            
             PreviewMouseDown += (s, e) =>
             {
                 //! コントローラが処理中だった場合はキャンセルする
@@ -239,7 +198,7 @@ namespace TsNode.Controls
                     clickedConnections.ToSelectableDataContext());
 
                 // 選択状態を設定する
-                selector.OnSelect(selectInfo);
+                selector.OnSelect(selectInfo);                
 
                 // ! ドラッグコントローラを作成する
                 //   複雑な条件に対応できるように
@@ -264,8 +223,6 @@ namespace TsNode.Controls
             return null;
         }
 
-        ScrollBar _xSlider = null;
-        ScrollBar _ySlider = null;
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -280,38 +237,97 @@ namespace TsNode.Controls
 
             Initialize();
         }
-        public Point ViewportOffset { get; set; } = new Point(0, 0);
 
-        public ScaleTransform ScaleMatrix { get; } = new ScaleTransform(1,1);
+        // マウスホイール関係のテスト実装
+        private void SetupWheel()
+        {
+            double scale = 1.0f;     // current scale 
+            double minScale = 0.25f; 
+            double maxScale = 4.0f;
+            double scaleUnit = 1.2;
 
-        public TranslateTransform TranslateMatrix { get; } = new TranslateTransform(0,0);
+            var scaleTaeget = this.FindChildWithName<FrameworkElement>("PART_ItemsHost");
 
+            var transformGroup = new TransformGroup();
+
+            transformGroup.Children.Add(ScaleMatrix);
+            transformGroup.Children.Add(TranslateMatrix);
+
+            scaleTaeget.RenderTransform = transformGroup;
+
+            PreviewMouseWheel += (s, e) =>
+            {
+                // スクロール
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) is false)
+                {
+                    if (e.Delta > 0)
+                        this.TranslateY(60);
+                    else
+                        this.TranslateY(-60);
+                    return;
+                }
+
+                // スケーリング
+                var delta = e.Delta < 0 ? 1.0 / scaleUnit : scaleUnit;
+                scale = MathUtil.Clamp(scale * delta, minScale, maxScale);
+
+                if (scaleTaeget != null)
+                {
+                    var mouse = Mouse.GetPosition(_canvas);
+                    this.Scale(scale, mouse.X, mouse.Y);
+                }
+            };
+        }
+
+        private void SetupTestScrollBar()
+        {
+            // 試験実装 毎秒監視
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(0.1);
+            timer.Tick += (s, e) => UpdateScrollBar();
+            timer.Start();
+        }
+
+        // TODO 整理
         private bool _lock = false;
         private bool _first = true;
-        public void UpdateCanvasSize()
+
+        private double Snap(double value , double snap ,bool minus)
+        {
+            if(minus)
+                return value - (value % snap) - snap;
+            return value - (value % snap) + snap;
+        }
+
+        public void UpdateScrollBar()
         {
             int margin = 128;
-            var MinNodeX = this._nodeItemsControl.GetNodes().Min(x => x.X) - margin;
-            var MaxNodeX = this._nodeItemsControl.GetNodes().Max(x => x.X + x.ActualWidth) + margin;
-            var MinNodeY = this._nodeItemsControl.GetNodes().Min(x => x.Y) - margin;
-            var MaxNodeY = this._nodeItemsControl.GetNodes().Max(x => x.Y + x.ActualHeight) + margin;
+            var minNodeX = this._nodeItemsControl.GetNodes().Min(x => x.X) - margin;
+            var maxNodeX = this._nodeItemsControl.GetNodes().Max(x => x.X + x.ActualWidth) + margin;
+            var minNodeY = this._nodeItemsControl.GetNodes().Min(x => x.Y) - margin;
+            var maxNodeY = this._nodeItemsControl.GetNodes().Max(x => x.Y + x.ActualHeight) + margin;
 
-            var CanvasLeft   = MinNodeX * ScaleMatrix.ScaleX;
-            var CanvasRight  = MaxNodeX * ScaleMatrix.ScaleX;
-            var CanvasTop    = MinNodeY * ScaleMatrix.ScaleY;
-            var CanvasBottom = MaxNodeY * ScaleMatrix.ScaleY;
+#if true
+            var left   = minNodeX * ScaleMatrix.ScaleX;
+            var right  = maxNodeX * ScaleMatrix.ScaleX;
+            var top    = minNodeY * ScaleMatrix.ScaleY;
+            var bottom = maxNodeY * ScaleMatrix.ScaleY;
+#else
+            var viewportL = Snap(-TranslateMatrix.X, 512,true);
+            var viewportR = Snap(-TranslateMatrix.X + ActualWidth, 512,false);
+            var viewportT = Snap(-TranslateMatrix.Y, 512,true);
+            var viewportB = Snap(-TranslateMatrix.Y + ActualHeight, 512,false);
 
-            var canvasW = CanvasRight - CanvasLeft;
-            var canvasH = CanvasBottom - CanvasTop;
-
-            var gridRender = this.FindVisualChildrenWithType<GridRenderer>().FirstOrDefault();
-            gridRender.Scale = ScaleMatrix.ScaleX;
-
+            var left   = Math.Min(minNodeX,viewportL) * ScaleMatrix.ScaleX;
+            var right  = Math.Max(maxNodeX,viewportR) * ScaleMatrix.ScaleX;
+            var top    = Math.Min(minNodeY,viewportT) * ScaleMatrix.ScaleY;
+            var bottom = Math.Max(maxNodeY,viewportB) * ScaleMatrix.ScaleY;
+#endif
             _lock = true;
 
-            _xSlider =  this.FindChildWithName<ScrollBar>("PART_XSlider");
-            _xSlider.Minimum = CanvasLeft;
-            _xSlider.Maximum = CanvasRight - ActualWidth;
+            var _xSlider =  this.FindChildWithName<ScrollBar>("PART_XSlider");
+            _xSlider.Minimum = left;
+            _xSlider.Maximum = right - ActualWidth;
             _xSlider.ViewportSize = ActualWidth;
             _xSlider.Value = -TranslateMatrix.X;
             if (_xSlider.Maximum - _xSlider.Minimum <= 0)
@@ -319,9 +335,9 @@ namespace TsNode.Controls
             else
                 _xSlider.Visibility = Visibility.Visible;
 
-            _ySlider =  this.FindChildWithName<ScrollBar>("PART_YSlider");
-            _ySlider.Minimum = CanvasTop;
-            _ySlider.Maximum = CanvasBottom - ActualHeight;
+            var _ySlider =  this.FindChildWithName<ScrollBar>("PART_YSlider");
+            _ySlider.Minimum = top;
+            _ySlider.Maximum = bottom - ActualHeight;
             _ySlider.ViewportSize = ActualHeight;
             _ySlider.Value = -TranslateMatrix.Y;
 
@@ -347,15 +363,5 @@ namespace TsNode.Controls
                 _first = false;
             }
         }
-        public void GridUpdate()
-        {
-            var _gridRender = this.FindVisualChildrenWithType<GridRenderer>().FirstOrDefault();
-            if (_gridRender != null)
-            {
-                var scaleTaeget = this.FindChildWithName<FrameworkElement>("PART_ItemsHost");
-                _gridRender.Scale = scaleTaeget.RenderTransform.Value.M11;
-            }
-        }
-
     }
 }

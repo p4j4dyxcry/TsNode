@@ -81,7 +81,7 @@ namespace WpfApp1
         public ICommand ConnectCommand => _connectionCreator.ConnectCommand;
 
         //! コネクションドラッグ開始
-        public ICommand StartNewConnectionCommand =>_connectionCreator.StartNewConnectionCommand;
+        public ICommand StartNewConnectionCommand => _connectionCreator.StartNewConnectionCommand;
 
         //! 選択変更
         public ReactiveCommand<SelectionChangedEventArgs> SelectionChangedCommand { get; }
@@ -101,19 +101,34 @@ namespace WpfApp1
         private readonly IOperationController _operationController;
         private ConnectionCreator _connectionCreator;
 
+        private ObservableCollection<INodeDataContext> CreateNode( int count )
+        {
+             var nodes = new List<INodeDataContext>();
+
+            var rand = new Random();
+            foreach(var _ in Enumerable.Range(0, count))
+            {
+                var node = new NodeViewModel2(_operationController) { X = rand.NextDouble() * 1024 - 128, Y = rand.NextDouble() * 1024 - 128 };
+                node.InputPlugs.Add(new PlugViewModel(_operationController));
+                node.InputPlugs.Add(new PlugViewModel2(_operationController));
+                node.OutputPlugs.Add(new PlugViewModel3(_operationController));
+                node.OutputPlugs.Add(new PlugViewModel3(_operationController));
+                nodes.Add(node);
+            }
+            return new ObservableCollection<INodeDataContext>(nodes);
+        }
+
         public NetworkViewModel(IOperationController operationController)
         {
             _operationController = operationController;
+            
 
-            var node1 = new NodeViewModel(_operationController) { X = 30 , Y = 20 };
+            Nodes = CreateNode(20);
+
+            var node1 = new NodeViewModel(_operationController) { X = 30, Y = 20 };
             var node2 = new NodeViewModel2(_operationController) { X = 130, Y = 20 };
             var node3 = new NodeViewModel3(_operationController) { X = 300, Y = 400 };
-            Nodes = new ObservableCollection<INodeDataContext>()
-            {
-                node1,
-                node2,
-                node3,
-            };
+
             node1.InputPlugs.Add(new PlugViewModel(_operationController));
             node1.InputPlugs.Add(new PlugViewModel2(_operationController));
             node1.OutputPlugs.Add(new PlugViewModel(_operationController));
@@ -131,6 +146,10 @@ namespace WpfApp1
             node3.OutputPlugs.Add(new PlugViewModel3(_operationController));
             node3.OutputPlugs.Add(new PlugViewModel3(_operationController));
             node3.OutputPlugs.Add(new PlugViewModel3(_operationController));
+
+            Nodes.Add(node1);
+            Nodes.Add(node2);
+            Nodes.Add(node3);
 
             Connections = new ObservableCollection<IConnectionDataContext>();
 

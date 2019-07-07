@@ -45,11 +45,6 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls1:NetworkView">
-                    <!--<ScrollViewer
-                        x:Name="PART_ScrollViewer"
-                        Focusable="False"
-                        HorizontalScrollBarVisibility="Auto"
-                        VerticalScrollBarVisibility="Auto">-->
                     <Grid Background="{TemplateBinding Background}">
                         <Canvas x:Name="PART_Canvas">
                             <Canvas x:Name="PART_ItemsHost">
@@ -61,7 +56,8 @@
                                     GridInterval="{TemplateBinding GridSize}"
                                     GridThickness="0.0625"
                                     IsDash="False"
-                                    IsDrawGrid="True" />
+                                    IsDrawGrid="True"
+                                    Scale="{Binding ScaleMatrix.ScaleX, RelativeSource={RelativeSource AncestorType={x:Type controls1:NetworkView}}}" />
                                 <!--  実在するConnection  -->
                                 <connection:ConnectionItemsControl x:Name="PART_ConnectionItemsControl" ItemsSource="{TemplateBinding Connections}" />
 
@@ -74,19 +70,19 @@
                         </Canvas>
                         <ScrollBar
                             x:Name="PART_XSlider"
-                            Width="256"
-                            HorizontalAlignment="Center"
+                            Margin="0,0,16,0"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Bottom"
+                            Opacity="0.9"
                             Orientation="Horizontal" />
                         <ScrollBar
                             x:Name="PART_YSlider"
-                            Height="256"
+                            Margin="0,0,0,16"
                             HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
+                            VerticalAlignment="Stretch"
+                            Opacity="0.9"
                             Orientation="Vertical" />
                     </Grid>
-
-                    <!--</ScrollViewer>-->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
