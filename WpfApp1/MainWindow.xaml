@@ -36,8 +36,6 @@
         </Grid.ColumnDefinitions>
         <Expander Header="ノード" IsExpanded="True">
             <controls:NetworkView
-                Width="4096"
-                Height="4096"
                 Background="{StaticResource LightDarkBrush}"
                 CompetedMoveNodeCommand="{Binding NodeMoveCommand}"
                 CompletedCreateConnectionCommand="{Binding ConnectCommand}"

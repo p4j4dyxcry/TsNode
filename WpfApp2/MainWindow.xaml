@@ -24,8 +24,6 @@
 
     <Grid>
         <controls:NetworkView
-            Width="4096"
-            Height="4096"
             Background="LightGray"
             CompletedCreateConnectionCommand="{Binding ConnectedCommand}"
             Connections="{Binding Connections}"

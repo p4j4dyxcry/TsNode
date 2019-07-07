@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
 using TsNode.Controls.Connection;
 using TsNode.Controls.Drag;
 using TsNode.Controls.Node;
@@ -16,7 +19,7 @@ namespace TsNode.Controls
     [TemplatePart(Name = "PART_NodeItemsControl", Type = typeof(NodeItemsControl))]
     [TemplatePart(Name = "PART_ConnectionItemsControl", Type = typeof(ConnectionItemsControl))]
     [TemplatePart(Name = "PART_CreatingConnectionItemsControl", Type = typeof(ConnectionItemsControl))]
-    public class NetworkView : Control
+    public class NetworkView : Control , ITransformHolder
     {
         public static readonly DependencyProperty NodesProperty = DependencyProperty.Register(
             nameof(Nodes), typeof(IEnumerable<INodeDataContext>), typeof(NetworkView), new PropertyMetadata(default(IEnumerable<INodeDataContext>)));
@@ -116,23 +119,67 @@ namespace TsNode.Controls
             set => SetValue(SelectionChangedCommandProperty, value);
         }
 
-
         //! 
         private NodeItemsControl _nodeItemsControl;
         private ConnectionItemsControl _connectionItemsControl;
         private ConnectionItemsControl _creatingConnectionItemsControl;
         private Canvas _canvas;
 
-
         public void Initialize()
         {
             setup_drag_events();
+
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(0.1);
+            timer.Tick += (s,e)=> UpdateCanvasSize();
+            timer.Start();
         }
 
         private void setup_drag_events()
         {
             IDragController currentDragObject = null;
-           
+            double scale = 1.0f;
+            double maxScale = 4.0f;
+            double minScale = 0.25f;
+
+            double oneDelta = 1.2;
+
+            var scaleTaeget = this.FindChildWithName<FrameworkElement>("PART_ItemsHost");
+
+            var transformGroup = new TransformGroup();
+
+            transformGroup.Children.Add(ScaleMatrix);
+            transformGroup.Children.Add(TranslateMatrix);
+
+            scaleTaeget.RenderTransform = transformGroup; 
+
+            PreviewMouseWheel += (s, e) =>
+            {
+                var delta = e.Delta < 0 ? 1.0 / oneDelta : oneDelta;
+
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) is false)
+                {
+
+                    return;
+                }
+
+                scale *= delta;
+
+                if (scale >= maxScale)
+                    scale = maxScale;
+
+                if (scale <= minScale)
+                    scale = minScale;
+
+                if (scaleTaeget != null)
+                {
+                    var mouse = Mouse.GetPosition(_canvas);
+                    this.Scale(scale, mouse.X, mouse.Y);
+                    this.GridUpdate();
+                    //GridUpdate();
+                }
+            };
+
             PreviewMouseDown += (s, e) =>
             {
                 //! コントローラが処理中だった場合はキャンセルする
@@ -157,6 +204,7 @@ namespace TsNode.Controls
             {
                 //! コントローラによるドラッグ処理を完了する
                 currentDragObject?.DragEnd(s, e);
+                currentDragObject = null;
             };
         }
 
@@ -195,7 +243,8 @@ namespace TsNode.Controls
 
                 // ! ドラッグコントローラを作成する
                 //   複雑な条件に対応できるように
-                var builder = new DragControllerBuilder(args, _canvas, nodes, connections);
+                
+                var builder = new DragControllerBuilder(args, this.FindChildWithName<Canvas>("PART_ItemsHost"), nodes, connections);
                 return builder
                     .AddBuildTarget(new ConnectionDragBuild(builder, 0, _creatingConnectionItemsControl))
                     .AddBuildTarget(new NodeDragBuild(builder, 1, UseGridSnap, (int) GridSize))
@@ -205,11 +254,18 @@ namespace TsNode.Controls
                     .SetNodeDragControllerBuilder(CompetedMoveNodeCommand)
                     .Build();
             }
+
+            if(args.MiddleButton == MouseButtonState.Pressed)
+            {
+                return new ViewportDrag(this,args,_canvas);
+            }
             
             // その他の場合はコントローラを作成しない ( つまりドラッグイベント無し )
             return null;
         }
 
+        Slider _xSlider = null;
+        Slider _ySlider = null;
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -224,5 +280,93 @@ namespace TsNode.Controls
 
             Initialize();
         }
+        public Point ViewportOffset { get; set; } = new Point(0, 0);
+
+        public ScaleTransform ScaleMatrix { get; } = new ScaleTransform(1,1);
+
+        public TranslateTransform TranslateMatrix { get; } = new TranslateTransform(0,0);
+
+        public double MinNodeX;
+        public double MaxNodeX;
+        public double MinNodeY;
+        public double MaxNodeY;
+        public double CanvasLeft;
+        public double CanvasTop;
+        public double CanvasBottom;
+        public double CanvasRight;
+
+        private int hash = 0;
+
+        public void UpdateCanvasSize()
+        {
+            MinNodeX = this.Nodes.Min(x => x.X);
+            MaxNodeX = this.Nodes.Max(x => x.X) + 100;
+            MinNodeY = this.Nodes.Min(x => x.Y);
+            MaxNodeY = this.Nodes.Max(x => x.Y) + 100;
+
+            var _gridRender = this.FindVisualChildrenWithType<GridRenderer>().FirstOrDefault();
+
+            CanvasLeft = MinNodeX;
+            CanvasRight = MaxNodeX;
+            CanvasTop = MinNodeY;
+            CanvasBottom = MaxNodeY;
+
+            var canvasW = CanvasRight - CanvasLeft;
+            var canvasH = CanvasBottom - CanvasTop;
+
+            var h = CanvasLeft.GetHashCode() + CanvasBottom.GetHashCode() + CanvasTop.GetHashCode() + CanvasRight.GetHashCode();
+
+            if (h == hash)
+                return;
+            hash = h;
+
+            _gridRender = this.FindVisualChildrenWithType<GridRenderer>().FirstOrDefault();
+            var scaleTaeget = this.FindChildWithName<FrameworkElement>("PART_ItemsHost");
+            _gridRender.Scale = scaleTaeget.RenderTransform.Value.M11;
+
+            _xSlider =  this.FindChildWithName<Slider>("PART_XSlider");
+            _xSlider.Minimum = CanvasLeft;
+            _xSlider.Maximum = CanvasRight;
+
+            _xSlider.ValueChanged += (s, e) =>
+            {
+                this.SetTranslateX(-_xSlider.Value);
+            };
+            _ySlider =  this.FindChildWithName<Slider>("PART_YSlider");
+            _ySlider.Minimum = CanvasTop;
+            _ySlider.Maximum = CanvasBottom;
+
+            _ySlider.ValueChanged += (s, e) =>
+            {
+                this.SetTranslateY(-_ySlider.Value);
+            };
+            UdateSliderValue();
+        }
+
+        private void UdateSliderValue()
+        {
+            _ySlider.Value = ViewportOffset.Y;
+            _xSlider.Value = -ViewportOffset.X;
+        }
+
+        public double snapTo(double a , double snap)
+        {
+            if( a <= 0)
+                return a - (a % snap) - snap;
+            
+            return a - (a % snap) + snap;
+        }
+
+        public void GridUpdate()
+        {
+            var _gridRender = this.FindVisualChildrenWithType<GridRenderer>().FirstOrDefault();
+            if (_gridRender != null)
+            {
+                var scaleTaeget = this.FindChildWithName<FrameworkElement>("PART_ItemsHost");
+                _gridRender.Scale = scaleTaeget.RenderTransform.Value.M11;
+                UdateSliderValue();
+            }
+        }
+
     }
 }

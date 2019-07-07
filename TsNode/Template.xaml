@@ -50,31 +50,44 @@
                         Focusable="False"
                         HorizontalScrollBarVisibility="Auto"
                         VerticalScrollBarVisibility="Auto">-->
-                        <Canvas
-                            x:Name="PART_Canvas"
-                            Width="{TemplateBinding Width}"
-                            Height="{TemplateBinding Height}"
-                            Background="{TemplateBinding Background}">
+                    <Grid Background="{TemplateBinding Background}">
+                        <Canvas x:Name="PART_Canvas">
+                            <Canvas x:Name="PART_ItemsHost">
+                                <controls1:GridRenderer
+                                    Canvas.Left="-100000"
+                                    Canvas.Top="-100000"
+                                    Width="200000"
+                                    Height="200000"
+                                    GridInterval="{TemplateBinding GridSize}"
+                                    GridThickness="0.0625"
+                                    IsDash="False"
+                                    IsDrawGrid="True" />
+                                <!--  実在するConnection  -->
+                                <connection:ConnectionItemsControl x:Name="PART_ConnectionItemsControl" ItemsSource="{TemplateBinding Connections}" />
 
-                            <!--  背景のGrid  -->
-                            <controls1:GridRenderer
-                                Width="{Binding Width, ElementName=PART_Canvas}"
-                                Height="{Binding Height, ElementName=PART_Canvas}"
-                                DashA="3"
-                                DashB="5"
-                                GridInterval="{TemplateBinding GridSize}"
-                                IsDrawGrid="True" />
+                                <!--  作成中のConnection  -->
+                                <connection:ConnectionItemsControl x:Name="PART_CreatingConnectionItemsControl" />
 
-                            <!--  実在するConnection  -->
-                            <connection:ConnectionItemsControl x:Name="PART_ConnectionItemsControl" ItemsSource="{TemplateBinding Connections}" />
-
-                            <!--  作成中のConnection  -->
-                            <connection:ConnectionItemsControl x:Name="PART_CreatingConnectionItemsControl" />
-
-                            <!--  Node  -->
-                            <node:NodeItemsControl x:Name="PART_NodeItemsControl" ItemsSource="{TemplateBinding Nodes}" />
-
+                                <!--  Node  -->
+                                <node:NodeItemsControl x:Name="PART_NodeItemsControl" ItemsSource="{TemplateBinding Nodes}" />
+                            </Canvas>
                         </Canvas>
+                        <Slider
+                            x:Name="PART_XSlider"
+                            Width="256"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom"
+                            Background="#404040" />
+                        <Slider
+                            x:Name="PART_YSlider"
+                            Height="256"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Background="#404040"
+                            IsDirectionReversed="True"
+                            Orientation="Vertical" />
+                    </Grid>
+
                     <!--</ScrollViewer>-->
                 </ControlTemplate>
             </Setter.Value>

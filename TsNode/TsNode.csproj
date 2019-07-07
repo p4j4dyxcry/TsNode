@@ -54,6 +54,7 @@
     <Compile Include="Controls\Drag\DragControllerBuilder.cs" />
     <Compile Include="Controls\Drag\NodeDragBuild.cs" />
     <Compile Include="Controls\Drag\RectSelectionDragBuild.cs" />
+    <Compile Include="Controls\Drag\ViewportDrag.cs" />
     <Compile Include="Controls\EventArgs.cs" />
     <Compile Include="Controls\GridRenderer.cs" />
     <Compile Include="Controls\Drag\SelectionRectDragController.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Interface\ISelectable.cs" />
     <Compile Include="Controls\Drag\NodeDragController.cs" />
     <Compile Include="Controls\Node\NodeItemsControl.cs" />
+    <Compile Include="Interface\ITransformHolder.cs" />
     <Compile Include="Preset\NodeViewModel.cs" />
     <Compile Include="Controls\Plug\PlugControl.cs" />
     <Compile Include="Controls\NetworkView.cs" />

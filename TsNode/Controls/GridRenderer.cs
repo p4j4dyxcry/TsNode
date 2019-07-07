@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -25,6 +26,15 @@ namespace TsNode.Controls
         {
             get => (double) GetValue(GridIntervalProperty);
             set => SetValue(GridIntervalProperty, value);
+        }
+
+        public static readonly DependencyProperty ScaleProperty = DependencyProperty.Register(
+            nameof(Scale), typeof(double), typeof(GridRenderer), new PropertyMetadata(1.0D, OnDependencyPropertyChanged));
+
+        public double Scale
+        {
+            get => (double)GetValue(ScaleProperty);
+            set => SetValue(ScaleProperty, value);
         }
 
         public static readonly DependencyProperty GridBrushProperty = DependencyProperty.Register(
@@ -91,34 +101,36 @@ namespace TsNode.Controls
                 return;
 
 
-            var szX = GridInterval / (width);
-            var szY = GridInterval / (height);
+            var szX = GridInterval /  (width );
+            var szY = GridInterval /  (height);
 
+            var invScale = 1.0 / Scale;
             if (IsDash)
             {
                 var dashStyle = new DashStyle(new[] { DashA, DashB }, 0).DoFreeze();
-                _pen = new Pen(GridBrush, 0.1) { DashStyle = dashStyle }.DoFreeze();
+                _pen = new Pen(GridBrush, GridThickness * invScale) { DashStyle = dashStyle }.DoFreeze();
             }
             else
             {
-                _pen = new Pen(GridBrush, 0.1).DoFreeze();
+                _pen = new Pen(GridBrush, GridThickness * invScale).DoFreeze();
             }
 
             var geometry = new GeometryGroup();
-            geometry.Children.Add(new LineGeometry(new Point(0, 0), new Point(1, 0)).DoFreeze());
-            geometry.Children.Add(new LineGeometry(new Point(0, 0), new Point(0, 1)).DoFreeze());
+            geometry.Children.Add(new LineGeometry(new Point(0, 0), new Point(8, 0)).DoFreeze());
+            geometry.Children.Add(new LineGeometry(new Point(0, 0), new Point(0, 8)).DoFreeze());
             geometry.DoFreeze();
 
+            var snapedScale = SnapTo(Scale, 0.25);
 
             var drawingBrush = new DrawingBrush()
             {
                 TileMode = TileMode.Tile,
                 ViewboxUnits = BrushMappingMode.Absolute,
-                Viewport = new Rect(0,0, szX, szY),
+                Viewport = new Rect(0,0, szX * snapedScale, szY * snapedScale),
                 Drawing = new GeometryDrawing()
                 {
                     Pen = _pen,
-                    Geometry = geometry,
+                    Geometry = geometry,                  
                 }.DoFreeze()
             }.DoFreeze();
 
@@ -129,6 +141,11 @@ namespace TsNode.Controls
         {
             //サイズが更新されたら背景テクスチャブラシを作り直す
             SizeChanged += (s, e) => make_pen();
+        }
+
+        public static double SnapTo(double a, double snap)
+        {
+            return Math.Max(a - (a % snap),snap);
         }
     }
 }
