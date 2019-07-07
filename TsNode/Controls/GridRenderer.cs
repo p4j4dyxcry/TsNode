@@ -104,7 +104,7 @@ namespace TsNode.Controls
             var szX = GridInterval /  (width );
             var szY = GridInterval /  (height);
 
-            var invScale = 1.0 / Scale;
+            var invScale = Scale >= 1.0 ? 1.0 / Scale : 1.0;
             if (IsDash)
             {
                 var dashStyle = new DashStyle(new[] { DashA, DashB }, 0).DoFreeze();
@@ -126,7 +126,7 @@ namespace TsNode.Controls
             {
                 TileMode = TileMode.Tile,
                 ViewboxUnits = BrushMappingMode.Absolute,
-                Viewport = new Rect(0,0, szX * snapedScale, szY * snapedScale),
+                Viewport = new Rect(0,0, szX , szY ),
                 Drawing = new GeometryDrawing()
                 {
                     Pen = _pen,
