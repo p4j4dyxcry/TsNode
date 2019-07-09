@@ -11,7 +11,7 @@ namespace TsGui.Operation
     /// </summary>
     public class InsertOperation<T> : IOperation
     {
-        public string Name { get; set; }
+        public string Messaage { get; set; }
 
         private readonly Func<IList<T>> _generator;
         private readonly IList<T> _list;
@@ -59,7 +59,7 @@ namespace TsGui.Operation
     /// </summary>
     public class RemoveOperation<T> : IOperation
     {
-        public string Name { get; set; }
+        public string Messaage { get; set; }
 
         private readonly Func<IList<T>> _generator;
         private readonly IList<T> _list;
@@ -108,7 +108,7 @@ namespace TsGui.Operation
     /// </summary>
     public class RemoveAtOperation : IOperation
     {
-        public string Name { get; set; }
+        public string Messaage { get; set; }
 
         private readonly Func<IList> _generator;
         private readonly IList _list;
@@ -152,7 +152,7 @@ namespace TsGui.Operation
     /// </summary>
     public class ClearOperation<T> : IOperation
     {
-        public string Name { get; set; }
+        public string Messaage { get; set; }
 
         private readonly Func<IList<T>> _generator;
         private readonly IList<T> _list;

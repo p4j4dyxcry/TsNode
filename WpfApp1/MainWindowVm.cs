@@ -22,7 +22,7 @@ namespace WpfApp1
 
         public OperationVm(IOperation operation , IOperationController controller )
         {
-            Name = operation.Name;
+            Name = operation.Messaage;
             GotoCommand = new ViewModelCommand(()=>controller.MoveTo(operation));
             IsRedo = controller.Operations.All(x=> x!= operation);
         }

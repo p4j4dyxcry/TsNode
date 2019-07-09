@@ -58,7 +58,7 @@ namespace TsGui.Operation
             MergeJudge = mergeJudge;
         }
 
-        public string Name { get; set; }
+        public string Messaage { get; set; }
 
         public void RollForward()
         {
@@ -153,7 +153,7 @@ namespace TsGui.Operation
             MergeJudge = mergeJudge;
         }
 
-        public string Name { get; set; }
+        public string Messaage { get; set; }
 
         public void RollForward()
         {

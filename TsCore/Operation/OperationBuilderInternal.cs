@@ -77,7 +77,7 @@ namespace TsGui.Operation
                 return this;
             }
 
-            public IOperationBuilder Name(string name)
+            public IOperationBuilder Message(string name)
             {
                 _name = name;
                 return this;
@@ -102,7 +102,7 @@ namespace TsGui.Operation
                 Debug.Assert(_canBuild,ErrorMessages.InvalidOperation);
                 var operation = new MergeableOperation<T>(_function, _new, _prev, _mergeJudge)
                 {
-                    Name = _name
+                    Messaage = _name
                 };
                 return _eventEventBinder.BindEvents(operation);
             }
@@ -142,7 +142,7 @@ namespace TsGui.Operation
                 return this;
             }
 
-            public IOperationBuilder Name(string name)
+            public IOperationBuilder Message(string name)
             {
                 _name = name;
                 return this;
@@ -167,7 +167,7 @@ namespace TsGui.Operation
                 Debug.Assert(_canBuild, ErrorMessages.InvalidOperation);
 
                 var operation = _sender.GenerateSetOperation(_propertyName, _newValue, _throttleTimeSpan);
-                operation.Name = _name;
+                operation.Messaage = _name;
                 return _eventEventBinder.BindEvents(operation);
             }
         }
@@ -333,9 +333,9 @@ namespace TsGui.Operation
                 _operation = operation;
             }
 
-            public IOperationBuilder Name(string name)
+            public IOperationBuilder Message(string name)
             {
-                _operation.Name = name;
+                _operation.Messaage = name;
                 return this;
             }
 
@@ -386,7 +386,7 @@ namespace TsGui.Operation
 
             public IMergeableOperationBuilder SetActionName(string executeAction, string rollbackAction)
             {
-                _mergeableOperation.Name = executeAction;
+                _mergeableOperation.Messaage = executeAction;
                 return this;
             }
         }

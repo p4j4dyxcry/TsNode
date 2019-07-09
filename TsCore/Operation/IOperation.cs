@@ -7,9 +7,9 @@ namespace TsGui.Operation
     public interface IOperation
     {
         /// <summary>
-        /// 表示名
+        /// メッセージ
         /// </summary>
-        string Name { get; set; }
+        string Messaage { get; set; }
 
         /// <summary>
         /// 実行 / 前進回帰

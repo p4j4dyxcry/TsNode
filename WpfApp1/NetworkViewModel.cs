@@ -33,7 +33,7 @@ namespace WpfApp1
                     .CombineOperations(connecions.ToAddOperation(e.ConnectionDataContext))
                     .ToCompositeOperation();
 
-                operation.Name = "コネクション接続";
+                operation.Messaage = "コネクション接続";
 
                 if (removeOperation.IsEmpty())
                     operation.ExecuteTo(@operator);
@@ -63,7 +63,7 @@ namespace WpfApp1
 
                 var operation = connecions
                     .ToRemoveRangeOperation(removeConnections);
-                operation.Name = "コノクションの削除";
+                operation.Messaage = "コノクションの削除";
                 return operation;
             }
         }
@@ -101,7 +101,7 @@ namespace WpfApp1
         private readonly IOperationController _operationController;
         private ConnectionCreator _connectionCreator;
 
-        private ObservableCollection<INodeDataContext> CreateNode( int count )
+        private ObservableCollection<INodeDataContext> CreateNodes( int count )
         {
              var nodes = new List<INodeDataContext>();
 
@@ -121,43 +121,10 @@ namespace WpfApp1
         public NetworkViewModel(IOperationController operationController)
         {
             _operationController = operationController;
-            
 
-            Nodes = CreateNode(20);
-
-            var node1 = new NodeViewModel(_operationController) { X = 30, Y = 20 };
-            var node2 = new NodeViewModel2(_operationController) { X = 130, Y = 20 };
-            var node3 = new NodeViewModel3(_operationController) { X = 300, Y = 400 };
-
-            node1.InputPlugs.Add(new PlugViewModel(_operationController));
-            node1.InputPlugs.Add(new PlugViewModel2(_operationController));
-            node1.OutputPlugs.Add(new PlugViewModel(_operationController));
-            node1.OutputPlugs.Add(new PlugViewModel2(_operationController));
-            node1.OutputPlugs.Add(new PlugViewModel3(_operationController));
-
-            node2.InputPlugs.Add(new PlugViewModel(_operationController));
-            node2.InputPlugs.Add(new PlugViewModel2(_operationController));
-            node2.OutputPlugs.Add(new PlugViewModel3(_operationController));
-            node2.OutputPlugs.Add(new PlugViewModel3(_operationController));
-
-            node3.InputPlugs.Add(new PlugViewModel(_operationController));
-            node3.InputPlugs.Add(new PlugViewModel2(_operationController));
-            node3.OutputPlugs.Add(new PlugViewModel3(_operationController));
-            node3.OutputPlugs.Add(new PlugViewModel3(_operationController));
-            node3.OutputPlugs.Add(new PlugViewModel3(_operationController));
-            node3.OutputPlugs.Add(new PlugViewModel3(_operationController));
-
-            Nodes.Add(node1);
-            Nodes.Add(node2);
-            Nodes.Add(node3);
+            Nodes = CreateNodes(30);
 
             Connections = new ObservableCollection<IConnectionDataContext>();
-
-            Connections.Add(new ConnectionViewModel(operationController)
-            {
-                SourcePlug = node2.OutputPlugs.First(),
-                DestPlug = node3.InputPlugs.First(),
-            });
 
             _connectionCreator = new ConnectionCreator(Connections,_operationController);
 
@@ -176,7 +143,7 @@ namespace WpfApp1
                             keyValuePair.Key.Y = keyValuePair.Value.Y;
                         }
                     },e.CompletedNodePoints, e.InitialNodePoints)
-                    .Name("ノード移動")
+                    .Message("ノード移動")
                     .Build();
                 _operationController.Push(operation);
             });
@@ -198,24 +165,23 @@ namespace WpfApp1
                         foreach (var i in Enumerable.Range(0, selected.Length))
                             e.ChangedItems[i].IsSelected = !selected[i];
                     })
-                    .PostEvent(() => GenerateProperties(Nodes.Where(x => x.IsSelected)))
-                    .Name("選択変更")
+                    .PostEvent(() => Properties = GenerateProperties(Nodes.Where(x => x.IsSelected)))
+                    .Message("選択変更")
                     .Build()
                     .PushTo(_operationController);
-                GenerateProperties(Nodes.Where(x => x.IsSelected));
+                Properties = GenerateProperties(Nodes.Where(x => x.IsSelected));
             });
         }
 
-        public void GenerateProperties(IEnumerable<ISelectable> items)
+        public ObservableCollection<IProperty> GenerateProperties(IEnumerable<ISelectable> items)
         {
             var selectables = items as ISelectable[] ?? items.ToArray();
             if (selectables.Any() is false)
             {
-                Properties = Enumerable.Empty<IProperty>().ToObservableCollection();
-                return;
+                return Enumerable.Empty<IProperty>().ToObservableCollection();
             }
 
-            Properties = new ReflectionPropertyBuilder(selectables.First())
+            return new ReflectionPropertyBuilder(selectables.First())
                 .GenerateProperties()
                 .OperationController(_operationController)
                 .Build()

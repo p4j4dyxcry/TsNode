@@ -19,7 +19,7 @@ namespace TsGui.Operation
             _rollback = rollback;            
         }
 
-        public string Name { get; set; }
+        public string Messaage { get; set; }
 
         public void RollForward()
         {
@@ -45,7 +45,7 @@ namespace TsGui.Operation
             _newValue = newValue;
         }
 
-        public string Name { get; set; }
+        public string Messaage { get; set; }
 
         public void RollForward()
         {

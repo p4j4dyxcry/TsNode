@@ -77,7 +77,7 @@ namespace TsProperty
                     var operationBuilder = new OperationBuilder();
                     operationBuilder.MakeThrottle(setter, newValue, oldValue,setter.GetHashCode()^ property.GetHashCode(), TimeSpan.MaxValue)
                         .PostEvent(property.RaiseUpdateValue)
-                        .Name($"Property = {property.Name} Value = {newValue}")
+                        .Message($"Property = {property.Name} Value = {newValue}")
                         .Build()
                         .ExecuteTo(_operationController);
                 }

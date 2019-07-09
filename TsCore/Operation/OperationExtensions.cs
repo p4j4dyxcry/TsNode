@@ -10,7 +10,7 @@ namespace TsGui.Operation
     {
         private class EmptyOperation : IOperation
         {
-            public string Name { get; set; }
+            public string Messaage { get; set; } = "Empty Operation";
             public void RollForward() { }
             public void Rollback() { }
         }
@@ -58,7 +58,7 @@ namespace TsGui.Operation
                 var prev = controller.Pop();
                 _this.RollForward();
                 var newOperation = prev.CombineOperations(_this).ToCompositeOperation();
-                newOperation.Name = _this.Name;
+                newOperation.Messaage = _this.Messaage;
                 return controller.Push(newOperation);
             }
 
@@ -164,7 +164,8 @@ namespace TsGui.Operation
             if (_this == Operation.Empty)
                 return true;
             if (_this is CompositeOperation compositeOperation)
-                return compositeOperation.GetAllOperation().All(x=>x.IsEmpty());
+                return compositeOperation.Operations.Any() is false 
+                    || compositeOperation.GetAllOperation().All(x=>x.IsEmpty());
             return false;
         }
 

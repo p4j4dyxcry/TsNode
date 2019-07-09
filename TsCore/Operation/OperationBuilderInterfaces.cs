@@ -8,7 +8,7 @@ namespace TsGui.Operation
     /// </summary>
     public interface IOperationBuilder
     {
-        IOperationBuilder Name(string name);
+        IOperationBuilder Message(string message);
 
         /// <summary>
         /// オペレーションの実行・ロールバック後にイベントを追加

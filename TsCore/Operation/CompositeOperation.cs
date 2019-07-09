@@ -24,7 +24,7 @@ namespace TsGui.Operation
             Add(operations);
         }
 
-        public string Name { get; set; }
+        public string Messaage { get; set; }
 
         public void RollForward()
         {
