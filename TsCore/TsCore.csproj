@@ -43,20 +43,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Foundation\CompositeDisposable.cs" />
+    <Compile Include="Foundation\DisposableExtensions.cs" />
+    <Compile Include="Foundation\EnumerableExtensions.cs" />
+    <Compile Include="Foundation\Logger.cs" />
+    <Compile Include="Foundation\ExpressionPropertyAccessorCache.cs" />
+    <Compile Include="Mvvm\Bindable.cs" />
+    <Compile Include="Mvvm\DelegateCommand.cs" />
+    <Compile Include="Mvvm\PropertyObserver.cs" />
     <Compile Include="Thread\IWorkerQueue.cs" />
     <Compile Include="Thread\TaskCanceler.cs" />
     <Compile Include="Thread\WorkerPool.cs" />
     <Compile Include="Thread\WorkerThread.cs" />
     <Compile Include="Collections\InfiniteList.cs" />
     <Compile Include="Collections\LinqEx.cs" />
-    <Compile Include="Develop\SpeedChecker.cs" />
+    <Compile Include="Foundation\SpeedChecker.cs" />
     <Compile Include="Operation\CompositeOperation.cs" />
     <Compile Include="Operation\DelegateOperation.cs" />
     <Compile Include="Operation\IMergeJudge.cs" />
     <Compile Include="Operation\Internal\CapacityStack.cs" />
     <Compile Include="Operation\Internal\ErrorMessages.cs" />
-    <Compile Include="FastReflection.cs" />
-    <Compile Include="PropertyAccesser.cs" />
+    <Compile Include="Foundation\FastReflection.cs" />
+    <Compile Include="Foundation\PropertyAccesser.cs" />
     <Compile Include="Operation\Internal\UndoStack.cs" />
     <Compile Include="Operation\IOperation.cs" />
     <Compile Include="Operation\IOperationController.cs" />
