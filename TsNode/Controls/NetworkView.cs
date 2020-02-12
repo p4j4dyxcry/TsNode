@@ -299,6 +299,8 @@ namespace TsNode.Controls
             return value - (value % snap) + snap;
         }
 
+        private ScrollBar _xSlider = null;
+        private ScrollBar _ySlider = null;
         public void UpdateScrollBar()
         {
             int margin = 128;
@@ -307,25 +309,14 @@ namespace TsNode.Controls
             var minNodeY = this._nodeItemsControl.GetNodes().Min(x => x.Y) - margin;
             var maxNodeY = this._nodeItemsControl.GetNodes().Max(x => x.Y + x.ActualHeight) + margin;
 
-#if true
             var left   = minNodeX * ScaleMatrix.ScaleX;
             var right  = maxNodeX * ScaleMatrix.ScaleX;
             var top    = minNodeY * ScaleMatrix.ScaleY;
             var bottom = maxNodeY * ScaleMatrix.ScaleY;
-#else
-            var viewportL = Snap(-TranslateMatrix.X, 512,true);
-            var viewportR = Snap(-TranslateMatrix.X + ActualWidth, 512,false);
-            var viewportT = Snap(-TranslateMatrix.Y, 512,true);
-            var viewportB = Snap(-TranslateMatrix.Y + ActualHeight, 512,false);
-
-            var left   = Math.Min(minNodeX,viewportL) * ScaleMatrix.ScaleX;
-            var right  = Math.Max(maxNodeX,viewportR) * ScaleMatrix.ScaleX;
-            var top    = Math.Min(minNodeY,viewportT) * ScaleMatrix.ScaleY;
-            var bottom = Math.Max(maxNodeY,viewportB) * ScaleMatrix.ScaleY;
-#endif
             _lock = true;
 
-            var _xSlider =  this.FindChildWithName<ScrollBar>("PART_XSlider");
+            if(_xSlider is null)
+                _xSlider =  this.FindChildWithName<ScrollBar>("PART_XSlider");
             _xSlider.Minimum = left;
             _xSlider.Maximum = right - ActualWidth;
             _xSlider.ViewportSize = ActualWidth;
@@ -335,7 +326,8 @@ namespace TsNode.Controls
             else
                 _xSlider.Visibility = Visibility.Visible;
 
-            var _ySlider =  this.FindChildWithName<ScrollBar>("PART_YSlider");
+            if(_ySlider is null)
+                _ySlider =  this.FindChildWithName<ScrollBar>("PART_YSlider");
             _ySlider.Minimum = top;
             _ySlider.Maximum = bottom - ActualHeight;
             _ySlider.ViewportSize = ActualHeight;
