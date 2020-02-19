@@ -260,10 +260,21 @@ namespace TsNode.Controls
                 // スクロール
                 if (Keyboard.IsKeyDown(Key.LeftCtrl) is false)
                 {
-                    if (e.Delta > 0)
-                        this.TranslateY(60);
+                    if (Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.Right))
+                    {
+                        if (e.Delta > 0)
+                            this.TranslateX(60);
+                        else
+                            this.TranslateX(-60);                                                
+                    }
                     else
-                        this.TranslateY(-60);
+                    {
+                        if (e.Delta > 0)
+                            this.TranslateY(60);
+                        else
+                            this.TranslateY(-60);                        
+                    }
+
                     return;
                 }
 
@@ -317,10 +328,15 @@ namespace TsNode.Controls
 
             if(_xSlider is null)
                 _xSlider =  this.FindChildWithName<ScrollBar>("PART_XSlider");
-            _xSlider.Minimum = left;
-            _xSlider.Maximum = right - ActualWidth;
-            _xSlider.ViewportSize = ActualWidth;
+            // TODO MoseDownではなくスクロールバードラッグ時に変更する
+            if (Mouse.LeftButton == MouseButtonState.Released)
+            {
+                _xSlider.Minimum = Math.Min(left,TranslateMatrix.X);
+                _xSlider.Maximum = Math.Max(right - ActualWidth,TranslateMatrix.X + ActualHeight);
+                _xSlider.ViewportSize = ActualWidth;
+            }
             _xSlider.Value = -TranslateMatrix.X;
+
             if (_xSlider.Maximum - _xSlider.Minimum <= 0)
                 _xSlider.Visibility = Visibility.Hidden;
             else
@@ -328,9 +344,16 @@ namespace TsNode.Controls
 
             if(_ySlider is null)
                 _ySlider =  this.FindChildWithName<ScrollBar>("PART_YSlider");
-            _ySlider.Minimum = top;
-            _ySlider.Maximum = bottom - ActualHeight;
-            _ySlider.ViewportSize = ActualHeight;
+
+            var t = Mouse.LeftButton == MouseButtonState.Pressed ? Snap(-TranslateMatrix.Y, 200, true) : top;
+
+            // TODO MoseDownではなくスクロールバードラッグ時に変更する
+            if (Mouse.LeftButton == MouseButtonState.Released)
+            {
+                _ySlider.Minimum = Math.Min(top , -TranslateMatrix.Y);
+                _ySlider.Maximum = Math.Max(bottom - ActualHeight , -TranslateMatrix.Y + ActualWidth);
+                _ySlider.ViewportSize = ActualHeight;
+            }
             _ySlider.Value = -TranslateMatrix.Y;
 
             if (_ySlider.Maximum - _ySlider.Minimum <= 0)
