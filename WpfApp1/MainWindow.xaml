@@ -8,6 +8,7 @@
     xmlns:local="clr-namespace:WpfApp1"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tsProperty="clr-namespace:TsProperty;assembly=TsProperty"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     Title="MainWindow"
     Width="1280"
     Height="780"
@@ -22,9 +23,9 @@
         <local:MainWindowVm />
     </Window.DataContext>
 
-    <i:Interaction.Behaviors>
+    <b:Interaction.Behaviors>
         <local:UndoRedoKeyBehavior RedoCommand="{Binding RedoCommand}" UndoCommand="{Binding UndoCommand}" />
-    </i:Interaction.Behaviors>
+    </b:Interaction.Behaviors>
 
     <Grid>
         <Grid.ColumnDefinitions>
