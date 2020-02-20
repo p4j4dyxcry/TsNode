@@ -19,7 +19,7 @@ namespace TsNode.Controls
     [TemplatePart(Name = "PART_NodeItemsControl", Type = typeof(NodeItemsControl))]
     [TemplatePart(Name = "PART_ConnectionItemsControl", Type = typeof(ConnectionItemsControl))]
     [TemplatePart(Name = "PART_CreatingConnectionItemsControl", Type = typeof(ConnectionItemsControl))]
-    public class NetworkView : Control , ITransformHolder
+    public class NetworkView : Control
     {
         public static readonly DependencyProperty NodesProperty = DependencyProperty.Register(
             nameof(Nodes), typeof(IEnumerable<INodeDataContext>), typeof(NetworkView), new PropertyMetadata(default(IEnumerable<INodeDataContext>)));
@@ -82,6 +82,15 @@ namespace TsNode.Controls
             set => SetValue(SelectionRectangleStyleProperty, value);
         }
 
+        public static readonly DependencyProperty ItemsRectProperty = DependencyProperty.Register(
+            "ItemsRect", typeof(Rect), typeof(NetworkView), new PropertyMetadata(default(Rect)));
+
+        public Rect ItemsRect
+        {
+            get { return (Rect) GetValue(ItemsRectProperty); }
+            set { SetValue(ItemsRectProperty, value); }
+        }
+
         //! コマンドの引数として[CompletedCreateConnectionEventArgs]が渡される
         public ICommand CompletedCreateConnectionCommand
         {
@@ -124,16 +133,10 @@ namespace TsNode.Controls
         private ConnectionItemsControl _connectionItemsControl;
         private ConnectionItemsControl _creatingConnectionItemsControl;
         private Canvas _canvas;
-
-        public ScaleTransform ScaleMatrix { get; } = new ScaleTransform(1, 1);
-        public TranslateTransform TranslateMatrix { get; } = new TranslateTransform(0, 0);
-
-        public void Initialize()
+        private void Initialize()
         {
             setup_drag_events();
-
-            SetupWheel();
-            SetupTestScrollBar();
+            SetupUpdateRect();
         }
 
         private void setup_drag_events()
@@ -238,145 +241,26 @@ namespace TsNode.Controls
             Initialize();
         }
 
-        // マウスホイール関係のテスト実装
-        private void SetupWheel()
-        {
-            double scale = 1.0f;     // current scale 
-            double minScale = 0.25f; 
-            double maxScale = 4.0f;
-            double scaleUnit = 1.2;
-
-            var scaleTaeget = this.FindChildWithName<FrameworkElement>("PART_ItemsHost");
-
-            var transformGroup = new TransformGroup();
-
-            transformGroup.Children.Add(ScaleMatrix);
-            transformGroup.Children.Add(TranslateMatrix);
-
-            scaleTaeget.RenderTransform = transformGroup;
-
-            PreviewMouseWheel += (s, e) =>
-            {
-                // スクロール
-                if (Keyboard.IsKeyDown(Key.LeftCtrl) is false)
-                {
-                    if (Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.Right))
-                    {
-                        if (e.Delta > 0)
-                            this.TranslateX(60);
-                        else
-                            this.TranslateX(-60);                                                
-                    }
-                    else
-                    {
-                        if (e.Delta > 0)
-                            this.TranslateY(60);
-                        else
-                            this.TranslateY(-60);                        
-                    }
-
-                    return;
-                }
-
-                // スケーリング
-                var delta = e.Delta < 0 ? 1.0 / scaleUnit : scaleUnit;
-                scale = MathUtil.Clamp(scale * delta, minScale, maxScale);
-
-                if (scaleTaeget != null)
-                {
-                    var mouse = Mouse.GetPosition(_canvas);
-                    this.Scale(scale, mouse.X, mouse.Y);
-                }
-            };
-        }
-
-        private void SetupTestScrollBar()
+        private void SetupUpdateRect()
         {
             // 試験実装 毎秒監視
             DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(0.1);
-            timer.Tick += (s, e) => UpdateScrollBar();
-            timer.Start();
-        }
-
-        // TODO 整理
-        private bool _lock = false;
-        private bool _first = true;
-
-        private double Snap(double value , double snap ,bool minus)
-        {
-            if(minus)
-                return value - (value % snap) - snap;
-            return value - (value % snap) + snap;
-        }
-
-        private ScrollBar _xSlider = null;
-        private ScrollBar _ySlider = null;
-        public void UpdateScrollBar()
-        {
-            int margin = 128;
-            var minNodeX = this._nodeItemsControl.GetNodes().Min(x => x.X) - margin;
-            var maxNodeX = this._nodeItemsControl.GetNodes().Max(x => x.X + x.ActualWidth) + margin;
-            var minNodeY = this._nodeItemsControl.GetNodes().Min(x => x.Y) - margin;
-            var maxNodeY = this._nodeItemsControl.GetNodes().Max(x => x.Y + x.ActualHeight) + margin;
-
-            var left   = minNodeX * ScaleMatrix.ScaleX;
-            var right  = maxNodeX * ScaleMatrix.ScaleX;
-            var top    = minNodeY * ScaleMatrix.ScaleY;
-            var bottom = maxNodeY * ScaleMatrix.ScaleY;
-            _lock = true;
-
-            if(_xSlider is null)
-                _xSlider =  this.FindChildWithName<ScrollBar>("PART_XSlider");
-            // TODO MoseDownではなくスクロールバードラッグ時に変更する
-            if (Mouse.LeftButton == MouseButtonState.Released)
+            timer.Interval = TimeSpan.FromSeconds(1.0);
+            timer.Tick += (s, e) =>
             {
-                _xSlider.Minimum = Math.Min(left,TranslateMatrix.X);
-                _xSlider.Maximum = Math.Max(right - ActualWidth,TranslateMatrix.X + ActualHeight);
-                _xSlider.ViewportSize = ActualWidth;
-            }
-            _xSlider.Value = -TranslateMatrix.X;
-
-            if (_xSlider.Maximum - _xSlider.Minimum <= 0)
-                _xSlider.Visibility = Visibility.Hidden;
-            else
-                _xSlider.Visibility = Visibility.Visible;
-
-            if(_ySlider is null)
-                _ySlider =  this.FindChildWithName<ScrollBar>("PART_YSlider");
-
-            var t = Mouse.LeftButton == MouseButtonState.Pressed ? Snap(-TranslateMatrix.Y, 200, true) : top;
-
-            // TODO MoseDownではなくスクロールバードラッグ時に変更する
-            if (Mouse.LeftButton == MouseButtonState.Released)
-            {
-                _ySlider.Minimum = Math.Min(top , -TranslateMatrix.Y);
-                _ySlider.Maximum = Math.Max(bottom - ActualHeight , -TranslateMatrix.Y + ActualWidth);
-                _ySlider.ViewportSize = ActualHeight;
-            }
-            _ySlider.Value = -TranslateMatrix.Y;
-
-            if (_ySlider.Maximum - _ySlider.Minimum <= 0)
-                _ySlider.Visibility = Visibility.Hidden;
-            else
-                _ySlider.Visibility = Visibility.Visible;
-
-            _lock = false;
-            if (_first)
-            {
-                _xSlider.ValueChanged += (s, e) =>
+                var nodes = this._nodeItemsControl.GetNodes();
+                
+                var newRect = new Rect()
                 {
-                    if (_lock is false)
-                        this.SetTranslateX(-_xSlider.Value);
+                    X = nodes.Min(x=>x.X),
+                    Y = nodes.Min(x=>x.Y),
+                    Width = nodes.Max(x=>x.X + x.ActualWidth),
+                    Height = nodes.Max(x=>x.X + x.ActualHeight),                    
                 };
                 
-                _ySlider.ValueChanged += (s, e) =>
-                {
-                    if (_lock is false)
-                        this.SetTranslateY(-_ySlider.Value);
-                };
-                _first = false;
-            }
+                SetValue(ItemsRectProperty,newRect);
+            };
+            timer.Start();
         }
     }
 }

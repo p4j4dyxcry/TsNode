@@ -58,6 +58,7 @@
     <Compile Include="Controls\EventArgs.cs" />
     <Compile Include="Controls\GridRenderer.cs" />
     <Compile Include="Controls\Drag\SelectionRectDragController.cs" />
+    <Compile Include="Controls\InfiniteScrollViewer.cs" />
     <Compile Include="Interface\IConnectTarget.cs" />
     <Compile Include="Interface\IConnectionDataContext.cs" />
     <Compile Include="Interface\IControlSelector.cs" />

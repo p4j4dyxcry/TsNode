@@ -39,13 +39,41 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
+    <Style TargetType="controls1:InfiniteScrollViewer">
+          <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls1:InfiniteScrollViewer">
+                    <Grid Background="{TemplateBinding Background}">
+                        <ContentPresenter Content="{TemplateBinding Content }"/>
+                        <ScrollBar
+                            x:Name="PART_XSlider"
+                            Margin="0,0,16,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Bottom"
+                            Opacity="0.9"
+                            Orientation="Horizontal" />
+                        <ScrollBar
+                            x:Name="PART_YSlider"
+                            Margin="0,0,0,16"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Opacity="0.9"
+                            Orientation="Vertical" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>      
+    </Style>
 
     <!--  Network View  -->
     <Style TargetType="{x:Type controls1:NetworkView}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls1:NetworkView">
-                    <Grid Background="{TemplateBinding Background}">
+                    <controls1:InfiniteScrollViewer 
+                        ViewRect="{Binding ItemsRect , RelativeSource={RelativeSource AncestorType=controls1:NetworkView}}"
+                        ViewRectOffset="128">
                         <Canvas x:Name="PART_Canvas">
                             <Canvas x:Name="PART_ItemsHost">
                                 <controls1:GridRenderer
@@ -67,22 +95,8 @@
                                 <!--  Node  -->
                                 <node:NodeItemsControl x:Name="PART_NodeItemsControl" ItemsSource="{TemplateBinding Nodes}" />
                             </Canvas>
-                        </Canvas>
-                        <ScrollBar
-                            x:Name="PART_XSlider"
-                            Margin="0,0,16,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Bottom"
-                            Opacity="0.9"
-                            Orientation="Horizontal" />
-                        <ScrollBar
-                            x:Name="PART_YSlider"
-                            Margin="0,0,0,16"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Opacity="0.9"
-                            Orientation="Vertical" />
-                    </Grid>
+                        </Canvas>                        
+                    </controls1:InfiniteScrollViewer>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
