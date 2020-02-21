@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -73,6 +74,9 @@ namespace TsNode.Controls.Drag
 
         private bool _isDrag;
         private bool _isMoved;
+        private bool _isCaptured;
+
+        private readonly InfiniteScrollViewer _scrollViewer;
 
         // コンストラクタ / ドラッグ開始
         public NodeDragController(NodeDragControllerSetupArgs setupArgs)
@@ -80,7 +84,7 @@ namespace TsNode.Controls.Drag
             if (setupArgs.Args.LeftButton == MouseButtonState.Pressed)
             {
                 _isDrag = true;
-
+                
                 _dragStartPos = setupArgs.Args.GetPosition(setupArgs.BaseControl);
                 _originalPoints = setupArgs.Nodes.ToDictionary(x => x , x => new Point(x.X, x.Y));
             }
@@ -90,6 +94,15 @@ namespace TsNode.Controls.Drag
             _useSnapGrid = setupArgs.UseSnapGrid;
             _inputElement = setupArgs.BaseControl;
             _gridSize = setupArgs.GridSize;
+            if (_selectedNodes.Any())
+            {
+                var control = _selectedNodes.First().FindVisualParentWithType<InfiniteScrollViewer>();
+                if (Mouse.Captured == null)
+                {
+                    _isCaptured = _inputElement.CaptureMouse();
+                }
+                _scrollViewer = control;
+            }
         }
 
         public bool CanDragStart(object sender, MouseEventArgs args)
@@ -109,7 +122,6 @@ namespace TsNode.Controls.Drag
                 Cancel();
                 return;
             }
-
             var currentPos = args.GetPosition(_inputElement);
             var xDelta = currentPos.X - _dragStartPos.X;
             var yDelta = currentPos.Y - _dragStartPos.Y;
@@ -128,8 +140,64 @@ namespace TsNode.Controls.Drag
                 item.X = point.X;
                 item.Y = point.Y;
             }
+            
+                        
+            if (IsMouseOutScrollViewer())
+            {
+                DragScrollOffset();
+                _scrollViewer.UpdateScrollBar();
+                return;
+            }
         }
 
+                
+        public bool IsMouseOutScrollViewer()
+        {
+            if (_scrollViewer is null)
+                return false;
+            
+            var pos = Mouse.GetPosition(_scrollViewer);
+            if (pos.X > 0 &&
+                pos.X < _scrollViewer.ActualWidth &&
+                pos.Y > 0 &&
+                pos.Y < _scrollViewer.ActualHeight)
+                return false;
+
+            return true;
+        }
+        
+        private void DragScrollOffset()
+        {
+            var offset = new Point(0, 0);
+            var mousePoint = Mouse.GetPosition(_scrollViewer);
+ 
+            if (mousePoint.X < 0)
+            {
+                offset.X = - mousePoint.X;
+            }
+            else if(mousePoint.X > _scrollViewer.ActualWidth)
+            {
+                offset.X = -(mousePoint.X - _scrollViewer.ActualWidth);
+            }
+            
+            if (mousePoint.Y < 0)
+            {
+                offset.Y = - mousePoint.Y;
+            }
+            else if (mousePoint.Y > _scrollViewer.ActualHeight)
+            {
+                offset.Y = -(mousePoint.Y - _scrollViewer.ActualHeight);
+            }
+
+            // clamp
+            var clampValue = _scrollViewer.ScrollOffsetClampValue;
+            offset.X = Math.Max(Math.Min(clampValue, offset.X), -clampValue);
+            offset.Y = Math.Max(Math.Min(clampValue, offset.Y), -clampValue);
+            
+            _scrollViewer.TranslateX(offset.X *  _scrollViewer.ScrollRate);
+            _scrollViewer.TranslateY(offset.Y *  _scrollViewer.ScrollRate);
+ }
+        
         public void DragEnd(object sender, MouseEventArgs args)
         {
             Completed();
@@ -138,6 +206,9 @@ namespace TsNode.Controls.Drag
         // ドラッグ完了処理
         private void Completed()
         {
+            if(_isCaptured)
+                _inputElement.ReleaseMouseCapture();
+            
             if (_isDrag)
             {
                 _isDrag = false;

@@ -73,6 +73,24 @@ namespace TsNode.Controls
             get { return (double) GetValue(TranslateUnitProperty); }
             set { SetValue(TranslateUnitProperty, value); }
         }
+
+        public static readonly DependencyProperty ScrollRateProperty = DependencyProperty.Register(
+            "ScrollRate", typeof(double), typeof(InfiniteScrollViewer), new PropertyMetadata(0.003d));
+
+        public double ScrollRate
+        {
+            get { return (double) GetValue(ScrollRateProperty); }
+            set { SetValue(ScrollRateProperty, value); }
+        }
+
+        public static readonly DependencyProperty ScrollOffsetClampValueProperty = DependencyProperty.Register(
+            "ScrollOffsetClampValue", typeof(double), typeof(InfiniteScrollViewer), new PropertyMetadata(300d));
+
+        public double ScrollOffsetClampValue
+        {
+            get { return (double) GetValue(ScrollOffsetClampValueProperty); }
+            set { SetValue(ScrollOffsetClampValueProperty, value); }
+        }
         
         private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
