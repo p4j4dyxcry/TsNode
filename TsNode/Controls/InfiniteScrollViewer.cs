@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -158,12 +159,12 @@ namespace TsNode.Controls
             }
 
             _xSlider.Minimum = Math.Min(left,-TranslateMatrix.X);
-            _xSlider.Maximum = Math.Max(right - ActualWidth, -TranslateMatrix.X - ActualWidth);
+            _xSlider.Maximum = Math.Max(right - ActualWidth, -TranslateMatrix.X);
             _xSlider.ViewportSize = ActualWidth;
             _xSlider.Value = -TranslateMatrix.X;
 
             _ySlider.Minimum = Math.Min(top , -TranslateMatrix.Y);
-            _ySlider.Maximum = Math.Max(bottom - ActualHeight , -TranslateMatrix.Y - ActualHeight);
+            _ySlider.Maximum = Math.Max(bottom  - ActualWidth, -TranslateMatrix.Y );
             _ySlider.ViewportSize = ActualHeight;
             _ySlider.Value = -TranslateMatrix.Y;
 
