@@ -57,10 +57,6 @@
     <Compile Include="Mvvm\Bindable.cs" />
     <Compile Include="Mvvm\DelegateCommand.cs" />
     <Compile Include="Mvvm\PropertyObserver.cs" />
-    <Compile Include="Thread\IWorkerQueue.cs" />
-    <Compile Include="Thread\TaskCanceler.cs" />
-    <Compile Include="Thread\WorkerPool.cs" />
-    <Compile Include="Thread\WorkerThread.cs" />
     <Compile Include="Collections\InfiniteList.cs" />
     <Compile Include="Collections\LinqEx.cs" />
     <Compile Include="Foundation\SpeedChecker.cs" />

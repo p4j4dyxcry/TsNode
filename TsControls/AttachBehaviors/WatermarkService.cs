@@ -1,11 +1,12 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace TsControls.Controls
+namespace TsControls.AttachBehaviors
 {
     public static class TextBoxWatermarkService
     {
@@ -48,10 +49,10 @@ namespace TsControls.Controls
 
         private static void Control_Loaded(object sender, RoutedEventArgs e)
         {
-            if (sender is Control control && ShouldShowWatermark(control))
+            if (sender is TextBox control && ShouldShowWatermark(control))
                 ShowWatermark(control);
         }
-        
+
         private static void RemoveWatermark(UIElement control)
         {
             var layer = AdornerLayer.GetAdornerLayer(control);
@@ -60,14 +61,17 @@ namespace TsControls.Controls
             {
                 if (adorner is TextBoxWatermarkAdorner)
                 {
-                    adorner.Visibility = Visibility.Hidden;
-                    layer.Remove(adorner);
+                    adorner.Visibility = Visibility.Collapsed;
+                    layer?.Remove(adorner);
                 }
             }
         }
 
-        private static void ShowWatermark(Control control)
+        private static async void ShowWatermark(TextBox control)
         {
+            // コントロールのパラメータ解決が終わった後に実行したいので遅延させる
+            await Task.Delay(1);
+
             if (AdornerLayer.GetAdornerLayer(control) is AdornerLayer layer)
             {
                 layer.Add(new TextBoxWatermarkAdorner(control, GetWatermark(control)));
@@ -78,6 +82,9 @@ namespace TsControls.Controls
         {
             if (c is TextBox textBox)
             {
+                if (string.IsNullOrEmpty(textBox.Text) is false)
+                    return false;
+
                 if (textBox.IsFocused)
                     return true;
 
@@ -90,16 +97,30 @@ namespace TsControls.Controls
         {
             private readonly ContentPresenter _contentPresenter;
 
-            public TextBoxWatermarkAdorner(UIElement adornedElement, object watermark) : base(adornedElement)
+            public TextBoxWatermarkAdorner(TextBox adornedElement, object watermark) : base(adornedElement)
             {
                 IsHitTestVisible = false;
 
+                if (watermark is string)
+                {
+                    watermark = new TextBlock()
+                    {
+                        Text = watermark.ToString(),
+                        Foreground = adornedElement.Foreground,
+                        FontSize = adornedElement.FontSize,
+                        FontStretch = adornedElement.FontStretch,
+                        FontFamily = adornedElement.FontFamily,
+                        HorizontalAlignment = adornedElement.HorizontalContentAlignment,
+                        Margin = adornedElement.Padding,
+                    };
+                }
+                
                 _contentPresenter = new ContentPresenter
                 {
                     Content = watermark,
                     VerticalAlignment = VerticalAlignment.Center,
                     Opacity = 0.5,
-                    Margin = new Thickness(0, 0, 0, 0)
+                    Margin = new Thickness(0, 0, 0, 0),
                 };
 
                 var binding = new Binding(nameof(IsVisible))
@@ -108,6 +129,8 @@ namespace TsControls.Controls
                     Converter = new BooleanToVisibilityConverter()
                 };
                 SetBinding(VisibilityProperty, binding);
+
+                this.UpdateLayout();
             }
 
             protected override int VisualChildrenCount => 1;

@@ -56,6 +56,15 @@ namespace TsControls.Behaviors
             get => (double)GetValue(IntellisenseMinWidthProperty);
             set => SetValue(IntellisenseMinWidthProperty, value);
         }
+        
+        public static readonly DependencyProperty MaxRecodeProperty = DependencyProperty.Register(
+            "MaxRecode", typeof(int), typeof(TextBoxIntellisenseBehavior), new PropertyMetadata(-1));
+
+        public int MaxRecode
+        {
+            get { return (int)GetValue(MaxRecodeProperty); }
+            set { SetValue(MaxRecodeProperty, value); }
+        }
 
         private readonly ListBox _listBox = new ListBox();
         private readonly Popup _intellisense = new Popup();
@@ -148,6 +157,10 @@ namespace TsControls.Behaviors
                 if (defaultIndex < 0 && targetItems.Any())
                     defaultIndex = 0;
 
+                if (MaxRecode > 0)
+                {
+                    targetItems = targetItems.Take(MaxRecode).ToArray();
+                }
 
                 _listBox.ItemsSource = targetItems;
                 _listBox.SelectedIndex = defaultIndex;
@@ -253,7 +266,16 @@ namespace TsControls.Behaviors
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            GetOrCreateKeyboardActions(e.Key)?.Invoke();
+            if (_intellisense.IsOpen)
+            {
+                var action = GetOrCreateKeyboardActions(e.Key);
+
+                if (action != null)
+                {
+                    action.Invoke();
+                    e.Handled = true;
+                }
+            }
         }
 
         private void OnPreviewTextInput(object sender, TextCompositionEventArgs e)

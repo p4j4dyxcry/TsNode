@@ -14,15 +14,4 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
-    <Style TargetType="{x:Type local:SelectableTextBlock}" x:Key="SelectableTextBlockDarkStyle">
-        <Setter Property="Foreground" Value="{StaticResource FrontBrush}"/>
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Style.Triggers>
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Foreground" Value="{StaticResource DisableBrush}" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-
 </ResourceDictionary>

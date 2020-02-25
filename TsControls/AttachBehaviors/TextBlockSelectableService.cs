@@ -3,8 +3,11 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace TsControls.Controls
+namespace TsControls.AttachBehaviors
 {
+    /// <summary>
+    /// .net internal class を外部から無理やり扱うためのクラス
+    /// </summary>
     internal class InternalTextEditorHacker
     {
         private static Type InternalTextEditorType { get; }
@@ -55,19 +58,40 @@ namespace TsControls.Controls
         }
     }
 
-    public class SelectableTextBlock : TextBlock
+    /// <summary>
+    /// TextBlockを選択可能にし、コピーができるようにする添付ビヘイビア
+    /// </summary>
+    public static class TextBlockSelectableService
     {
-        static SelectableTextBlock()
-        {
-            FocusableProperty.OverrideMetadata(typeof(SelectableTextBlock), new FrameworkPropertyMetadata(true));
-            InternalTextEditorHacker.RegisterCommandHandlers(typeof(SelectableTextBlock), true, true, true);
+        public static readonly DependencyProperty WatermarkProperty = DependencyProperty.RegisterAttached(
+            "IsSelectable",
+            typeof(bool),
+            typeof(TextBlockSelectableService),
+            new FrameworkPropertyMetadata(false, IsSelectableChanged));
 
-            FocusVisualStyleProperty.OverrideMetadata(typeof(SelectableTextBlock), new FrameworkPropertyMetadata((object)null));
+        public static bool GetIsSelectable(DependencyObject d)
+        {
+            return (bool)d.GetValue(WatermarkProperty);
         }
 
-        public SelectableTextBlock()
+        public static void SetIsSelectable(DependencyObject d, bool value)
         {
-            InternalTextEditorHacker.Bind(this);
+            d.SetValue(WatermarkProperty, value);
+        }
+
+        static TextBlockSelectableService()
+        {
+            InternalTextEditorHacker.RegisterCommandHandlers(typeof(TextBlock), true, true, true);
+        }
+
+        private static void IsSelectableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is TextBlock textBlock)
+            {
+                textBlock.SetValue(UIElement.FocusableProperty, true);
+                textBlock.SetValue(FrameworkElement.FocusVisualStyleProperty, (object)null);
+                InternalTextEditorHacker.Bind(textBlock);
+            }
         }
     }
 }

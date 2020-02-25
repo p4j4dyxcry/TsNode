@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace TsControls.AttachBehaviors
 {
-    class TextBoxService
+    public class TextBoxService
     {
         public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.RegisterAttached(
             "CornerRadius",

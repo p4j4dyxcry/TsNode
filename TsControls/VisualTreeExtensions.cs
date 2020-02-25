@@ -83,6 +83,12 @@ namespace TsControls
             }
             return null;
         }
+        
+        public static T FindChildFirst<T>(this FrameworkElement root)
+            where T : FrameworkElement
+        {
+            return root.FindChild<T>(x=>true);
+        }
 
         public static bool HitTestCircle(this Visual root, Point center, double radius)
         {

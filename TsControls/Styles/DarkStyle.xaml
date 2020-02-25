@@ -7,7 +7,6 @@
 
     <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlockDarkStyle}"/>
     <Style TargetType="TextBox" BasedOn="{StaticResource TextBoxDarkStyle}"/>
-    <Style TargetType="controls:SelectableTextBlock" BasedOn="{StaticResource SelectableTextBlockDarkStyle}"/>
     <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}"/>
     <Style TargetType="ListView" BasedOn="{StaticResource ListViewDarkStyle}"/>
     <Style TargetType="ListBox" BasedOn="{StaticResource ListBoxDarkStyle}"/>
