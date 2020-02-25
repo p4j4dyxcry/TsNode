@@ -20,6 +20,8 @@ LivetCask
 ReactiveProperty
 - https://www.nuget.org/packages/ReactiveProperty/
 
+※TsNodeのみ利用する場合はオープンソースライブラリへの依存はありません。
+
 
 ## WpfApp2
 TsNode組み込み用の最低限の実装です。
