@@ -114,12 +114,33 @@ namespace TsGui.Foundation.Property
             Properties = properties as IProperty[] ?? properties.ToArray();
         }
     }
+    
+    public class StructuredProperty : BindablePropertyBase
+    {
+        public override string Name { get; set; }
+        public override object Data { get; set; }
+
+        public IProperty[] Properties { get;}
+
+        public StructuredProperty(IEnumerable<IProperty> properties)
+        {
+            Properties = properties as IProperty[] ?? properties.ToArray();
+        }
+    }
 
     public static class GroupPropertyExtensions
     {
         public static GroupProperty ToGroupProperty(this IEnumerable<IProperty> properties , string name = "")
         {
             return new GroupProperty(properties)
+            {
+                Name = name,
+            };
+        }
+        
+        public static StructuredProperty ToStructuredProperty(this IEnumerable<IProperty> properties , string name = "")
+        {
+            return new StructuredProperty(properties)
             {
                 Name = name,
             };

@@ -161,7 +161,7 @@ namespace TsGui.Foundation.Property
 
                         if (properies.Any())
                         {
-                            group.Add(properies.ToGroupProperty($"{propertyName}[{index++}]"));
+                            group.Add(properies.ToStructuredProperty($"{propertyName}[{index++}]"));
                             _suBuilders.Add(subBuilder);
                         }
                     }
@@ -189,7 +189,7 @@ namespace TsGui.Foundation.Property
 
                     if (properies.Any())
                     {
-                        _properties.Add(properies.ToGroupProperty($"{propertyName}({propertyType.Name})"));
+                        _properties.Add(properies.ToStructuredProperty($"{propertyName}({propertyType.Name})"));
                         _suBuilders.Add(subBuilder);
                     }
                     else

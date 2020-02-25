@@ -49,9 +49,35 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tsProperty:GroupProperty}">
+        
+        <Expander Header="{Binding Name}">
+            <ItemsControl Margin="16,0,0,0" ItemsSource="{Binding Properties}" />
+        </Expander>
+        
+        <!-- <StackPanel Background="{StaticResource DarkBrush}"> -->
+        <!--     <TextBlock Text="{Binding Name}" /> -->
+        <!--     <ListBox x:Name="compositeSource" -->
+        <!--              Background="{StaticResource DeepDarkBrush}" -->
+        <!--              Height="60" -->
+        <!--              ItemsSource="{Binding Properties}" -->
+        <!--              SelectedIndex="0"> -->
+        <!--         <ListBox.ItemContainerStyle> -->
+        <!--             <Style TargetType="ListBoxItem" /> -->
+        <!--         </ListBox.ItemContainerStyle> -->
+        <!--         <ListBox.ItemTemplate> -->
+        <!--             <DataTemplate > -->
+        <!--                 <TextBlock Text="{Binding Name}" /> -->
+        <!--             </DataTemplate> -->
+        <!--         </ListBox.ItemTemplate> -->
+        <!--     </ListBox> -->
+        <!--     <ContentPresenter Content="{Binding Path = SelectedItem ,ElementName=compositeSource}" />                             -->
+        <!-- </StackPanel> -->
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type tsProperty:StructuredProperty}">
         <Expander Header="{Binding Name}">
             <ItemsControl Margin="16,0,0,0" ItemsSource="{Binding Properties}" />
         </Expander>
     </DataTemplate>
-
+    
 </ResourceDictionary>

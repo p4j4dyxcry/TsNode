@@ -89,10 +89,13 @@
             Background="{StaticResource DarkBrush}"
             Header="プロパティ"
             IsExpanded="True">
-            <ItemsControl
-                DataContext="{Binding NetworkVm}"
-                DockPanel.Dock="Bottom"
-                ItemsSource="{Binding Properties}" />
+
+            <ScrollViewer>
+                <ItemsControl
+                    DataContext="{Binding NetworkVm}"
+                    DockPanel.Dock="Bottom"
+                    ItemsSource="{Binding Properties}" />                
+            </ScrollViewer>
         </Expander>
 
     </Grid>
