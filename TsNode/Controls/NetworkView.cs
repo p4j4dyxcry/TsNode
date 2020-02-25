@@ -254,10 +254,10 @@ namespace TsNode.Controls
                 {
                     X = nodes.Min(x=>x.X),
                     Y = nodes.Min(x=>x.Y),
-                    Width = nodes.Max(x=>x.X + x.ActualWidth),
-                    Height = nodes.Max(x=>x.X + x.ActualHeight),                    
                 };
-                
+                newRect.Width = nodes.Max(x => x.X + x.ActualWidth)  - newRect.X;
+                newRect.Height = nodes.Max(x => x.Y+ x.ActualHeight) - newRect.Y;
+               
                 SetValue(ItemsRectProperty,newRect);
             };
             timer.Start();
