@@ -108,7 +108,20 @@ namespace WpfApp1
             var rand = new Random();
             foreach(var _ in Enumerable.Range(0, count))
             {
-                var node = new NodeViewModel2(_operationController) { X = rand.NextDouble() * 1024 - 128, Y = rand.NextDouble() * 1024 - 128 };
+                dynamic node = null;
+                switch (rand.Next()%4)
+                {
+                    case 0:
+                        node = new NodeViewModel(_operationController) { X = rand.NextDouble() * 1024 - 128, Y = rand.NextDouble() * 1024 - 128 };
+                        break;
+                    case 1:
+                        node = new NodeViewModel2(_operationController) { X = rand.NextDouble() * 1024 - 128, Y = rand.NextDouble() * 1024 - 128 };
+                        break;
+                    default:
+                        node = new NodeViewModel3(_operationController) { X = rand.NextDouble() * 1024 - 128, Y = rand.NextDouble() * 1024 - 128 };
+                        break;
+                }
+                
                 node.InputPlugs.Add(new PlugViewModel(_operationController));
                 node.InputPlugs.Add(new PlugViewModel2(_operationController));
                 node.OutputPlugs.Add(new PlugViewModel3(_operationController));

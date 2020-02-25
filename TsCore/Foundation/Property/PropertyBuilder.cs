@@ -55,6 +55,21 @@ namespace TsGui.Foundation.Property
 
             return this;
         }
+        
+        public IPropertyBuilder Register<T>(object[] collection , int index , string propertyName)
+        {
+            //TODO コピーされた配列への値の設定になってしいるので正しく値が設定できない。Typeを限定し、RTTIで設定する必要がある。
+            Register(
+                ()=> (T)collection[index],
+                (x) =>
+                {
+                    collection[index] = x;
+                });
+
+            _properties[_properties.Count - 1].Name = $"{propertyName}[{index}]";
+
+            return this;
+        }
 
         public IPropertyBuilder Register<T>(Func<T> getter, Action<T> setter)
         {
@@ -108,7 +123,7 @@ namespace TsGui.Foundation.Property
     {
         private static readonly Dictionary<Type, PropertyInfo[]> _cache = new Dictionary<Type, PropertyInfo[]>();
 
-        private readonly IList<ReflectionPropertyBuilder> _suBuilders = new List<ReflectionPropertyBuilder>();
+        private readonly IList<IPropertyBuilder> _suBuilders = new List<IPropertyBuilder>();
 
         public ReflectionPropertyBuilder(object @object):base(@object)
         {
@@ -149,6 +164,8 @@ namespace TsGui.Foundation.Property
 
                     var index = 0;
                     var group = new List<IProperty>();
+                    var basicTypeBuilder = new PropertyBuilder(null).OperationController(_operationController);
+
                     foreach (var value in list)
                     {
                         var subBuilder = new ReflectionPropertyBuilder(value);
@@ -164,12 +181,27 @@ namespace TsGui.Foundation.Property
                             group.Add(properies.ToStructuredProperty($"{propertyName}[{index++}]"));
                             _suBuilders.Add(subBuilder);
                         }
+                        else
+                        {
+                            FastReflection.InvokeGenericMethod(basicTypeBuilder, value.GetType(), nameof(Register) , list , index++ , propertyName);
+                        }
                     }
 
                     if (group.Any())
                     {
                         _properties.Add(group.ToGroupProperty(propertyName));
                     }
+                    else
+                    {
+                        var basic = basicTypeBuilder
+                            .Build().ToArray();
+                        if(basic.Any())
+                        {
+                            _properties.Add(basic.ToGroupProperty(propertyName));
+                            _suBuilders.Add(basicTypeBuilder);
+                        }
+                    }
+                    
                 }
                 else if(BindablePropertyFactory.Contain(propertyType) == false)
                 {

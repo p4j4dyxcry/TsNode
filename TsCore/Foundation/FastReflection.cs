@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using TsGui.Collections;
 
 namespace TsGui.Foundation
 {
@@ -85,8 +86,8 @@ namespace TsGui.Foundation
             return ((MemberExpression)expression.Body).Member.Name;
         }
 
-        private static MethodInfo _regisMethodInfo;
-        private static readonly Dictionary<Type, MethodInfo> _methodCache = new Dictionary<Type, MethodInfo>();
+        private static MethodInfo[] _regisMethodInfo = null;
+        private static readonly Dictionary<int, MethodInfo> _methodCache = new Dictionary<int, MethodInfo>();
 
         public static void InvokeGenericMethod(object classInstance , Type type, string methodName,params object[] args)
         {
@@ -96,15 +97,22 @@ namespace TsGui.Foundation
                     .GetMethods()
                     .Where(x => x.Name == methodName)
                     .Where(x => x.IsGenericMethod)
-                    .Where(x => x.GetParameters().Length == args.Length)
-                    .Single(x => x.GetGenericArguments().Length == 1);
+                    .OrderBy(x => x.GetParameters().Length)
+                    .ToArray();
             }
 
-            if (_methodCache.TryGetValue(type, out var genericMethodInfo) is false)
+            var hash = type.GetHashCode();
+
+            foreach (var arg in args)
             {
-                _methodCache[type] =
+                hash ^= arg.GetType().GetHashCode();
+            }
+
+            if (_methodCache.TryGetValue(hash, out var genericMethodInfo) is false)
+            {
+                _methodCache[hash] =
                     genericMethodInfo =
-                        _regisMethodInfo.MakeGenericMethod(type);
+                        _regisMethodInfo[args.Length - 1].MakeGenericMethod(type);
             }
             Debug.Assert(genericMethodInfo != null);
             genericMethodInfo.Invoke(classInstance, args.Length != 0 ? args : null);
