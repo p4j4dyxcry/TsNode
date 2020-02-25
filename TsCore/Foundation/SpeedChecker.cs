@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace TsGui.Develop
+namespace TsGui.Foundation
 {
     public class SpeedChecker : IDisposable
     {

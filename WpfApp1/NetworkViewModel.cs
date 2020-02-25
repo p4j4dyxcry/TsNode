@@ -5,10 +5,10 @@ using System.Linq;
 using System.Windows.Input;
 using Livet;
 using Reactive.Bindings;
+using TsGui.Foundation.Property;
 using TsGui.Operation;
 using TsNode.Controls;
 using TsNode.Interface;
-using TsProperty;
 
 namespace WpfApp1
 {

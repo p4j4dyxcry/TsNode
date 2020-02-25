@@ -9,7 +9,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/TsControls;component/Styles/DarkStyle.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/TsNode;component/Template.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/TsProperty;component/Template.xaml" />
+                <ResourceDictionary Source="Template.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

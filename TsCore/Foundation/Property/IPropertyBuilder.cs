@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using TsGui.Operation;
 
-namespace TsProperty
+namespace TsGui.Foundation.Property
 {
     public interface IPropertyBuilder
     {

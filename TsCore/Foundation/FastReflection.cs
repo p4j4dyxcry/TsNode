@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace TsGui
+namespace TsGui.Foundation
 {
     public static class FastReflection
     {        

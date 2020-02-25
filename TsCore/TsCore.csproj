@@ -48,6 +48,12 @@
     <Compile Include="Foundation\EnumerableExtensions.cs" />
     <Compile Include="Foundation\Logger.cs" />
     <Compile Include="Foundation\ExpressionPropertyAccessorCache.cs" />
+    <Compile Include="Foundation\Property\BindableProperty.cs" />
+    <Compile Include="Foundation\Property\IProperty.cs" />
+    <Compile Include="Foundation\Property\IPropertyBuilder.cs" />
+    <Compile Include="Foundation\Property\Notification.cs" />
+    <Compile Include="Foundation\Property\PropertyBuilder.cs" />
+    <Compile Include="Foundation\Property\TypeAbstractionConverter.cs" />
     <Compile Include="Mvvm\Bindable.cs" />
     <Compile Include="Mvvm\DelegateCommand.cs" />
     <Compile Include="Mvvm\PropertyObserver.cs" />
@@ -79,6 +85,5 @@
     <Compile Include="Operation\ThrottleMergeJudge.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

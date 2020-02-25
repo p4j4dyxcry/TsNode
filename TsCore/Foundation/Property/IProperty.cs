@@ -1,4 +1,4 @@
-﻿namespace TsProperty
+﻿namespace TsGui.Foundation.Property
 {
     public interface IProperty
     {

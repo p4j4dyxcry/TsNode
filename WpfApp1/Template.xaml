@@ -1,45 +1,45 @@
 ﻿<ResourceDictionary
-    x:Class="TsProperty.Template"
+    x:Class="WpfApp1.Template"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:TsProperty"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="clr-namespace:TsControls.Controls;assembly=TsControls"
+    xmlns:tsProperty="clr-namespace:TsGui.Foundation.Property;assembly=TsGui"
     mc:Ignorable="d">
 
-    <DataTemplate DataType="{x:Type local:BindablePropertyBase}">
+    <DataTemplate DataType="{x:Type tsProperty:BindablePropertyBase}">
         <controls:LabeledControl Label="{Binding Name}" Margin="16,0,1,0">
             <TextBlock Text="{Binding Data}" />
         </controls:LabeledControl>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type local:ReadOnlyProperty}" >
+    <DataTemplate DataType="{x:Type tsProperty:ReadOnlyProperty}" >
         <controls:LabeledControl Label="{Binding Name}" Margin="16,0,1,0">
             <TextBlock Text="{Binding Data}" />
         </controls:LabeledControl>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type local:BindableDoubleProperty}">
+    <DataTemplate DataType="{x:Type tsProperty:BindableDoubleProperty}">
         <controls:LabeledControl Label="{Binding Name}" Margin="16,0,1,0">
             <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </controls:LabeledControl>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type local:BindableIntProperty}">
+    <DataTemplate DataType="{x:Type tsProperty:BindableIntProperty}">
         <controls:LabeledControl Label="{Binding Name}" Margin="16,0,1,0">
             <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </controls:LabeledControl>
 
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type local:BindableStringProperty}">
+    <DataTemplate DataType="{x:Type tsProperty:BindableStringProperty}">
         <controls:LabeledControl Label="{Binding Name}" Margin="16,0,1,0">
             <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </controls:LabeledControl>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type local:BindableBoolProperty}">
+    <DataTemplate DataType="{x:Type tsProperty:BindableBoolProperty}">
         <controls:LabeledControl Label="{Binding Name}" Margin="16,0,1,0">
             <CheckBox
                 VerticalAlignment="Center"
@@ -48,7 +48,7 @@
         </controls:LabeledControl>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type local:GroupProperty}">
+    <DataTemplate DataType="{x:Type tsProperty:GroupProperty}">
         <Expander Header="{Binding Name}">
             <ItemsControl Margin="16,0,0,0" ItemsSource="{Binding Properties}" />
         </Expander>

@@ -69,6 +69,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Template.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindowVm.cs" />
@@ -112,10 +116,6 @@
     <ProjectReference Include="..\TsNode\TsNode.csproj">
       <Project>{7120b89a-f7f8-4a34-a048-e57b028f0d2a}</Project>
       <Name>TsNode</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TsProperty\TsProperty.csproj">
-      <Project>{187f9734-9651-4cf6-af96-5f4ccbb4688a}</Project>
-      <Name>TsProperty</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
