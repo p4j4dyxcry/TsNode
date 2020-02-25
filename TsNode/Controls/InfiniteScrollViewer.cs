@@ -182,7 +182,7 @@ namespace TsNode.Controls
             _xSlider.Value = -TranslateMatrix.X;
 
             _ySlider.Minimum = Math.Min(top , -TranslateMatrix.Y);
-            _ySlider.Maximum = Math.Max(bottom  - ActualWidth, -TranslateMatrix.Y );
+            _ySlider.Maximum = Math.Max(bottom  - ActualHeight , -TranslateMatrix.Y);
             _ySlider.ViewportSize = ActualHeight;
             _ySlider.Value = -TranslateMatrix.Y;
 
@@ -194,7 +194,7 @@ namespace TsNode.Controls
 
         private void UpdateSliderVisible(ScrollBar slider)
         {
-            if (slider.Maximum - _xSlider.Minimum <= 0)
+            if (slider.Maximum - slider.Minimum <= 0)
                 slider.Visibility = Visibility.Hidden;
             else
                 slider.Visibility = Visibility.Visible;

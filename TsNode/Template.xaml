@@ -73,7 +73,7 @@
                 <ControlTemplate TargetType="controls1:NetworkView">
                     <controls1:InfiniteScrollViewer 
                         ViewRect="{Binding ItemsRect , RelativeSource={RelativeSource AncestorType=controls1:NetworkView}}"
-                        ViewRectOffset="128">
+                        ViewRectOffset="32">
                         <Canvas x:Name="PART_Canvas">
                             <Canvas x:Name="PART_ItemsHost">
                                 <controls1:GridRenderer
