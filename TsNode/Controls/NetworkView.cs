@@ -249,6 +249,9 @@ namespace TsNode.Controls
             timer.Tick += (s, e) =>
             {
                 var nodes = this._nodeItemsControl.GetNodes();
+
+                if (nodes.Length == 0)
+                    return;
                 
                 var newRect = new Rect()
                 {
