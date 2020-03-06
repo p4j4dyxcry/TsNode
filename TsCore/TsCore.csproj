@@ -55,8 +55,10 @@
     <Compile Include="Foundation\Property\PropertyBuilder.cs" />
     <Compile Include="Foundation\Property\TypeAbstractionConverter.cs" />
     <Compile Include="Foundation\Reactive\DelayObserver.cs" />
+    <Compile Include="Foundation\Reactive\DoObserver.cs" />
     <Compile Include="Foundation\Reactive\Extensions.cs" />
     <Compile Include="Foundation\Reactive\ObserverProduct.cs" />
+    <Compile Include="Foundation\Reactive\OfTypeObserver.cs" />
     <Compile Include="Foundation\Reactive\SelectObserver.cs" />
     <Compile Include="Foundation\Reactive\StartWithObserver.cs" />
     <Compile Include="Foundation\Reactive\ThrottleObserver.cs" />
