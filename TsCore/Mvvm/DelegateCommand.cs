@@ -7,10 +7,10 @@ namespace TsGui.Mvvm
     public class DelegateCommand<T> : ICommand
     {
         private readonly Action<T> _execute;
-        private readonly Func<bool> _canExecute;
+        private readonly Func<T,bool> _canExecute;
         private readonly SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
 
-        public DelegateCommand(Action<T> execute, Func<bool> canExecute = null)
+        public DelegateCommand(Action<T> execute, Func<T,bool> canExecute = null)
         {
             _execute = execute;
             _canExecute = canExecute;
@@ -35,7 +35,7 @@ namespace TsGui.Mvvm
 
         protected virtual bool OnCanExecute(object parameter)
         {
-            return _canExecute?.Invoke() is true;
+            return _canExecute?.Invoke((T)parameter) is true;
         }
 
         protected virtual void OnExecute(object parameter)
@@ -59,7 +59,7 @@ namespace TsGui.Mvvm
 
     public class DelegateCommand : DelegateCommand<object>
     {
-        public DelegateCommand(Action<object> execute, Func<bool> canExecute = null) : base(execute, canExecute)
+        public DelegateCommand(Action execute, Func<bool> canExecute = null) : base( _ => execute.Invoke() , _ => canExecute() )
         {
         }
     }
