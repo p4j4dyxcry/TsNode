@@ -4,7 +4,7 @@ namespace TsGui.Foundation.Reactive
 {
     public static class ReactiveExtensions
     {
-        public static IObservable<T> Where<T>(this IObservable<T> sender, Action<T> action)
+        public static IObservable<T> Do<T>(this IObservable<T> sender, Action<T> action)
         {
             return new DoObserver<T>(sender,action);
         }
@@ -12,6 +12,23 @@ namespace TsGui.Foundation.Reactive
         public static IObservable<T> Where<T>(this IObservable<T> sender, Func<T, bool> predicate)
         {
             return new WhereObserver<T>(sender,predicate);
+        }
+        
+        public static IObservable<T> Skip<T>(this IObservable<T> sender, int count)
+        {
+            int i = 0;
+            return new WhereObserver<T>(sender, x => i++ > count);
+        }
+        
+        public static IObservable<T> Take<T>(this IObservable<T> sender, int count)
+        {
+            int i = 0;
+            return new WhereObserver<T>(sender, x => i++ < count);
+        }
+        
+        public static IObservable<T> NotNull<T>(this IObservable<T> sender)
+        {
+            return new WhereObserver<T>(sender,x=> x != null);
         }
         
         public static IObservable<TResult> Select<TSource,TResult>(this IObservable<TSource> sender, Func<TSource,TResult> converter)
