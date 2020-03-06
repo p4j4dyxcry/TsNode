@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using TsGui.Foundation;
+using TsGui.Foundation.Reactive;
 
 namespace TsGui.Mvvm
 {
@@ -12,63 +10,28 @@ namespace TsGui.Mvvm
     /// Observable.FromEventを利用すると暗黙的にスケジューラ上で動作させることになりパフォーマンスが悪いので
     /// 代わりにこのクラスを使うことでRx内部で保持されているスケジューラから再スケジュールされないようになり高速に動作します
     /// </summary>
-    public class PropertyObserver<T> : IObservable<PropertyChangedEventArgs>,
-        IObserver<PropertyChangedEventArgs>, IDisposable where T : INotifyPropertyChanged
+    public class PropertyObserver<T> : ObserverProduct<PropertyChangedEventArgs,PropertyChangedEventArgs>
+        where T : INotifyPropertyChanged
     {
-        private readonly IList<IObserver<PropertyChangedEventArgs>> _observers =
-            new List<IObserver<PropertyChangedEventArgs>>();
+        private readonly T _propertyOwner;
 
-        private readonly T _property;
-
-        public IDisposable Subscribe(IObserver<PropertyChangedEventArgs> observer)
+        public PropertyObserver(T propertyOwner) : base(x=>x)
         {
-            _observers.Add(observer);
-            return Disposable.Create(() => { _observers.Remove(observer); });
+            _propertyOwner = propertyOwner;
+            _propertyOwner.PropertyChanged += OnPropertyChanged;
         }
-
-        public void Dispose()
-        {
-            _property.PropertyChanged -= OnPropertyChanged;
-        }
-
+        
         private void OnPropertyChanged(object s, PropertyChangedEventArgs e)
         {
-            //! OnNextでProperyChangedObserverがSubscribeされるとInvalidOperationExceptionが発生するのでArray化して置く
-            var observersArray = _observers.ToArray();
-            foreach (var o in observersArray)
-                o.OnNext(e);
+            OnNext(e);
         }
-
-        public PropertyObserver(T property)
+        
+        protected override void Dispose(bool disposed)
         {
-            _property = property;
-            _property.PropertyChanged += OnPropertyChanged;
-        }
-
-        public void OnNext(PropertyChangedEventArgs value)
-        {
-            // このタイミングで後続に値を流す必要は無いので空実装です
-            // 実際に値が発行されるのはPropertyChangedが呼ばれたときになるので
-            // そのタイミングで後続に値を流します( observerのOnNextを呼び出す)
-        }
-
-        public void OnError(Exception error)
-        {
-            foreach (var o in _observers)
-                o.OnError(error);
-        }
-
-        public void OnCompleted()
-        {
-            foreach (var o in _observers)
-                o.OnCompleted();
-        }
-    }
-
-    public sealed class PropertyObserver : PropertyObserver<INotifyPropertyChanged>
-    {
-        public PropertyObserver(INotifyPropertyChanged property) : base(property)
-        {
+            if (disposed is false)
+            {
+                _propertyOwner.PropertyChanged -= OnPropertyChanged;
+            }
         }
     }
 
@@ -77,54 +40,44 @@ namespace TsGui.Mvvm
     /// Observable.FromEventを利用すると暗黙的にスケジューラ上で動作させることになりパフォーマンスが悪いので
     /// 代わりにこのクラスを使うことでRx内部で保持されているスケジューラから再スケジュールされないようになり高速に動作します
     /// </summary>
-    public class CollectionObserver : IObservable<NotifyCollectionChangedEventArgs>,
-        IObserver<NotifyCollectionChangedEventArgs>, IDisposable
+    public class CollectionObserver : ObserverProduct<NotifyCollectionChangedEventArgs,NotifyCollectionChangedEventArgs>, IDisposable
     {
-        private readonly IList<IObserver<NotifyCollectionChangedEventArgs>> _observers =
-            new List<IObserver<NotifyCollectionChangedEventArgs>>();
-
-        private readonly INotifyCollectionChanged _property;
-
-        private void OnCollectionChanged(object s, NotifyCollectionChangedEventArgs e)
-        {
-            foreach (var o in _observers)
-                o.OnNext(e);
-        }
+        private readonly INotifyCollectionChanged _collectionOwner;
 
         public CollectionObserver(INotifyCollectionChanged property)
         {
-            _property = property;
-            _property.CollectionChanged += OnCollectionChanged;
+            _collectionOwner = property;
+            _collectionOwner.CollectionChanged += OnCollectionChanged;
+        }
+        
+        private void OnCollectionChanged(object s, NotifyCollectionChangedEventArgs e)
+        {
+            OnNext(e);
         }
 
-        public IDisposable Subscribe(IObserver<NotifyCollectionChangedEventArgs> observer)
+        protected override void Dispose(bool disposed)
         {
-            _observers.Add(observer);
-            return Disposable.Create(() => { _observers.Remove(observer); });
+            if (disposed is false)
+            {
+                _collectionOwner.CollectionChanged -= OnCollectionChanged;                
+            }
         }
+    }
 
-        public void OnNext(NotifyCollectionChangedEventArgs value)
+    public static class PropertyObserverExtensions
+    {
+        public static IObservable<PropertyChangedEventArgs> AsObservable(this INotifyPropertyChanged sender)
         {
-            // このタイミングで後続に値を流す必要は無いので空実装です
-            // 実際に値が発行されるのはCollectionChangedが呼ばれたときになるので
-            // そのタイミングで後続に値を流します( observerのOnNextを呼び出す)
+            return new PropertyObserver<INotifyPropertyChanged>(sender);
         }
-
-        public void OnError(Exception error)
+        public static IObservable<NotifyCollectionChangedEventArgs> AsObservable(this INotifyCollectionChanged sender)
         {
-            foreach (var o in _observers)
-                o.OnError(error);
+            return new CollectionObserver(sender);
         }
-
-        public void OnCompleted()
+        public static IObservable<PropertyChangedEventArgs> ObserveProperty(this INotifyPropertyChanged sender, string propertyName)
         {
-            foreach (var o in _observers)
-                o.OnCompleted();
-        }
-
-        public void Dispose()
-        {
-            _property.CollectionChanged -= OnCollectionChanged;
+            return sender.AsObservable()
+                .Where(x => x.PropertyName == propertyName);
         }
     }
 }

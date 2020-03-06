@@ -54,6 +54,13 @@
     <Compile Include="Foundation\Property\Notification.cs" />
     <Compile Include="Foundation\Property\PropertyBuilder.cs" />
     <Compile Include="Foundation\Property\TypeAbstractionConverter.cs" />
+    <Compile Include="Foundation\Reactive\DelayObserver.cs" />
+    <Compile Include="Foundation\Reactive\Extensions.cs" />
+    <Compile Include="Foundation\Reactive\ObserverProduct.cs" />
+    <Compile Include="Foundation\Reactive\SelectObserver.cs" />
+    <Compile Include="Foundation\Reactive\StartWithObserver.cs" />
+    <Compile Include="Foundation\Reactive\ThrottleObserver.cs" />
+    <Compile Include="Foundation\Reactive\WhereObserver.cs" />
     <Compile Include="Mvvm\Bindable.cs" />
     <Compile Include="Mvvm\DelegateCommand.cs" />
     <Compile Include="Mvvm\PropertyObserver.cs" />
