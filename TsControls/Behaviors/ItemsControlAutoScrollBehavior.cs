@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Windows.Controls;
-using System.Windows.Interactivity;
+using Microsoft.Xaml.Behaviors;
 using TsControls.EventListeners;
 
 namespace TsControls.Behaviors

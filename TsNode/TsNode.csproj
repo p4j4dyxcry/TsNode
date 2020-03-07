@@ -1,94 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7120B89A-F7F8-4A34-A048-E57B028F0D2A}</ProjectGuid>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TsNode</RootNamespace>
-    <AssemblyName>TsNode</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Controls\Drag\ConnectionDragBuild.cs" />
-    <Compile Include="Controls\Connection\ConnectionShape.cs" />
-    <Compile Include="Controls\Drag\ConnectionCreateController.cs" />
-    <Compile Include="Controls\Connection\ConnectionItemsControl.cs" />
-    <Compile Include="Controls\Connection\ConnectionHelper.cs" />
-    <Compile Include="Controls\ControlSelector.cs" />
-    <Compile Include="Controls\Drag\DragControllerBuilder.cs" />
-    <Compile Include="Controls\Drag\NodeDragBuild.cs" />
-    <Compile Include="Controls\Drag\RectSelectionDragBuild.cs" />
-    <Compile Include="Controls\Drag\ViewportDrag.cs" />
-    <Compile Include="Controls\EventArgs.cs" />
-    <Compile Include="Controls\GridRenderer.cs" />
-    <Compile Include="Controls\Drag\SelectionRectDragController.cs" />
-    <Compile Include="Controls\InfiniteScrollViewer.cs" />
-    <Compile Include="Interface\IConnectTarget.cs" />
-    <Compile Include="Interface\IConnectionDataContext.cs" />
-    <Compile Include="Interface\IControlSelector.cs" />
-    <Compile Include="Interface\IDragController.cs" />
-    <Compile Include="Interface\INodeDataContext.cs" />
-    <Compile Include="Interface\IPlugDataContext.cs" />
-    <Compile Include="Interface\ISelectable.cs" />
-    <Compile Include="Controls\Drag\NodeDragController.cs" />
-    <Compile Include="Controls\Node\NodeItemsControl.cs" />
-    <Compile Include="Interface\ITransformHolder.cs" />
-    <Compile Include="Preset\NodeViewModel.cs" />
-    <Compile Include="Controls\Plug\PlugControl.cs" />
-    <Compile Include="Controls\NetworkView.cs" />
-    <Compile Include="Controls\Node\NodeControl.cs" />
-    <Compile Include="Controls\Plug\PlugItemsControl.cs" />
-    <Compile Include="Preset\PresentPlugViewModel.cs" />
-    <Compile Include="Preset\PresetConnectionViewModel.cs" />
-    <Compile Include="Preset\PresetNotification.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Preset\PresetTemplate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Template.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
