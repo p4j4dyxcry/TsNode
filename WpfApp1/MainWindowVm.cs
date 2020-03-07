@@ -9,7 +9,7 @@ using Livet;
 using Livet.Commands;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
-using TsGui.Operation;
+using TsCore.Operation;
 
 namespace WpfApp1
 {

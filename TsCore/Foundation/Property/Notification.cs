@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace TsGui.Foundation.Property
+namespace TsCore.Foundation.Property
 {
     public class Notification : INotifyPropertyChanged
     {

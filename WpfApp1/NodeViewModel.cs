@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using TsGui.Operation;
+using TsCore.Operation;
 using TsNode.Preset;
 
 namespace WpfApp1

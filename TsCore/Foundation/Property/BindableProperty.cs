@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace TsGui.Foundation.Property
+namespace TsCore.Foundation.Property
 {
     public abstract class BindablePropertyBase : Notification, IProperty
     {

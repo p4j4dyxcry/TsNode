@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using TsGui.Foundation.Reactive;
+using TsCore.Foundation.Reactive;
 
-namespace TsGui.Mvvm
+namespace TsCore.Mvvm
 {
     /// <summary>
     /// INotifyPropertyChangedのPropertyChangedでOnNextを実行するObserver

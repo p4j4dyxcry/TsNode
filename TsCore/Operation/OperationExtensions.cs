@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using TsGui.Foundation;
+using TsCore.Foundation;
 
-namespace TsGui.Operation
+namespace TsCore.Operation
 {
     public static class Operation
     {

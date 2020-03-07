@@ -1,4 +1,4 @@
-﻿using TsGui.Operation;
+﻿using TsCore.Operation;
 using TsNode.Preset;
 
 namespace WpfApp1

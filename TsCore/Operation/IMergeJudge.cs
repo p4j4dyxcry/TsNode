@@ -1,4 +1,4 @@
-﻿namespace TsGui.Operation
+﻿namespace TsCore.Operation
 {
     public interface IMergeJudge
 

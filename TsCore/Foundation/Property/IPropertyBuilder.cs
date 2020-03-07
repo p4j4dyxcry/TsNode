@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using TsGui.Operation;
+using TsCore.Operation;
 
-namespace TsGui.Foundation.Property
+namespace TsCore.Foundation.Property
 {
     public interface IPropertyBuilder
     {

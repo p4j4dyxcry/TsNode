@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="clr-namespace:TsControls.Controls;assembly=TsControls"
-    xmlns:tsProperty="clr-namespace:TsGui.Foundation.Property;assembly=TsGui"
+    xmlns:tsProperty="clr-namespace:TsCore.Foundation.Property;assembly=TsCore"
     mc:Ignorable="d">
 
     <DataTemplate DataType="{x:Type tsProperty:BindablePropertyBase}">

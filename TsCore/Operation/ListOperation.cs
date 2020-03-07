@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace TsGui.Operation
+namespace TsCore.Operation
 {
     /// <summary>
     /// 追加オペレーション

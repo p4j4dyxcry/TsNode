@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Windows.Input;
 
-namespace TsGui.Mvvm
+namespace TsCore.Mvvm
 {
     public class DelegateCommand<T> : ICommand
     {

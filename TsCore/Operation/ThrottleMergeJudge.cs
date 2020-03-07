@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TsGui.Operation
+namespace TsCore.Operation
 {
     /// <summary>
     /// 識別子とタイムスタンプからマージ可能か判断する

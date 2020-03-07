@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace TsGui.Foundation
+namespace TsCore.Foundation
 {
     public static class EnumerableExtensions
     {

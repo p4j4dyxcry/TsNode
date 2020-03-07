@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TsGui.Operation
+namespace TsCore.Operation
 {
     /// <summary>
     /// オペレーションを実行するコントローラ

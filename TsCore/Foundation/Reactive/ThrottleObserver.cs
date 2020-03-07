@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace TsGui.Foundation.Reactive
+namespace TsCore.Foundation.Reactive
 {
     public class ThrottleObserver<T> : ObserverBase<T>
     {

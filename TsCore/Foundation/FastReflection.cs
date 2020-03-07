@@ -5,9 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using TsGui.Collections;
 
-namespace TsGui.Foundation
+namespace TsCore.Foundation
 {
     public static class FastReflection
     {        

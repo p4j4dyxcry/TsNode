@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace TsGui.Operation
+namespace TsCore.Operation
 {
     public interface ICompositeOperation : IOperation
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TsGui.Foundation.Reactive
+namespace TsCore.Foundation.Reactive
 {
     public class ObserverProduct<T,T2>  : IObserver<T>,IObservable<T2>, IDisposable
     {

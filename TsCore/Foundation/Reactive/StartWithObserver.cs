@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TsGui.Foundation.Reactive
+namespace TsCore.Foundation.Reactive
 {
     public class StartWithObserver<T> : ObserverBase<T>
     {

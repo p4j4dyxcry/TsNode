@@ -1,4 +1,4 @@
-﻿namespace TsGui.Operation.Internal
+﻿namespace TsCore.Operation.Internal
 {
     internal static class ErrorMessages
     {

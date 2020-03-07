@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace TsGui.Operation
+namespace TsCore.Operation
 {
     public interface IMergeableOperation : IOperation
     {

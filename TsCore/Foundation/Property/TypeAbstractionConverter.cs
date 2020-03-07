@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace TsGui.Foundation.Property
+namespace TsCore.Foundation.Property
 {
     /// <summary>
     /// TSource から TDest にコンバートを行うクラス

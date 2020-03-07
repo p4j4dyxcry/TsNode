@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace TsGui.Foundation
+namespace TsCore.Foundation
 {
     public static class ExpressionPropertyAccessorCache<TType>
     {

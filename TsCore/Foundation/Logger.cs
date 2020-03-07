@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TsGui.Foundation
+namespace TsCore.Foundation
 {
     public interface ILogger
     {

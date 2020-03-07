@@ -1,5 +1,5 @@
 ﻿
-namespace TsGui.Operation
+namespace TsCore.Operation
 {
     /// <summary>
     /// ロールバック可能な操作のインタフェース

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace TsGui.Foundation
+namespace TsCore.Foundation
 {
     internal interface IAccessor
     {

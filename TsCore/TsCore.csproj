@@ -7,8 +7,8 @@
     <ProjectGuid>{063ACA49-2EDC-4FF3-9D4B-6CE9ED74CE37}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TsGui</RootNamespace>
-    <AssemblyName>TsGui</AssemblyName>
+    <RootNamespace>TsCore</RootNamespace>
+    <AssemblyName>TsCore</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

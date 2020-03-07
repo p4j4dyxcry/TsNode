@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TsGui.Operation.Internal
+namespace TsCore.Operation.Internal
 {
     internal class UndoStack<T> : IStack<T>
     {

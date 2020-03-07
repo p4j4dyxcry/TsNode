@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace TsGui.Operation
+namespace TsCore.Operation
 {
     public static class OperationControllerExtensions
     {

@@ -5,10 +5,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using TsGui.Collections;
-using TsGui.Operation;
+using TsCore.Collections;
+using TsCore.Operation;
 
-namespace TsGui.Foundation.Property
+namespace TsCore.Foundation.Property
 {
     public class PropertyBuilder : IPropertyBuilder
     {

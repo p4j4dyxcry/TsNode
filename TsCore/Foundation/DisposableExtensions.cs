@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace TsGui.Foundation
+namespace TsCore.Foundation
 {
     public class Disposable
     {

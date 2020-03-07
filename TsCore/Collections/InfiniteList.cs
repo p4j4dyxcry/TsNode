@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TsGui.Collections
+namespace TsCore.Collections
 {
     public class InfiniteList<T> :  IList<T>
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace TsGui.Mvvm
+namespace TsCore.Mvvm
 {
     public class Bindable : INotifyPropertyChanged
     {

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using TsGui.Operation.Internal;
+using TsCore.Operation.Internal;
 
-namespace TsGui.Operation
+namespace TsCore.Operation
 {
     public partial class OperationBuilder
     {
