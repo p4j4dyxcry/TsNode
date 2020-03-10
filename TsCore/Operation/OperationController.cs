@@ -81,7 +81,7 @@ namespace TsCore.Operation
         private int _preStackChangedCall;
 
         public IEnumerable<IOperation> RollForwardTargets => _undoStack.RedoStack.Reverse();
-        public event Action<object, OperationStackChangedEventArgs> StackChanged;
+        public event EventHandler<OperationStackChangedEventArgs> StackChanged;
 
         private void PreStackChanged()
         {

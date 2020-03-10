@@ -5,6 +5,7 @@ namespace TsCore.Foundation
 {
     public class CompositeDisposable : List<IDisposable> , IDisposable
     {
+        public CompositeDisposable() {}
         public CompositeDisposable(IEnumerable<IDisposable> source)
             : base(source) { }
 

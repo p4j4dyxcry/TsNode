@@ -10,6 +10,7 @@ namespace TsCore.Foundation.Reactive
         public DelayObserver(IObservable<T> observable , TimeSpan timeSpan) : base(observable)
         {
             _timeSpan = timeSpan;
+            InitializeSubscribe();
         }
         
         public override async void OnNext(T value)

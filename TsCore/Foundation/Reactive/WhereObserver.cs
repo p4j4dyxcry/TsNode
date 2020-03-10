@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace TsCore.Foundation.Reactive
 {
@@ -8,6 +9,7 @@ namespace TsCore.Foundation.Reactive
 
         public WhereObserver(IObservable<T> observable , Func<T,bool> predicate) : base(observable)
         {
+            Debug.Assert(_predicate != null);
             _predicate = predicate;
         }
 

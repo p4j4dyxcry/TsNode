@@ -9,6 +9,7 @@ namespace TsCore.Foundation.Reactive
         public DoObserver(IObservable<T> observable , Action<T> action) : base(observable)
         {
             _action = action;
+            InitializeSubscribe();
         }
 
         public override void OnNext(T value)

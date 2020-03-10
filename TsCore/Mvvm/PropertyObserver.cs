@@ -40,7 +40,7 @@ namespace TsCore.Mvvm
     /// Observable.FromEventを利用すると暗黙的にスケジューラ上で動作させることになりパフォーマンスが悪いので
     /// 代わりにこのクラスを使うことでRx内部で保持されているスケジューラから再スケジュールされないようになり高速に動作します
     /// </summary>
-    public class CollectionObserver : ObserverProduct<NotifyCollectionChangedEventArgs,NotifyCollectionChangedEventArgs>, IDisposable
+    public class CollectionObserver : ObserverProduct<NotifyCollectionChangedEventArgs,NotifyCollectionChangedEventArgs>
     {
         private readonly INotifyCollectionChanged _collectionOwner;
 

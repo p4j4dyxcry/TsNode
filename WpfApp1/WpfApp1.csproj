@@ -33,4 +33,7 @@
     <Page Remove="WpfApp1\App.xaml" />
     <Page Remove="WpfApp1\MainWindow.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="WpfApp1\obj" />
+  </ItemGroup>
 </Project>

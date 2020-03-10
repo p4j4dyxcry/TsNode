@@ -66,7 +66,7 @@ namespace TsCore.Operation
         /// <summary>
         /// スタックが更新されたときにイベントが発生する
         /// </summary>
-        event Action<object, OperationStackChangedEventArgs> StackChanged;
+        event EventHandler<OperationStackChangedEventArgs> StackChanged;
 
         /// <summary>
         /// オペレーション中かどうか

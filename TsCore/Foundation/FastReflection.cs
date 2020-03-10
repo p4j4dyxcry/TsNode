@@ -87,6 +87,11 @@ namespace TsCore.Foundation
 
         private static MethodInfo[] _regisMethodInfo = null;
         private static readonly Dictionary<int, MethodInfo> _methodCache = new Dictionary<int, MethodInfo>();
+        
+        public static TDelegate CreateDelegate<TDelegate>(object o, MethodInfo method)
+        {
+            return (TDelegate)(object)Delegate.CreateDelegate(typeof(TDelegate), o, method);
+        }
 
         public static void InvokeGenericMethod(object classInstance , Type type, string methodName,params object[] args)
         {

@@ -14,7 +14,7 @@ namespace TsCore.Foundation.Reactive
         
         public OfTypeObserver(IObservable<T> observable) : base(observable,Convert)
         {
-            
+            InitializeSubscribe();
         }
 
         public override void OnNext(T value)

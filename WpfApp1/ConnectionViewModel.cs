@@ -1,4 +1,6 @@
-﻿using TsCore.Operation;
+﻿using System.Reactive.Linq;
+using Reactive.Bindings;
+using TsCore.Operation;
 using TsNode.Preset;
 
 namespace WpfApp1

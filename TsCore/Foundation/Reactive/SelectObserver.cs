@@ -6,7 +6,7 @@ namespace TsCore.Foundation.Reactive
     {
         public SelectObserver(IObservable<T> observable, Func<T, TU> converter) : base(observable,converter)
         {
-            
+            InitializeSubscribe();
         }
     }
 }

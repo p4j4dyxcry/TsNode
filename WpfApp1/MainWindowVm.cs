@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Linq;
+using TsCore.Foundation.Reactive;
 using System.Windows.Input;
 using Livet;
 using Livet.Commands;
@@ -106,8 +106,9 @@ namespace WpfApp1
         public static IObservable<Unit> StackChangedAsObservable(this IOperationController self)
         {
             return Observable
-                .FromEventPattern<Action<object, OperationStackChangedEventArgs>, OperationStackChangedEventArgs>(
-                    h => self.StackChanged += h, h => self.StackChanged -= h)
+                .FromEventPattern<OperationStackChangedEventArgs>(
+                    h => self.StackChanged += h, 
+                    h => self.StackChanged -= h)
                 .ToUnit()
                 .StartWithDefault();
         }

@@ -8,6 +8,7 @@ namespace TsCore.Foundation.Reactive
         public StartWithObserver(IObservable<T> observable , Func<T> defaultValue) : base(observable)
         {
             _defaultValue = defaultValue;
+            InitializeSubscribe();
         }
 
         protected override IDisposable SubscribeRaw(IDisposable disposable)
