@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -107,6 +106,7 @@ namespace TsNode.Controls
         {
             base.OnApplyTemplate();
             SetupWheel();
+            SetupSizeChange();
         }
 
         // マウスホイール関係のイベントバインド
@@ -156,6 +156,11 @@ namespace TsNode.Controls
                 this.Scale(Scale, mouse.X, mouse.Y);
                 UpdateScrollBar();
             };
+        }
+
+        private void SetupSizeChange()
+        {
+            this.SizeChanged += (s,e)=> UpdateScrollBar();
         }
         
         private bool _isUpdateFromThisControl = false;
@@ -229,9 +234,7 @@ namespace TsNode.Controls
                         this.SetTranslateY(-_ySlider.Value);
                 };
             }
-
             return true;
         }
-        
     }
 }
