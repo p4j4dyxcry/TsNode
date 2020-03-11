@@ -32,14 +32,15 @@ namespace WpfApp1
                 {
                     if(UndoCommand?.CanExecute(null) is true)
                         UndoCommand?.Execute(null);
+                    e.Handled = true;
                 }
 
                 else if (e.Key == Key.Y && (Keyboard.Modifiers & ModifierKeys.Control) != 0)
                 {
                     if (RedoCommand?.CanExecute(null) is true)
                         RedoCommand?.Execute(null);
+                    e.Handled = true;
                 }
-
             };
         }
     }
