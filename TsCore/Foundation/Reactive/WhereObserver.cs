@@ -9,7 +9,7 @@ namespace TsCore.Foundation.Reactive
 
         public WhereObserver(IObservable<T> observable , Func<T,bool> predicate) : base(observable)
         {
-            Debug.Assert(_predicate != null);
+            Debug.Assert(predicate != null);
             _predicate = predicate;
         }
 
