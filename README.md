@@ -3,6 +3,9 @@
 
 ![ts-node-anime](https://user-images.githubusercontent.com/11988607/56496933-6e9e0580-6536-11e9-8a80-967e5dcdc8a6.gif)
 
+# nuget
+https://www.nuget.org/packages/TsNode/
+
 # 組み込みサンプルアプリケーション
 TsNodeを使った実装サンプルです。
 ## WpfApp1 
