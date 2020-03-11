@@ -10,7 +10,7 @@ https://www.nuget.org/packages/TsNode/
 
 # 組み込みサンプルアプリケーション
 TsNodeを使った実装サンプルです。
-## WpfApp1 
+## [WPFApp1](https://github.com/p4j4dyxcry/TsNode/tree/master/WpfApp1) 
 大き目のサンプルアプリケーションです。
 Undo/Redoの実装やプロパティツリー等一般的なアプリケーションの実装を兼ね備えています。
 
@@ -27,8 +27,7 @@ ReactiveProperty
 
 ※TsNodeのみ利用する場合はオープンソースライブラリへの依存はありません。
 
-
-## WpfApp2
+## [WPFApp2](https://github.com/p4j4dyxcry/TsNode/tree/master/WpfApp2) 
 TsNode組み込み用の最低限の実装です。
 オープンソースライブラリ等は利用していません。
 
