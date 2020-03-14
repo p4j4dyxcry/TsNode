@@ -43,10 +43,6 @@
         <Reference Include="System.Xaml">
             <RequiredTargetFramework>4.0</RequiredTargetFramework>
         </Reference>
-        <Reference Include="TsNode, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\packages\TsNode.1.0.1\lib\net471\TsNode.dll</HintPath>
-          <Private>True</Private>
-        </Reference>
         <Reference Include="WindowsBase" />
         <Reference Include="PresentationCore" />
         <Reference Include="PresentationFramework" />
@@ -85,7 +81,9 @@
     </ItemGroup>
     <ItemGroup>
         <None Include="App.config" />
-        <None Include="packages.config" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="TsNode" Version="1.0.2" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

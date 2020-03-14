@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TsNode", "TsNode\TsNode.csproj", "{484ECE51-D320-4DEE-954A-B4F4E6973918}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TsNodeApp", "nuget-SampleProjects\TsNodeApp\TsNodeApp.csproj", "{167F31A3-6C12-4067-AD31-21A3D4B4D734}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TsNodeAppBy.NetFramework", "nuget-SampleProjects\TsNodeAppBy.NetFramework\TsNodeAppBy.NetFramework.csproj", "{6117543F-B3A9-413C-ACB0-0F92D00D40BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandBox", "SandBox\SandBox.csproj", "{01E0530C-FFD5-4A43-8998-20203B84240E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{484ECE51-D320-4DEE-954A-B4F4E6973918}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{484ECE51-D320-4DEE-954A-B4F4E6973918}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{484ECE51-D320-4DEE-954A-B4F4E6973918}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{484ECE51-D320-4DEE-954A-B4F4E6973918}.Release|Any CPU.Build.0 = Release|Any CPU
+		{167F31A3-6C12-4067-AD31-21A3D4B4D734}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{167F31A3-6C12-4067-AD31-21A3D4B4D734}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{167F31A3-6C12-4067-AD31-21A3D4B4D734}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{167F31A3-6C12-4067-AD31-21A3D4B4D734}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6117543F-B3A9-413C-ACB0-0F92D00D40BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6117543F-B3A9-413C-ACB0-0F92D00D40BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6117543F-B3A9-413C-ACB0-0F92D00D40BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6117543F-B3A9-413C-ACB0-0F92D00D40BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01E0530C-FFD5-4A43-8998-20203B84240E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01E0530C-FFD5-4A43-8998-20203B84240E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01E0530C-FFD5-4A43-8998-20203B84240E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01E0530C-FFD5-4A43-8998-20203B84240E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
