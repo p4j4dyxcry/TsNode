@@ -142,27 +142,23 @@ namespace TsNode.Controls
         private void setup_drag_events()
         {
             IDragController currentDragObject = null;            
-            PreviewMouseDown += (s, e) =>
+            MouseDown += (s, e) =>
             {
                 //! コントローラが処理中だった場合はキャンセルする
                 currentDragObject?.Cancel();
                 currentDragObject = null;
-
-                if (_canvas.ContainChildren(e.OriginalSource as FrameworkElement) is false &&
-                    (e.OriginalSource is ScrollViewer) is false)
-                    return;
  
                 //! ドラッグ開始時に適切なドラッグコントローラを作成
                 currentDragObject = MakeDragController(e);
             };
 
-            PreviewMouseMove += (s, e) =>
+            MouseMove += (s, e) =>
             {
                 //! コントローラによるドラッグ処理を実施する
                 currentDragObject?.OnDrag(s,e);
             };
 
-            PreviewMouseUp += (s, e) =>
+            MouseUp += (s, e) =>
             {
                 //! コントローラによるドラッグ処理を完了する
                 currentDragObject?.DragEnd(s, e);
