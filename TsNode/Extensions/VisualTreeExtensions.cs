@@ -5,21 +5,18 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Threading;
-using TsNode.Interface;
 
-namespace TsNode
+namespace TsNode.Extensions
 {
     internal static class VisualTreeExtensions
     {
         public static TParent FindVisualParentWithType<TParent>(this DependencyObject childElement)
             where TParent : class
         {
-            FrameworkElement parentElement = (FrameworkElement)VisualTreeHelper.GetParent(childElement);
+            var parentElement = (FrameworkElement)VisualTreeHelper.GetParent(childElement);
             if (parentElement != null)
             {
-                TParent parent = parentElement as TParent;
-                if (parent != null)
+                if (parentElement is TParent parent)
                 {
                     return parent;
                 }
@@ -161,141 +158,4 @@ namespace TsNode
         }
     }
 
-    internal static class ItemsControlEx
-    {
-        public static IEnumerable<T> GetAsContentControl<T>(this ItemsControl self) where T : FrameworkElement
-        {
-           return Enumerable.Range(0, self.Items.Count)
-                .Select(x => self.Items.GetItemAt(x))
-                .OfType<T>();
-        }
-
-        public static IEnumerable<ListBoxItem> GetListBoxItems(this ListBox self)
-        {
-            return GetAsContentControl<ListBoxItem>(self);
-        }
-
-        public static IEnumerable<object> EnumerateItems(this ItemsControl self)
-        {
-            return Enumerable.Range(0, self.Items.Count)
-                .Select(x => self.Items.GetItemAt(x));
-        }
-    }
-
-    internal static class FreezableEx
-    {
-        public static T DoFreeze<T>(this T _this) where T : Freezable
-        {
-            if (_this.CanFreeze & _this.IsFrozen is false)
-                _this.Freeze();
-            return _this;
-        }
-    }
-
-    internal static class DispathcerObjectEx
-    {
-        public static void BeginInvoke(this DispatcherObject _this, Action action , DispatcherPriority priority = DispatcherPriority.Normal)
-        {
-            _this?.Dispatcher?.BeginInvoke(priority, action);
-        }
-    }
-
-    internal static class MathUtil
-    {
-        public static Point ToPoint(this Vector vector)
-        {
-            return new Point(vector.X,vector.Y);
-        }
-
-        public static Vector ToVector(this Point point)
-        {
-            return new Vector(point.X, point.Y);
-        }
-        public static double Clamp(this double value , double min , double max)
-        {
-            return Math.Max(min, Math.Min(value, max));
-        }
-
-    }
-
-    internal static class SelectUtility
-    {
-        public static ISelectable[] AddSelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
-        {
-            var result = new List<ISelectable>();
-            foreach (var i in targetItems)
-            {
-                if (i.IsSelected is false)
-                    result.Add(i);
-                i.IsSelected = true;
-            }
-            return result.ToArray();
-        }
-
-        public static ISelectable[] ToggleSelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
-        {
-            var itemsArray = targetItems as ISelectable[] ?? targetItems.ToArray();
-            foreach (var i in itemsArray)
-                i.IsSelected = !i.IsSelected;
-            return itemsArray;
-        }
-
-        public static ISelectable[] SingleSelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
-        {
-            var result = new List<ISelectable>();
-
-            var targetItemsArray = targetItems.ToArray();
-
-            if (targetItemsArray.Any(x=>x.IsSelected) is false)
-            {
-                foreach (var i in allItems)
-                {
-                    if (i.IsSelected)
-                        result.Add(i);
-                    i.IsSelected = false;
-                }
-            }
-
-            foreach (var i in targetItemsArray)
-            {
-                if (i.IsSelected is false)
-                    result.Add(i);
-                i.IsSelected = true;
-            }
-            return result.ToArray();
-        }
-
-        public static ISelectable[] OnlySelect(IEnumerable<ISelectable> allItems, IEnumerable<ISelectable> targetItems)
-        {
-            var result = new List<ISelectable>();
-
-            var targetItemsArray = targetItems.ToArray();
-
-            foreach (var i in allItems)
-            {
-                bool flag = i.IsSelected;
-                if (targetItemsArray.Contains(i))
-                    i.IsSelected = true;
-                else
-                    i.IsSelected = false;
-
-                if (flag != i.IsSelected)
-                    result.Add(i);
-            }
-            return result.ToArray();
-        }
-    }
-
-    internal static class SelectableExtensions
-    {
-        public static ISelectable[] ToSelectable<T>(this IEnumerable<T> enumerable)
-        {
-            return enumerable.OfType<ISelectable>().ToArray();
-        }
-
-        public static ISelectable[] ToSelectableDataContext(this IEnumerable<FrameworkElement> enumerable)
-        {
-            return enumerable.Select(x=>x.DataContext).OfType<ISelectable>().ToArray();
-        }
-    }
 }

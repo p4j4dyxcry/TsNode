@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Media;
+using TsNode.Extensions;
 
 namespace TsNode.Controls.Connection
 {

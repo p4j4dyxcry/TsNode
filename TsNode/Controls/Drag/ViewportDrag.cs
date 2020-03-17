@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using TsNode.Extensions;
+using TsNode.Foundations;
 using TsNode.Interface;
 
 namespace TsNode.Controls.Drag

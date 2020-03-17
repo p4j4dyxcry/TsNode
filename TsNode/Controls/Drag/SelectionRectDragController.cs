@@ -8,6 +8,8 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using TsNode.Controls.Connection;
 using TsNode.Controls.Node;
+using TsNode.Extensions;
+using TsNode.Foundations;
 using TsNode.Interface;
 
 namespace TsNode.Controls.Drag
@@ -149,7 +151,7 @@ namespace TsNode.Controls.Drag
 
             if (selectNodes.Any())
             {
-                var changed = SelectUtility.OnlySelect(_nodes.OfType<ISelectable>().Concat(_connections), selectNodes);
+                var changed = SelectHelper.OnlySelect(_nodes.OfType<ISelectable>().Concat(_connections), selectNodes);
                 SelectionChangedCommand?.Execute(new SelectionChangedEventArgs(changed));
                 return;
             }
@@ -157,7 +159,7 @@ namespace TsNode.Controls.Drag
 
             if (selectConnections.Any())
             {
-                var changed = SelectUtility.OnlySelect(_nodes.OfType<ISelectable>().Concat(_connections), selectConnections);
+                var changed = SelectHelper.OnlySelect(_nodes.OfType<ISelectable>().Concat(_connections), selectConnections);
                 SelectionChangedCommand?.Execute(new SelectionChangedEventArgs(changed));
             }
         }

@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using TsNode.Controls.Node;
 using TsNode.Controls.Plug;
+using TsNode.Extensions;
 using TsNode.Interface;
 
 namespace TsNode.Controls.Connection
@@ -89,7 +90,7 @@ namespace TsNode.Controls.Connection
         private PlugControl _destPlugControl;
 
         //! SourcePlugが更新された
-        public static void OnSourcePlugChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnSourcePlugChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is ConnectionShape shape)
             {

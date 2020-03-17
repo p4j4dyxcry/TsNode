@@ -5,6 +5,7 @@ using System.Windows.Input;
 using TsNode.Controls.Connection;
 using TsNode.Controls.Node;
 using TsNode.Controls.Plug;
+using TsNode.Extensions;
 using TsNode.Interface;
 
 namespace TsNode.Controls.Drag

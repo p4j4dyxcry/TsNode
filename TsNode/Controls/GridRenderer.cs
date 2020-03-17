@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using TsNode.Extensions;
 
 namespace TsNode.Controls
 {
@@ -119,8 +120,6 @@ namespace TsNode.Controls
             geometry.Children.Add(new LineGeometry(new Point(0, 0), new Point(8, 0)).DoFreeze());
             geometry.Children.Add(new LineGeometry(new Point(0, 0), new Point(0, 8)).DoFreeze());
             geometry.DoFreeze();
-
-            var snapedScale = SnapTo(Scale, 0.25);
 
             var drawingBrush = new DrawingBrush()
             {

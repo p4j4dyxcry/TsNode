@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using TsNode.Controls.Plug;
+using TsNode.Extensions;
 using TsNode.Interface;
 
 namespace TsNode.Controls.Node
