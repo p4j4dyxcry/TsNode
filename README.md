@@ -1,7 +1,7 @@
 ## TsNode
 ![.NET Core Version: >= 3.1](https://img.shields.io/badge/.NET%20Core-%3E%3D%203.1-brightgreen) 
 ![.NET Framework version: >= 4.62](https://img.shields.io/badge/.NET%20Framework-%3E%3D%204.62-brightgreen) [![MIT License](http://img.shields.io/badge/license-MIT-lightgray)](LICENSE)  
-グラフエディタを作成するためのWPFのカスタムコントロールライブラリです。
+グラフエディターを作成するためのWPFのカスタムコントロールライブラリです。
 
 他のオープンソースライブラリ等に依存しない軽量なパッケージとなっています。
 
