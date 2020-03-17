@@ -3,10 +3,28 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SandBox"
+        xmlns:controls="clr-namespace:TsNode.Controls;assembly=TsNode"
+        xmlns:exampleApp="clr-namespace:SandBox.ExampleApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/TsNode;component/Template.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
 
+    <Window.DataContext>
+        <exampleApp:MainWindowViewModel />
+    </Window.DataContext>
+
+    <Grid>
+        <controls:NetworkView
+            Background="LightGray"
+            CompletedCreateConnectionCommand="{Binding ConnectedCommand}"
+            Connections="{Binding Connections}"
+            Nodes="{Binding Nodes}"
+            StartCreateConnectionCommand="{Binding ConnectStartCommand}" />
     </Grid>
 </Window>

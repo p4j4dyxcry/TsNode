@@ -15,6 +15,20 @@ namespace TsNode.Interface
         TranslateTransform TranslateMatrix { get; }
     }
 
+    public class TransformResult
+    {
+        public double X { get; }
+        public double Y { get; }
+        public double Scale { get; }
+        
+        public TransformResult(double x, double y, double scale)
+        {
+            X = x;
+            Y = y;
+            Scale = scale;
+        }
+    }
+
     public static class TransformHolderExtensions
     {
         internal static Point TransformPoint(this ITransformHolder self, double x, double y)
@@ -66,9 +80,31 @@ namespace TsNode.Interface
         {
             self.TranslateMatrix.Y += offsetY;
         }
-        public static Point GetTranslateToPosition(this ITransformHolder self)
+        public static Point GetTranslateToPosition(this ITransformHolder self )
         {
             return new Point(self.TranslateMatrix.X, self.TranslateMatrix.Y);
+        }
+
+        public static TransformResult ComputeFitRect(this ITransformHolder self, Rect fitRect ,double width, double height)
+        {
+            // offset to fitRect
+            {
+                var deltaW = Math.Max(width - fitRect.Width, 0);
+                var deltaH = Math.Max(height - fitRect.Height, 0);
+                var offset = Math.Min(deltaW, deltaH) / 2;
+                fitRect.Inflate(offset, offset);                
+            }
+            
+            // compute translate
+            var centerPoint = new Point(fitRect.X + fitRect.Width / 2, 
+                fitRect.Y + fitRect.Height / 2);
+            
+            // compute scale
+            var scaleW = width / fitRect.Width;
+            var scaleH = height / fitRect.Height;
+            var newScale = Math.Min(scaleW, scaleH);
+            
+            return new TransformResult(centerPoint.X,centerPoint.Y,newScale);
         }
     }
 }

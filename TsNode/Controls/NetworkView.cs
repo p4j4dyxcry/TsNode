@@ -11,6 +11,8 @@ using System.Windows.Threading;
 using TsNode.Controls.Connection;
 using TsNode.Controls.Drag;
 using TsNode.Controls.Node;
+using TsNode.Extensions;
+using TsNode.Foundations;
 using TsNode.Interface;
 
 namespace TsNode.Controls
@@ -150,19 +152,50 @@ namespace TsNode.Controls
  
                 //! ドラッグ開始時に適切なドラッグコントローラを作成
                 currentDragObject = MakeDragController(e);
+                this.Focus();
+
+                if (currentDragObject != null)
+                    e.Handled = true;
             };
 
             MouseMove += (s, e) =>
             {
                 //! コントローラによるドラッグ処理を実施する
                 currentDragObject?.OnDrag(s,e);
+                
+                if (currentDragObject != null)
+                    e.Handled = true;
             };
 
             MouseUp += (s, e) =>
             {
                 //! コントローラによるドラッグ処理を完了する
                 currentDragObject?.DragEnd(s, e);
-                currentDragObject = null;
+
+                if (currentDragObject != null)
+                {
+                    e.Handled = true;
+                    currentDragObject = null;                    
+                }
+            };
+
+            KeyDown += async (s, e) =>
+            {
+                if (e.Key == Key.F)
+                {
+                    var infiniteScrollViewer = this.FindChild<InfiniteScrollViewer>(x => true);
+
+                    if (infiniteScrollViewer is null)
+                        return;
+
+                    var nodes = this._nodeItemsControl.GetNodes().ToArray();
+                    if(nodes.Any(x=>x.IsSelected))    
+                        nodes = nodes.Where(x => x.IsSelected).ToArray();
+                    var rect = compute_node_rect(nodes);
+                    e.Handled = true;
+
+                    await infiniteScrollViewer.FitRectAnimation(rect,TimeSpan.FromMilliseconds(200));
+                }
             };
         }
 
@@ -248,18 +281,24 @@ namespace TsNode.Controls
 
                 if (nodes.Length == 0)
                     return;
-                
-                var newRect = new Rect()
-                {
-                    X = nodes.Min(x=>x.X),
-                    Y = nodes.Min(x=>x.Y),
-                };
-                newRect.Width = nodes.Max(x => x.X + x.ActualWidth)  - newRect.X;
-                newRect.Height = nodes.Max(x => x.Y+ x.ActualHeight) - newRect.Y;
-               
-                SetValue(ItemsRectProperty,newRect);
+
+                SetValue(ItemsRectProperty,compute_node_rect(nodes));
             };
             timer.Start();
+        }
+
+        private Rect compute_node_rect(IEnumerable<NodeControl> nodes)
+        {
+            var nodeControls = nodes as NodeControl[] ?? nodes.ToArray();
+            var rect = new Rect()
+            {
+                X = nodeControls.Min(x=>x.X),
+                Y = nodeControls.Min(x=>x.Y),
+            };
+            rect.Width = nodeControls.Max(x => x.X + x.ActualWidth)  - rect.X;
+            rect.Height = nodeControls.Max(x => x.Y+ x.ActualHeight) - rect.Y;
+            
+            return rect;
         }
     }
 }

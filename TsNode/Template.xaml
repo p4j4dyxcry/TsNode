@@ -68,6 +68,7 @@
 
     <!--  Network View  -->
     <Style TargetType="{x:Type controls1:NetworkView}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls1:NetworkView">

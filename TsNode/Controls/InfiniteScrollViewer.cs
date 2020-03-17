@@ -1,10 +1,13 @@
 ﻿
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using TsNode.Extensions;
+using TsNode.Foundations;
 using TsNode.Interface;
 
 namespace TsNode.Controls
@@ -15,8 +18,8 @@ namespace TsNode.Controls
             "ViewRect", typeof(Rect), typeof(InfiniteScrollViewer), new PropertyMetadata(default(Rect),PropertyChangedCallback));
         public Rect ViewRect
         {
-            get { return (Rect) GetValue(ViewRectProperty); }
-            set { SetValue(ViewRectProperty, value); }
+            get => (Rect) GetValue(ViewRectProperty);
+            set => SetValue(ViewRectProperty, value);
         }
 
         public static readonly DependencyProperty ViewRectOffsetProperty = DependencyProperty.Register(
@@ -24,8 +27,8 @@ namespace TsNode.Controls
 
         public Thickness ViewRectOffset
         {
-            get { return (Thickness) GetValue(ViewRectOffsetProperty); }
-            set { SetValue(ViewRectOffsetProperty, value); }
+            get => (Thickness) GetValue(ViewRectOffsetProperty);
+            set => SetValue(ViewRectOffsetProperty, value);
         }
 
         public static readonly DependencyProperty ScaleProperty = DependencyProperty.Register(
@@ -33,8 +36,8 @@ namespace TsNode.Controls
 
         public double Scale
         {
-            get { return (double) GetValue(ScaleProperty); }
-            set { SetValue(ScaleProperty, value); }
+            get => (double) GetValue(ScaleProperty);
+            set => SetValue(ScaleProperty, value);
         }
 
         public static readonly DependencyProperty MinScaleProperty = DependencyProperty.Register(
@@ -42,8 +45,8 @@ namespace TsNode.Controls
 
         public double MinScale
         {
-            get { return (double) GetValue(MinScaleProperty); }
-            set { SetValue(MinScaleProperty, value); }
+            get => (double) GetValue(MinScaleProperty);
+            set => SetValue(MinScaleProperty, value);
         }
 
         public static readonly DependencyProperty MaxScaleProperty = DependencyProperty.Register(
@@ -51,8 +54,8 @@ namespace TsNode.Controls
 
         public double MaxScale
         {
-            get { return (double) GetValue(MaxScaleProperty); }
-            set { SetValue(MaxScaleProperty, value); }
+            get => (double) GetValue(MaxScaleProperty);
+            set => SetValue(MaxScaleProperty, value);
         }
 
         public static readonly DependencyProperty ScaleUnitProperty = DependencyProperty.Register(
@@ -60,8 +63,8 @@ namespace TsNode.Controls
 
         public double ScaleUnit
         {
-            get { return (double) GetValue(ScaleUnitProperty); }
-            set { SetValue(ScaleUnitProperty, value); }
+            get => (double) GetValue(ScaleUnitProperty);
+            set => SetValue(ScaleUnitProperty, value);
         }
 
         public static readonly DependencyProperty TranslateUnitProperty = DependencyProperty.Register(
@@ -69,8 +72,8 @@ namespace TsNode.Controls
 
         public double TranslateUnit
         {
-            get { return (double) GetValue(TranslateUnitProperty); }
-            set { SetValue(TranslateUnitProperty, value); }
+            get => (double) GetValue(TranslateUnitProperty);
+            set => SetValue(TranslateUnitProperty, value);
         }
 
         public static readonly DependencyProperty ScrollRateProperty = DependencyProperty.Register(
@@ -78,8 +81,8 @@ namespace TsNode.Controls
 
         public double ScrollRate
         {
-            get { return (double) GetValue(ScrollRateProperty); }
-            set { SetValue(ScrollRateProperty, value); }
+            get => (double) GetValue(ScrollRateProperty);
+            set => SetValue(ScrollRateProperty, value);
         }
 
         public static readonly DependencyProperty ScrollOffsetClampValueProperty = DependencyProperty.Register(
@@ -87,8 +90,8 @@ namespace TsNode.Controls
 
         public double ScrollOffsetClampValue
         {
-            get { return (double) GetValue(ScrollOffsetClampValueProperty); }
-            set { SetValue(ScrollOffsetClampValueProperty, value); }
+            get => (double) GetValue(ScrollOffsetClampValueProperty);
+            set => SetValue(ScrollOffsetClampValueProperty, value);
         }
         
         private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -105,12 +108,71 @@ namespace TsNode.Controls
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            SetupWheel();
-            SetupSizeChange();
+            setup_wheel();
+            setup_size_change();
         }
 
-        // マウスホイール関係のイベントバインド
-        private void SetupWheel()
+        private bool _isUpdateFromThisControl ;
+        private ScrollBar _xSlider ;
+        private ScrollBar _ySlider ;
+
+        public void UpdateScrollBar()
+        {
+            _isUpdateFromThisControl = true;
+
+            if (setup_slider() is false)
+            {
+                return;
+            }
+
+            var rect = ViewRect
+                .ToOffset(ViewRectOffset)
+                .ToScale(ScaleMatrix.ScaleX , ScaleMatrix.ScaleY);
+            
+            _xSlider.Minimum = Math.Min(rect.Left,-TranslateMatrix.X);
+            _xSlider.Maximum = Math.Max(rect.Right - ActualWidth, -TranslateMatrix.X);
+            _xSlider.ViewportSize = ActualWidth;
+            _xSlider.Value = -TranslateMatrix.X;
+
+            _ySlider.Minimum = Math.Min(rect.Top , -TranslateMatrix.Y);
+            _ySlider.Maximum = Math.Max(rect.Bottom  - ActualHeight , -TranslateMatrix.Y);
+            _ySlider.ViewportSize = ActualHeight;
+            _ySlider.Value = -TranslateMatrix.Y;
+
+            update_slider_visibility(_xSlider);
+            update_slider_visibility(_ySlider);
+            
+            _isUpdateFromThisControl = false;
+        }
+
+        public void FitRect(Rect fitRect)
+        {
+            var transformResult = this.ComputeFitRect(fitRect.ToOffset(ViewRectOffset), ActualWidth, ActualHeight);
+            set_transform_origin(transformResult.X,transformResult.Y,transformResult.Scale);
+        }
+
+        /// <summary>
+        /// 指定したRectにフィッティングさせます。
+        /// </summary>
+        /// <param name="fitRect"></param>
+        /// <param name="time"></param>
+        /// <param name="easing"></param>
+        /// <returns></returns>
+        public async Task FitRectAnimation(Rect fitRect, TimeSpan time , Func<double,double> easing = null)
+        {
+            var currentTransform = get_transform_origin();
+            var targetTransform = this.ComputeFitRect(fitRect.ToOffset(ViewRectOffset), ActualWidth, ActualHeight);
+
+            await EasingHelper.StartAnimation(t =>
+            {
+                set_transform_origin(
+                    EasingHelper.Lerp(currentTransform.X, targetTransform.X, t),
+                    EasingHelper.Lerp(currentTransform.Y, targetTransform.Y, t),
+                    EasingHelper.Lerp(currentTransform.Scale, targetTransform.Scale, t));
+            },time);
+        }
+        
+        private void setup_wheel()
         {
             var scaleTarget = this.Content as FrameworkElement;
             
@@ -124,7 +186,7 @@ namespace TsNode.Controls
 
             scaleTarget.RenderTransform = transformGroup;
 
-            PreviewMouseWheel += (s, e) =>
+            MouseWheel += (s, e) =>
             {
                 // スクロール
                 if (Keyboard.IsKeyDown(Key.LeftCtrl) is false)
@@ -149,7 +211,7 @@ namespace TsNode.Controls
 
                 // スケーリング
                 var delta = e.Delta < 0 ? 1.0 / ScaleUnit : ScaleUnit;
-                var newScale = MathUtil.Clamp(Scale * delta, MinScale, MaxScale);
+                var newScale = MathExtensions.Clamp(Scale * delta, MinScale, MaxScale);
                 SetValue(ScaleProperty,newScale);
 
                 var mouse = Mouse.GetPosition(this);
@@ -157,55 +219,46 @@ namespace TsNode.Controls
                 UpdateScrollBar();
             };
         }
-
-        private void SetupSizeChange()
+        
+        private void setup_size_change()
         {
             this.SizeChanged += (s,e)=> UpdateScrollBar();
         }
         
-        private bool _isUpdateFromThisControl = false;
-
-        private ScrollBar _xSlider = null;
-        private ScrollBar _ySlider = null;
-        public void UpdateScrollBar()
-        {
-            _isUpdateFromThisControl = true;
-            
-            var left   = (ViewRect.Left   - ViewRectOffset.Left)   * ScaleMatrix.ScaleX;
-            var right  = (ViewRect.Right  + ViewRectOffset.Right)  * ScaleMatrix.ScaleX;
-            var top    = (ViewRect.Top    - ViewRectOffset.Top)    * ScaleMatrix.ScaleY;
-            var bottom = (ViewRect.Bottom + ViewRectOffset.Bottom) * ScaleMatrix.ScaleY;
-
-            if (SetupSlider() is false)
-            {
-                return;
-            }
-
-            _xSlider.Minimum = Math.Min(left,-TranslateMatrix.X);
-            _xSlider.Maximum = Math.Max(right - ActualWidth, -TranslateMatrix.X);
-            _xSlider.ViewportSize = ActualWidth;
-            _xSlider.Value = -TranslateMatrix.X;
-
-            _ySlider.Minimum = Math.Min(top , -TranslateMatrix.Y);
-            _ySlider.Maximum = Math.Max(bottom  - ActualHeight , -TranslateMatrix.Y);
-            _ySlider.ViewportSize = ActualHeight;
-            _ySlider.Value = -TranslateMatrix.Y;
-
-            UpdateSliderVisible(_xSlider);
-            UpdateSliderVisible(_ySlider);
-            
-            _isUpdateFromThisControl = false;
-        }
-
-        private void UpdateSliderVisible(ScrollBar slider)
+        private void update_slider_visibility(ScrollBar slider)
         {
             if (slider.Maximum - slider.Minimum <= 0)
                 slider.Visibility = Visibility.Hidden;
             else
                 slider.Visibility = Visibility.Visible;
         }
+        
+        private void set_transform_origin(double x, double y, double scale)
+        {
+            var screenCenterPoint = new Point(ActualWidth/2, ActualHeight/2);
+            
+            // set translate
+            {
+                this.Scale(1, screenCenterPoint.X,screenCenterPoint.Y);
+                this.SetTranslate(-x, -y);
+                this.Translate(screenCenterPoint.X,screenCenterPoint.Y);
+            }
+            
+            // set scale
+            {
+                this.Scale(scale, screenCenterPoint.X, screenCenterPoint.Y);                
+            }
+            UpdateScrollBar();
+        }
 
-        private bool SetupSlider()
+        private TransformResult get_transform_origin()
+        {
+            var p = this.TransformPoint(ActualWidth / 2, ActualHeight / 2);
+            var s = this.ScaleMatrix.ScaleX;
+            return new TransformResult(p.X ,p.Y,s);
+        }
+
+        private bool setup_slider()
         {
             if (_xSlider is null)
             {
