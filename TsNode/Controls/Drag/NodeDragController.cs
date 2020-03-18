@@ -53,9 +53,6 @@ namespace TsNode.Controls.Drag
     /// </summary>
     public class NodeDragController : IDragController
     {
-        // ドラッグ開始位置
-        private readonly Point _dragStartPos;
-
         // ドラッグする前のノードの座標を覚える
         private readonly IReadOnlyDictionary<NodeControl, Point> _originalPoints;
 
@@ -87,7 +84,6 @@ namespace TsNode.Controls.Drag
             {
                 _isDrag = true;
                 
-                _dragStartPos = setupArgs.Args.GetPosition(setupArgs.BaseControl);
                 _originalPoints = setupArgs.Nodes.ToDictionary(x => x , x => new Point(x.X, x.Y));
             }
 
@@ -107,34 +103,30 @@ namespace TsNode.Controls.Drag
             }
         }
 
-        public bool CanDragStart(object sender, MouseEventArgs args)
+        public bool CanDragStart(DragControllerEventArgs args)
         {
             return _selectedNodes.Any() && _isDrag;
         }
 
         // ドラッグ中の処理
-        public void OnDrag(object sender, MouseEventArgs args)
+        public void OnDrag(DragControllerEventArgs args)
         {
             if (_isDrag is false)
                 return;
 
             // ボタンが離れた場合はキャンセルとみなす
-            if (args.LeftButton != MouseButtonState.Pressed)
+            if (args.Button != MouseButton.Left)
             {
                 Cancel();
                 return;
             }
-            var currentPos = args.GetPosition(_inputElement);
-            var xDelta = currentPos.X - _dragStartPos.X;
-            var yDelta = currentPos.Y - _dragStartPos.Y;
-
             _isMoved = true;
 
             foreach (var item in _selectedNodes)
             {
                 // ドラッグ開始前 + 移動量でノード位置を計算する
-                var x = (int)(_originalPoints[item].X + xDelta);
-                var y = (int)(_originalPoints[item].Y + yDelta);
+                var x = (int)(_originalPoints[item].X + args.Vector.X);
+                var y = (int)(_originalPoints[item].Y + args.Vector.Y);
 
                 //! スナップグリッドする場合は再計算
                 var point = _useSnapGrid ? gird_snap(x, y, 4) : new Point(x, y);
@@ -142,8 +134,7 @@ namespace TsNode.Controls.Drag
                 item.X = point.X;
                 item.Y = point.Y;
             }
-            
-                        
+
             if (IsMouseOutScrollViewer())
             {
                 DragScrollOffset();
@@ -152,7 +143,6 @@ namespace TsNode.Controls.Drag
             }
         }
 
-                
         public bool IsMouseOutScrollViewer()
         {
             if (_scrollViewer is null)
@@ -200,7 +190,7 @@ namespace TsNode.Controls.Drag
             _scrollViewer.TranslateY(offset.Y *  _scrollViewer.ScrollRate);
  }
         
-        public void DragEnd(object sender, MouseEventArgs args)
+        public void DragEnd()
         {
             Completed();
         }

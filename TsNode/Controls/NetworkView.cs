@@ -24,7 +24,8 @@ namespace TsNode.Controls
     public class NetworkView : Control
     {
         public static readonly DependencyProperty NodesProperty = DependencyProperty.Register(
-            nameof(Nodes), typeof(IEnumerable<INodeDataContext>), typeof(NetworkView), new PropertyMetadata(default(IEnumerable<INodeDataContext>)));
+            nameof(Nodes), typeof(IEnumerable<INodeDataContext>), typeof(NetworkView),
+            new PropertyMetadata(default(IEnumerable<INodeDataContext>)));
 
         public IEnumerable<INodeDataContext> Nodes
         {
@@ -33,7 +34,8 @@ namespace TsNode.Controls
         }
 
         public static readonly DependencyProperty ConnectionsProperty = DependencyProperty.Register(
-            nameof(Connections), typeof(IEnumerable<IConnectionDataContext>), typeof(NetworkView), new PropertyMetadata(default(IEnumerable<IConnectionDataContext>)));
+            nameof(Connections), typeof(IEnumerable<IConnectionDataContext>), typeof(NetworkView),
+            new PropertyMetadata(default(IEnumerable<IConnectionDataContext>)));
 
         public IEnumerable<IConnectionDataContext> Connections
         {
@@ -43,7 +45,7 @@ namespace TsNode.Controls
 
         public IEnumerable<NodeControl> SelectedItems => Enumerable.Range(0, _nodeItemsControl.Items.Count)
             .Select(x => _nodeItemsControl.FindAssociatedNodeItem(_nodeItemsControl.Items.GetItemAt(x)))
-            .Where(x=>x.IsSelected);
+            .Where(x => x.IsSelected);
 
         public static readonly DependencyProperty CanvasSizeProperty = DependencyProperty.Register(
             nameof(CanvasSize), typeof(double), typeof(NetworkView), new PropertyMetadata(default(double)));
@@ -72,8 +74,10 @@ namespace TsNode.Controls
             set => SetValue(UseGridSnapProperty, value);
         }
 
-        public static readonly DependencyProperty CompletedCreateConnectionCommandProperty = DependencyProperty.Register(
-            nameof(CompletedCreateConnectionCommand), typeof(ICommand), typeof(NetworkView), new PropertyMetadata(default(ICommand)));
+        public static readonly DependencyProperty CompletedCreateConnectionCommandProperty =
+            DependencyProperty.Register(
+                nameof(CompletedCreateConnectionCommand), typeof(ICommand), typeof(NetworkView),
+                new PropertyMetadata(default(ICommand)));
 
         public static readonly DependencyProperty SelectionRectangleStyleProperty = DependencyProperty.Register(
             nameof(SelectionRectangleStyle), typeof(Style), typeof(NetworkView), new PropertyMetadata(default(Style)));
@@ -89,8 +93,8 @@ namespace TsNode.Controls
 
         public Rect ItemsRect
         {
-            get { return (Rect) GetValue(ItemsRectProperty); }
-            set { SetValue(ItemsRectProperty, value); }
+            get => (Rect) GetValue(ItemsRectProperty);
+            set => SetValue(ItemsRectProperty, value);
         }
 
         //! コマンドの引数として[CompletedCreateConnectionEventArgs]が渡される
@@ -102,7 +106,8 @@ namespace TsNode.Controls
 
         //! コマンドの引数として[StartCreateConnectionEventArgs]が渡される
         public static readonly DependencyProperty StartCreateConnectionCommandProperty = DependencyProperty.Register(
-            nameof(StartCreateConnectionCommand), typeof(ICommand), typeof(NetworkView), new PropertyMetadata(default(ICommand)));
+            nameof(StartCreateConnectionCommand), typeof(ICommand), typeof(NetworkView),
+            new PropertyMetadata(default(ICommand)));
 
         public ICommand StartCreateConnectionCommand
         {
@@ -112,7 +117,8 @@ namespace TsNode.Controls
 
         //! コマンドの引数として[CompletedMoveNodeEventArgs]が渡される
         public static readonly DependencyProperty CompetedMoveNodeCommandProperty = DependencyProperty.Register(
-            nameof(CompetedMoveNodeCommand), typeof(ICommand), typeof(NetworkView), new PropertyMetadata(default(ICommand)));
+            nameof(CompetedMoveNodeCommand), typeof(ICommand), typeof(NetworkView),
+            new PropertyMetadata(default(ICommand)));
 
         public ICommand CompetedMoveNodeCommand
         {
@@ -122,91 +128,90 @@ namespace TsNode.Controls
 
         //! コマンドの引数として[SelectionChangedEventArgs]が渡される
         public static readonly DependencyProperty SelectionChangedCommandProperty = DependencyProperty.Register(
-            nameof(SelectionChangedCommand), typeof(ICommand), typeof(NetworkView), new PropertyMetadata(default(ICommand)));
+            nameof(SelectionChangedCommand), typeof(ICommand), typeof(NetworkView),
+            new PropertyMetadata(default(ICommand)));
 
         public ICommand SelectionChangedCommand
         {
-            get => (ICommand)GetValue(SelectionChangedCommandProperty);
+            get => (ICommand) GetValue(SelectionChangedCommandProperty);
             set => SetValue(SelectionChangedCommandProperty, value);
         }
 
-        //! 
+        //! properties
         private NodeItemsControl _nodeItemsControl;
         private ConnectionItemsControl _connectionItemsControl;
         private ConnectionItemsControl _creatingConnectionItemsControl;
         private Canvas _canvas;
-        private void Initialize()
+        private DragEventBinder _panelBinder;
+        private DragEventBinder _rootBinder;
+
+        public NetworkView()
         {
-            setup_drag_events();
-            SetupUpdateRect();
+            Loaded += (s, e) => _loaded();
+            Unloaded += (s, e) => _unloaded();
         }
 
-        private void setup_drag_events()
+        public override void OnApplyTemplate()
         {
-            IDragController currentDragObject = null;            
-            MouseDown += (s, e) =>
-            {
-                //! コントローラが処理中だった場合はキャンセルする
-                currentDragObject?.Cancel();
-                currentDragObject = null;
- 
-                //! ドラッグ開始時に適切なドラッグコントローラを作成
-                currentDragObject = MakeDragController(e);
-                this.Focus();
+            base.OnApplyTemplate();
 
-                if (currentDragObject != null)
-                    e.Handled = true;
-            };
+            //! Find Controls
+            _nodeItemsControl = this.FindTemplate<NodeItemsControl>("PART_NodeItemsControl");
+            _canvas = this.FindTemplate<Canvas>("PART_Canvas");
+            _connectionItemsControl = this.FindTemplate<ConnectionItemsControl>("PART_ConnectionItemsControl");
+            _creatingConnectionItemsControl =
+                this.FindTemplate<ConnectionItemsControl>("PART_CreatingConnectionItemsControl");
 
-            MouseMove += (s, e) =>
-            {
-                //! コントローラによるドラッグ処理を実施する
-                currentDragObject?.OnDrag(s,e);
-                
-                if (currentDragObject != null)
-                    e.Handled = true;
-            };
-
-            MouseUp += (s, e) =>
-            {
-                //! コントローラによるドラッグ処理を完了する
-                currentDragObject?.DragEnd(s, e);
-
-                if (currentDragObject != null)
-                {
-                    e.Handled = true;
-                    currentDragObject = null;                    
-                }
-            };
-
-            KeyDown += async (s, e) =>
-            {
-                if (e.Key == Key.F)
-                {
-                    var infiniteScrollViewer = this.FindChild<InfiniteScrollViewer>(x => true);
-
-                    if (infiniteScrollViewer is null)
-                        return;
-
-                    var nodes = this._nodeItemsControl.GetNodes().ToArray();
-                    if(nodes.Any(x=>x.IsSelected))    
-                        nodes = nodes.Where(x => x.IsSelected).ToArray();
-                    var rect = compute_node_rect(nodes);
-                    e.Handled = true;
-
-                    await infiniteScrollViewer.FitRectAnimation(rect,TimeSpan.FromMilliseconds(200));
-                }
-            };
+            //! Setup Events
+            // ...
         }
-
 
         // セレクタを取得する/オーバーライドすることで選択処理を独自実装可能
-        public virtual IControlSelector MakeControlSelector()
+        protected virtual IControlSelector MakeControlSelector()
         {
             return new ControlSelector(SelectionChangedCommand);
         }
 
-        public IDragController MakeDragController(MouseEventArgs args)
+        private void _loaded()
+        {
+            _panelBinder = new DragEventBinder(this.FindChildWithName<Canvas>("PART_ItemsHost"),
+                make_panel_drag_controller, true);
+            _rootBinder = new DragEventBinder(this, make_root_middle_drag_controller, true, _panelBinder);
+
+            KeyDown += key_down;
+            start_node_update_timer();
+        }
+
+        private void _unloaded()
+        {
+            _panelBinder?.Dispose();
+            _rootBinder?.Dispose();
+
+            KeyDown -= key_down;
+
+            stop_node_update_timer();
+        }
+
+        private async void key_down(object s, KeyEventArgs args)
+        {
+            if (args.Key == Key.F)
+            {
+                var infiniteScrollViewer = this.FindChild<InfiniteScrollViewer>(x => true);
+
+                if (infiniteScrollViewer is null)
+                    return;
+
+                var nodes = this._nodeItemsControl.GetNodes().ToArray();
+                if (nodes.Any(x => x.IsSelected))
+                    nodes = nodes.Where(x => x.IsSelected).ToArray();
+                var rect = compute_node_rect(nodes);
+                args.Handled = true;
+
+                await infiniteScrollViewer.FitRectAnimation(rect, TimeSpan.FromMilliseconds(200));
+            }
+        }
+
+        private IDragController make_panel_drag_controller(MouseEventArgs args)
         {
             //! 左クリックに反応
             if (args.LeftButton == MouseButtonState.Pressed)
@@ -230,12 +235,13 @@ namespace TsNode.Controls
                     clickedConnections.ToSelectableDataContext());
 
                 // 選択状態を設定する
-                selector.OnSelect(selectInfo);                
+                selector.OnSelect(selectInfo);
 
                 // ! ドラッグコントローラを作成する
                 //   複雑な条件に対応できるように
-                
-                var builder = new DragControllerBuilder(args, this.FindChildWithName<Canvas>("PART_ItemsHost"), nodes, connections);
+
+                var builder = new DragControllerBuilder(args, this.FindChildWithName<Canvas>("PART_ItemsHost"), nodes,
+                    connections);
                 return builder
                     .AddBuildTarget(new ConnectionDragBuild(builder, 0, _creatingConnectionItemsControl))
                     .AddBuildTarget(new NodeDragBuild(builder, 1, UseGridSnap, (int) GridSize))
@@ -246,45 +252,46 @@ namespace TsNode.Controls
                     .Build();
             }
 
-            if(args.MiddleButton == MouseButtonState.Pressed)
-            {
-                return new ViewportDrag(this,args);
-            }
-            
             // その他の場合はコントローラを作成しない ( つまりドラッグイベント無し )
             return null;
         }
 
-        public override void OnApplyTemplate()
+        private IDragController make_root_middle_drag_controller(MouseEventArgs args)
         {
-            base.OnApplyTemplate();
+            if (args.MiddleButton == MouseButtonState.Pressed)
+            {
+                return new ViewportDrag(this);
+            }
 
-            //! Find Controls
-            _nodeItemsControl = this.FindTemplate<NodeItemsControl>("PART_NodeItemsControl");
-            _canvas = this.FindTemplate<Canvas>("PART_Canvas");
-            _connectionItemsControl = this.FindTemplate<ConnectionItemsControl>("PART_ConnectionItemsControl");
-            _creatingConnectionItemsControl = this.FindTemplate<ConnectionItemsControl>("PART_CreatingConnectionItemsControl");
-            //! Setup Events
-            // ...
-
-            Initialize();
+            return null;
         }
 
-        private void SetupUpdateRect()
+        private DispatcherTimer _nodeRectCalcTimer;
+
+        private void start_node_update_timer()
         {
-            // 試験実装 毎秒監視
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1.0);
-            timer.Tick += (s, e) =>
+            if (_nodeRectCalcTimer is null)
             {
-                var nodes = this._nodeItemsControl.GetNodes();
+                _nodeRectCalcTimer = new DispatcherTimer();
+                // 試験実装 毎秒監視
+                _nodeRectCalcTimer.Interval = TimeSpan.FromSeconds(1.0);
+                _nodeRectCalcTimer.Tick += (s, e) =>
+                {
+                    var nodes = this._nodeItemsControl.GetNodes();
 
-                if (nodes.Length == 0)
-                    return;
+                    if (nodes.Length == 0)
+                        return;
 
-                SetValue(ItemsRectProperty,compute_node_rect(nodes));
-            };
-            timer.Start();
+                    SetValue(ItemsRectProperty, compute_node_rect(nodes));
+                };
+            }
+
+            _nodeRectCalcTimer.Start();
+        }
+
+        private void stop_node_update_timer()
+        {
+            _nodeRectCalcTimer?.Stop();
         }
 
         private Rect compute_node_rect(IEnumerable<NodeControl> nodes)
@@ -292,12 +299,12 @@ namespace TsNode.Controls
             var nodeControls = nodes as NodeControl[] ?? nodes.ToArray();
             var rect = new Rect()
             {
-                X = nodeControls.Min(x=>x.X),
-                Y = nodeControls.Min(x=>x.Y),
+                X = nodeControls.Min(x => x.X),
+                Y = nodeControls.Min(x => x.Y),
             };
-            rect.Width = nodeControls.Max(x => x.X + x.ActualWidth)  - rect.X;
-            rect.Height = nodeControls.Max(x => x.Y+ x.ActualHeight) - rect.Y;
-            
+            rect.Width = nodeControls.Max(x => x.X + x.ActualWidth) - rect.X;
+            rect.Height = nodeControls.Max(x => x.Y + x.ActualHeight) - rect.Y;
+
             return rect;
         }
     }

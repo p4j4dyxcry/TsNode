@@ -46,6 +46,7 @@ namespace TsNode.Controls.Drag
 
         private static readonly Rectangle Rectangle = new Rectangle();
         private static Style _defaultStyle ;
+        private bool _mouseCaptured = false;
         private ICommand SelectionChangedCommand { get; }
 
         public SelectionRectDragController(SelectionRectDragControllerSetupArgs args)
@@ -106,24 +107,26 @@ namespace TsNode.Controls.Drag
             };
         }
 
-        public bool CanDragStart(object sender, MouseEventArgs args)
+        public bool CanDragStart(DragControllerEventArgs args)
         {
             return true;
         }
 
-        public void OnDrag(object sender, MouseEventArgs args)
+        public void OnDrag(DragControllerEventArgs args)
         {
             if (_canceled)
                 return;
 
-            if (args.RightButton == MouseButtonState.Pressed)
+            if (args.Button == MouseButton.Right)
                 cancel_internal(false);
 
-            if (args.LeftButton != MouseButtonState.Pressed)
+            if (args.Button != MouseButton.Left)
                 cancel_internal(true);
 
-
-            var currentPoint = args.GetPosition(_panel);
+            if (_mouseCaptured is false)
+                _mouseCaptured = _panel.CaptureMouse();
+            
+            var currentPoint = args.CurrentPoint;
 
             // 負のをUI座標には指定できないのでUI空間での座標系を再計算する
             {
@@ -137,10 +140,9 @@ namespace TsNode.Controls.Drag
                 Rectangle.Width  = _rect.Width;
                 Rectangle.Height = _rect.Height;
             }
-
         }
 
-        public void DragEnd(object sender, MouseEventArgs args)
+        public void DragEnd()
         {
             cancel_internal(true);
         }
@@ -174,6 +176,10 @@ namespace TsNode.Controls.Drag
             if (_panel.Children.Contains(Rectangle))
                 _panel.Children.Remove(Rectangle);
 
+            if(_mouseCaptured)
+                this._panel.ReleaseMouseCapture();
+            _mouseCaptured = false;
+            
             if (isSelect)
                 OnSelect();
         }

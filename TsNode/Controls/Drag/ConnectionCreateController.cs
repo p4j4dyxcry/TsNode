@@ -77,12 +77,12 @@ namespace TsNode.Controls.Drag
 
         private bool _isCreated;
 
-        public bool CanDragStart(object sender, MouseEventArgs args)
+        public bool CanDragStart(DragControllerEventArgs args)
         {
             return _connections.All(x=>x!=null);
         }
 
-        public void OnDrag(object sender, MouseEventArgs args)
+        public void OnDrag(DragControllerEventArgs args)
         {
             //! 作成中仮コネクションの作成(1度だけ)
             if (_connectionItemsControl.Items.IsEmpty && _isCreated is false)
@@ -100,26 +100,25 @@ namespace TsNode.Controls.Drag
 
             foreach (var connection in _connectionItemsControl.FindVisualChildrenWithType<ConnectionShape>())
             {
-                var point = args.GetPosition(_inputElement);
                 if (_sourcePlugType == SourcePlugType.Output)
                 {
-                    connection.DestX = point.X;
-                    connection.DestY = point.Y;
+                    connection.DestX = args.CurrentPoint.X;
+                    connection.DestY = args.CurrentPoint.Y;
                 }
                 if (_sourcePlugType == SourcePlugType.Input)
                 {
-                    connection.SourceX = point.X;
-                    connection.SourceY = point.Y;
+                    connection.SourceX = args.CurrentPoint.X;
+                    connection.SourceY = args.CurrentPoint.Y;
                 }
             }
 
-            if (args.LeftButton != MouseButtonState.Pressed)
+            if (args.Button == MouseButton.Left)
             {
                 create_connection();
             }
         }
 
-        public void DragEnd(object sender, MouseEventArgs args)
+        public void DragEnd()
         {
             create_connection();
         }

@@ -4,6 +4,7 @@ using System.Windows.Input;
 using TsNode.Extensions;
 using TsNode.Foundations;
 using TsNode.Interface;
+using DragEventArgs = System.Windows.DragEventArgs;
 
 namespace TsNode.Controls.Drag
 {
@@ -14,38 +15,30 @@ namespace TsNode.Controls.Drag
 
         }
 
-        public bool CanDragStart(object sender, MouseEventArgs args)
+        public bool CanDragStart(DragControllerEventArgs args)
         {
-            return args.MiddleButton == MouseButtonState.Pressed;
+            return args.Button == MouseButton.Middle;
         }
 
-        public void DragEnd(object sender, MouseEventArgs args)
+        public void DragEnd()
         {
 
         }
 
-        public void OnDrag(object sender, MouseEventArgs args)
+        public void OnDrag(DragControllerEventArgs args)
         {
-            if (args.MiddleButton != MouseButtonState.Pressed)
-                return;
-
-            var offset = args.GetPosition(NetworkView) - PrevPosition;
-            PrevPosition = args.GetPosition(NetworkView);
             if (_scrollViewer != null)
             {
-                _scrollViewer?.Translate(offset.X, offset.Y);                
+                _scrollViewer?.Translate(args.Delta.X, args.Delta.Y);                
                 _scrollViewer.UpdateScrollBar();
             }
         }
-
-        private Point PrevPosition { get; set; }
         private NetworkView NetworkView { get; }
 
         private readonly InfiniteScrollViewer _scrollViewer;
         
-        public ViewportDrag(NetworkView networkView , MouseEventArgs mouseEventArgs)
+        public ViewportDrag(NetworkView networkView )
         {
-            PrevPosition = mouseEventArgs.GetPosition(networkView);
             NetworkView = networkView;
             _scrollViewer = NetworkView.FindChild<InfiniteScrollViewer>(x=>true);
         }
