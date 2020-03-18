@@ -62,7 +62,7 @@ namespace TsNode.Controls.Drag
             return this;
         }
 
-        public DragControllerBuilder SetNodeDragControllerBuilder(ICommand command)
+        public DragControllerBuilder SetNodeDragCompletedCommand(ICommand command)
         {
             CompletedNodeDragCommand = command;
             return this;

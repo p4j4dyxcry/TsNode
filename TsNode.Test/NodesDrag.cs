@@ -122,7 +122,7 @@ namespace TsNode.Test
             var builder = new DragControllerBuilder(null, MouseButton.Left, nodes, Array.Empty<ConnectionShape>());
             var controller = builder
                 .AddBuildTarget(new NodesDragBuild(builder, 1, false,0))
-                .SetNodeDragControllerBuilder(command)
+                .SetNodeDragCompletedCommand(command)
                 .Build();
 
             return controller;

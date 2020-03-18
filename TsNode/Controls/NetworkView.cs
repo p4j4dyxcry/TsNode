@@ -249,7 +249,7 @@ namespace TsNode.Controls
                     .AddBuildTarget(new RectSelectionDragBuild(builder, 2, SelectionRectangleStyle,panel))
                     .SetConnectionCommand(StartCreateConnectionCommand, CompletedCreateConnectionCommand)
                     .SetSelectionChangedCommand(SelectionChangedCommand)
-                    .SetNodeDragControllerBuilder(CompetedMoveNodeCommand)
+                    .SetNodeDragCompletedCommand(CompetedMoveNodeCommand)
                     .Build();
             }
 
