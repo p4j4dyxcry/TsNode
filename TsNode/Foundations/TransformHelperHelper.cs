@@ -4,14 +4,14 @@ using TsNode.Interface;
 
 namespace TsNode.Foundations
 {
-    public static class TransformHolderHelper
+    internal static class TransformHolderHelper
     {
         //
     }
 
-    public static class TransformHolderExtensions
+    internal static class TransformHolderExtensions
     {
-        internal static Point TransformPoint(this ITransformHolder self, double x, double y)
+        public static Point TransformPoint(this ITransformHolder self, double x, double y)
         {
             return new Point(
                 (x - self.TranslateMatrix.X) / self.ScaleMatrix.ScaleX,

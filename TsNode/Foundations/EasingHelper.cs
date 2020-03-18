@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace TsNode.Foundations
 {
-    public static class EasingHelper
+    internal static class EasingHelper
     {
         public static double Lerp(double a, double b, double t)
         {

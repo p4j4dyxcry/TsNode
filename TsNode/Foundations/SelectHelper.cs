@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using TsNode.Interface;
-
 namespace TsNode.Foundations
 {
     internal static class SelectHelper
