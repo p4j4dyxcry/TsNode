@@ -12,22 +12,19 @@ using TsNode.Extensions;
 using TsNode.Foundations;
 using TsNode.Interface;
 
-namespace TsNode.Controls.Drag
+namespace TsNode.Controls.Drag.Controller
 {
     public class SelectionRectDragControllerSetupArgs
     {
-        public SelectionRectDragControllerSetupArgs(Panel baseControl, MouseEventArgs args, NodeControl[] nodes, ConnectionShape[] connections)
+        public SelectionRectDragControllerSetupArgs(Panel baseControl, INodeControl[] nodes, ConnectionShape[] connections)
         {
             BaseControl = baseControl;
-            Args = args;
             Nodes = nodes;
             Connections = connections;
         }
 
         public Panel BaseControl { get; }
-        public MouseEventArgs Args { get; }
-
-        public NodeControl[] Nodes { get; }
+        public INodeControl[] Nodes { get; }
         public ConnectionShape[] Connections { get; }
 
         public Style RectangleStyle { get; set; }
@@ -36,11 +33,10 @@ namespace TsNode.Controls.Drag
 
     public class SelectionRectDragController : IDragController
     {
-        private Point _startPoint;
         private Rect _rect;
 
         private readonly Panel _panel;
-        private readonly NodeControl[] _nodes;
+        private readonly INodeControl[] _nodes;
         private readonly ConnectionShape[] _connections;
         private bool _canceled;
 
@@ -56,11 +52,6 @@ namespace TsNode.Controls.Drag
             _panel = args.BaseControl;
             SelectionChangedCommand = args.SelectionChangedCommand;
 
-
-            var startPosition = args.Args.GetPosition(args.BaseControl);
-            _startPoint.X = startPosition.X;
-            _startPoint.Y = startPosition.Y;
-
             //! オプション引数としてStyleが渡されている場合はStyleを適用する
             if (args.BaseControl.Style != null)
             {
@@ -73,12 +64,6 @@ namespace TsNode.Controls.Drag
                     _defaultStyle = make_default_style();
                 Rectangle.Style = _defaultStyle;
             }
-
-            Canvas.SetLeft(Rectangle, _startPoint.X);
-            Canvas.SetTop(Rectangle, _startPoint.Y);
-            Rectangle.Width = 1;
-            Rectangle.Height = 1;
-            _panel.Children.Add(Rectangle);
         }
 
         private Style make_default_style()
@@ -109,10 +94,19 @@ namespace TsNode.Controls.Drag
 
         public bool CanDragStart(DragControllerEventArgs args)
         {
-            return true;
+            return args.Button == MouseButton.Left;
+        }
+        
+        public void OnStartDrag(DragControllerEventArgs args)
+        {
+            Canvas.SetLeft(Rectangle, args.StartPoint.X);
+            Canvas.SetTop(Rectangle, args.StartPoint.Y);
+            Rectangle.Width = 1;
+            Rectangle.Height = 1;
+            _panel.Children.Add(Rectangle);
         }
 
-        public void OnDrag(DragControllerEventArgs args)
+        public void OnDragMoving(DragControllerEventArgs args)
         {
             if (_canceled)
                 return;
@@ -130,10 +124,10 @@ namespace TsNode.Controls.Drag
 
             // 負のをUI座標には指定できないのでUI空間での座標系を再計算する
             {
-                _rect.X = Math.Min(currentPoint.X, _startPoint.X);
-                _rect.Y = Math.Min(currentPoint.Y, _startPoint.Y);
-                _rect.Width = Math.Max(currentPoint.X, _startPoint.X) - _rect.X;
-                _rect.Height = Math.Max(currentPoint.Y, _startPoint.Y) - _rect.Y;
+                _rect.X = Math.Min(currentPoint.X, args.StartPoint.X);
+                _rect.Y = Math.Min(currentPoint.Y, args.StartPoint.Y);
+                _rect.Width = Math.Max(currentPoint.X, args.StartPoint.X) - _rect.X;
+                _rect.Height = Math.Max(currentPoint.Y, args.StartPoint.Y) - _rect.Y;
 
                 Canvas.SetLeft(Rectangle,_rect.X);
                 Canvas.SetTop(Rectangle, _rect.Y);
@@ -142,7 +136,7 @@ namespace TsNode.Controls.Drag
             }
         }
 
-        public void DragEnd()
+        public void OnDragEnd()
         {
             cancel_internal(true);
         }

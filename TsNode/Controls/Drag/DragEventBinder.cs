@@ -7,14 +7,16 @@ namespace TsNode.Controls.Drag
 {
     public class DragEventBinder : IDisposable
     {
+        // readonly properties
         private readonly UIElement _target;
         private readonly Func<MouseEventArgs, IDragController> _converter;
+        private readonly bool _onClickFocus;
+        private readonly DragEventBinder _parent;
 
+        // properties
         private IDragController _currentController;
         private Point _startPoint;
         private Point _prevPoint;
-        private readonly bool _onClickFocus;
-        private DragEventBinder _parent;
         
         public DragEventBinder(UIElement target , Func<MouseEventArgs , IDragController> converter , bool onClickFocus , DragEventBinder parent = null)
         {
@@ -58,6 +60,8 @@ namespace TsNode.Controls.Drag
             if(_onClickFocus)
                 _target.Focus();
 
+            _currentController.OnStartDrag(convertedArgs);
+            
             args.Handled = true;
         }
         
@@ -71,7 +75,7 @@ namespace TsNode.Controls.Drag
 
             var convertArgs = convert_args(args);
             
-            _currentController.OnDrag(convertArgs);
+            _currentController.OnDragMoving(convertArgs);
 
             _prevPoint = convertArgs.CurrentPoint;
 

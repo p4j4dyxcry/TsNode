@@ -1,10 +1,11 @@
 ﻿using System.Linq;
 using System.Windows.Input;
+using TsNode.Controls.Drag.Controller;
 using TsNode.Interface;
 
 namespace TsNode.Controls.Drag
 {
-    public class NodeDragBuild : IDragControllerBuild
+    public class NodesDragBuild : IDragControllerBuild
     {
         public int Priority { get; }
 
@@ -13,7 +14,7 @@ namespace TsNode.Controls.Drag
         private int SnapGridSize { get; } 
         private bool UseSnapGrid { get; }
 
-        public NodeDragBuild(DragControllerBuilder dragControllerBuilder, int priority , bool useSnapGrid , int snapGridSize)
+        public NodesDragBuild(DragControllerBuilder dragControllerBuilder, int priority , bool useSnapGrid , int snapGridSize)
         {
             _dragControllerBuilder = dragControllerBuilder;
             Priority = priority;
@@ -23,7 +24,7 @@ namespace TsNode.Controls.Drag
 
         public bool TryBuild()
         {
-            return _dragControllerBuilder.MouseEventArgs.LeftButton == MouseButtonState.Pressed &&
+            return _dragControllerBuilder.MouseButton == MouseButton.Left &&
                    _dragControllerBuilder.SelectedNodes.Any();
         }
 
@@ -31,7 +32,6 @@ namespace TsNode.Controls.Drag
         {
             var setupArgs = new NodeDragControllerSetupArgs(
                 _dragControllerBuilder.InputElement,
-                _dragControllerBuilder.MouseEventArgs,
                 _dragControllerBuilder.SelectedNodes,
                 _dragControllerBuilder.CompletedNodeDragCommand)
             {
@@ -39,7 +39,7 @@ namespace TsNode.Controls.Drag
                 UseSnapGrid = UseSnapGrid,
             };
 
-            return new NodeDragController(setupArgs);
+            return new NodesDragController(setupArgs);
         }
     }
 }

@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using TsNode.Controls.Connection;
 using TsNode.Controls.Drag;
+using TsNode.Controls.Drag.Controller;
 using TsNode.Controls.Node;
 using TsNode.Extensions;
 using TsNode.Foundations;
@@ -240,12 +241,12 @@ namespace TsNode.Controls
                 // ! ドラッグコントローラを作成する
                 //   複雑な条件に対応できるように
 
-                var builder = new DragControllerBuilder(args, this.FindChildWithName<Canvas>("PART_ItemsHost"), nodes,
-                    connections);
+                var panel = this.FindChildWithName<Canvas>("PART_ItemsHost");
+                var builder = new DragControllerBuilder(panel, MouseButton.Left, nodes, connections);
                 return builder
                     .AddBuildTarget(new ConnectionDragBuild(builder, 0, _creatingConnectionItemsControl))
-                    .AddBuildTarget(new NodeDragBuild(builder, 1, UseGridSnap, (int) GridSize))
-                    .AddBuildTarget(new RectSelectionDragBuild(builder, 2, SelectionRectangleStyle))
+                    .AddBuildTarget(new NodesDragBuild(builder, 1, UseGridSnap, (int) GridSize))
+                    .AddBuildTarget(new RectSelectionDragBuild(builder, 2, SelectionRectangleStyle,panel))
                     .SetConnectionCommand(StartCreateConnectionCommand, CompletedCreateConnectionCommand)
                     .SetSelectionChangedCommand(SelectionChangedCommand)
                     .SetNodeDragControllerBuilder(CompetedMoveNodeCommand)
@@ -260,7 +261,7 @@ namespace TsNode.Controls
         {
             if (args.MiddleButton == MouseButtonState.Pressed)
             {
-                return new ViewportDrag(this);
+                return new ViewportDragController(this);
             }
 
             return null;
@@ -294,9 +295,9 @@ namespace TsNode.Controls
             _nodeRectCalcTimer?.Stop();
         }
 
-        private Rect compute_node_rect(IEnumerable<NodeControl> nodes)
+        private Rect compute_node_rect(IEnumerable<INodeControl> nodes)
         {
-            var nodeControls = nodes as NodeControl[] ?? nodes.ToArray();
+            var nodeControls = nodes as INodeControl[] ?? nodes.ToArray();
             var rect = new Rect()
             {
                 X = nodeControls.Min(x => x.X),

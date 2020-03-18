@@ -1,14 +1,11 @@
-﻿using System.Linq;
-using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using TsNode.Extensions;
 using TsNode.Foundations;
 using TsNode.Interface;
-using DragEventArgs = System.Windows.DragEventArgs;
 
-namespace TsNode.Controls.Drag
+namespace TsNode.Controls.Drag.Controller
 {
-    public class ViewportDrag : IDragController
+    internal class ViewportDragController : IDragController
     {
         public void Cancel()
         {
@@ -20,12 +17,17 @@ namespace TsNode.Controls.Drag
             return args.Button == MouseButton.Middle;
         }
 
-        public void DragEnd()
+        public void OnStartDrag(DragControllerEventArgs args)
         {
 
         }
 
-        public void OnDrag(DragControllerEventArgs args)
+        public void OnDragEnd()
+        {
+
+        }
+
+        public void OnDragMoving(DragControllerEventArgs args)
         {
             if (_scrollViewer != null)
             {
@@ -37,7 +39,7 @@ namespace TsNode.Controls.Drag
 
         private readonly InfiniteScrollViewer _scrollViewer;
         
-        public ViewportDrag(NetworkView networkView )
+        public ViewportDragController(NetworkView networkView )
         {
             NetworkView = networkView;
             _scrollViewer = NetworkView.FindChild<InfiniteScrollViewer>(x=>true);

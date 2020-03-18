@@ -84,5 +84,10 @@ namespace TsNode.Foundations
         {
             return enumerable.Select(x=>x.DataContext).OfType<ISelectable>().ToArray();
         }
+        
+        public static ISelectable[] ToSelectableDataContext(this IEnumerable<INodeControl> enumerable)
+        {
+            return enumerable.Select(x=>x.DataContext).OfType<ISelectable>().ToArray();
+        }
     }
 }

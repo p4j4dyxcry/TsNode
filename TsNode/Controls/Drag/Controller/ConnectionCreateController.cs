@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 using TsNode.Controls.Connection;
 using TsNode.Controls.Node;
@@ -8,24 +7,18 @@ using TsNode.Controls.Plug;
 using TsNode.Extensions;
 using TsNode.Interface;
 
-namespace TsNode.Controls.Drag
+namespace TsNode.Controls.Drag.Controller
 {
     /// <summary>
     /// コネクション作成のドラッグコントローラ
     /// </summary>
     public class ConnectionCreateControllerSetupArgs
     {
-        //! コネクションの相対座標を計算するためのコントロール
-        public IInputElement BaseControl { get; }
-
-        //! マウスイベント
-        public MouseEventArgs Args { get; }
-
         //! ノード一覧 (接続確定を決めるために利用)
-        public NodeControl[] Nodes { get; }
+        public INodeControl[] Nodes { get; }
 
         //! ドラッグ開始プラグ(基本的には1つだが拡張性を持たせるために複数利用できるようにしている)
-        public PlugControl[] SourcePlugs { get; }
+        public IPlugControl[] SourcePlugs { get; }
 
         //! 作成中のコネクションのビューを格納する器 (実コネクションと分離するため)
         public ConnectionItemsControl CreatingConnectionItemsControl { get; }
@@ -40,17 +33,13 @@ namespace TsNode.Controls.Drag
         public SourcePlugType SourcePlugType { get; }
 
         public ConnectionCreateControllerSetupArgs(
-            IInputElement baseControl,
-            MouseEventArgs args,
-            NodeControl[] nodes,
-            PlugControl[] sourcePlugs,
+            INodeControl[] nodes,
+            IPlugControl[] sourcePlugs,
             ConnectionItemsControl connectionItemsControl,
             ICommand connectionCreated,
             ICommand startConnectionCreated,
             SourcePlugType sourcePlugType)
         {
-            Args = args;
-            BaseControl = baseControl;
             Nodes = nodes;
             SourcePlugs = sourcePlugs;
             CreatingConnectionItemsControl = connectionItemsControl;
@@ -70,10 +59,10 @@ namespace TsNode.Controls.Drag
         private readonly IPlugDataContext[] _sourcePlugs;
         private readonly Dictionary<IPlugDataContext, IConnectionDataContext> _plugToConnectionDataContexts;
         private readonly ConnectionItemsControl _connectionItemsControl;
-        private readonly NodeControl[] _nodes;
+        private readonly INodeControl[] _nodes;
+        private readonly ICommand _connectionStart;
         private readonly ICommand _connectionCreated;
         private readonly SourcePlugType _sourcePlugType;
-        private readonly IInputElement _inputElement;
 
         private bool _isCreated;
 
@@ -82,7 +71,12 @@ namespace TsNode.Controls.Drag
             return _connections.All(x=>x!=null);
         }
 
-        public void OnDrag(DragControllerEventArgs args)
+        public void OnStartDrag(DragControllerEventArgs args)
+        {
+            _connectionStart?.Execute(new StartCreateConnectionEventArgs(_sourcePlugs));
+        }
+
+        public void OnDragMoving(DragControllerEventArgs args)
         {
             //! 作成中仮コネクションの作成(1度だけ)
             if (_connectionItemsControl.Items.IsEmpty && _isCreated is false)
@@ -118,7 +112,7 @@ namespace TsNode.Controls.Drag
             }
         }
 
-        public void DragEnd()
+        public void OnDragEnd()
         {
             create_connection();
         }
@@ -172,7 +166,6 @@ namespace TsNode.Controls.Drag
         public ConnectionCreateController(ConnectionCreateControllerSetupArgs setupArgs)
         {
             _nodes = setupArgs.Nodes;
-            _inputElement = setupArgs.BaseControl;
 
             _sourcePlugs = setupArgs.SourcePlugs
                 .Select(x => x.DataContext)
@@ -189,8 +182,7 @@ namespace TsNode.Controls.Drag
             _connectionItemsControl = setupArgs.CreatingConnectionItemsControl;
             _connectionCreated = setupArgs.ConnectionCreated;
             _sourcePlugType = setupArgs.SourcePlugType;
-
-            setupArgs.StartConnectionCreated?.Execute(new StartCreateConnectionEventArgs(_sourcePlugs));
+            _connectionStart = setupArgs.StartConnectionCreated;
         }
     }
 }

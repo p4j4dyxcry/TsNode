@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using TsNode.Extensions;
+using TsNode.Interface;
 
 namespace TsNode.Controls.Node
 {
@@ -25,11 +26,12 @@ namespace TsNode.Controls.Node
             };
         }
 
-        public NodeControl[] GetNodes(Func<NodeControl,bool> function = null)
+        public INodeControl[] GetNodes(Func<NodeControl,bool> function = null)
         {
             return this.EnumerateItems()
                 .Select(FindAssociatedNodeItem)
                 .Where(x=>function?.Invoke(x) ?? true)
+                .OfType<INodeControl>()
                 .ToArray();
         }
     }

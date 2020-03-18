@@ -83,8 +83,8 @@ namespace TsNode.Controls.Connection
             set => SetValue(IsSelectedProperty, value);
         }
 
-        private readonly HashSet<NodeControl> _associationDestNode = new HashSet<NodeControl>();
-        private readonly HashSet<NodeControl> _associationSourceNode = new HashSet<NodeControl>();
+        private readonly HashSet<INodeControl> _associationDestNode = new HashSet<INodeControl>();
+        private readonly HashSet<INodeControl> _associationSourceNode = new HashSet<INodeControl>();
 
         private PlugControl _sourcePlugControl;
         private PlugControl _destPlugControl;
@@ -154,7 +154,7 @@ namespace TsNode.Controls.Connection
         }
 
         // プラグの親ノードを検索し座標イベントの移動に指定したイベントを張り付ける
-        private void bind_node(PlugControl plug, HashSet<NodeControl> hashSet, Action<object, UpdateNodePointArgs> bindFunc)
+        private void bind_node(PlugControl plug, HashSet<INodeControl> hashSet, Action<object, UpdateNodePointArgs> bindFunc)
         {
             if (plug is null)
                 return;
@@ -168,7 +168,7 @@ namespace TsNode.Controls.Connection
         }
 
         // プラグの親ノードを検索し座標イベントの移動から指定したイベントを削除する
-        private void un_bind_node(PlugControl plug, HashSet<NodeControl> hashSet ,Action<object,UpdateNodePointArgs> bindFunc)
+        private void un_bind_node(PlugControl plug, HashSet<INodeControl> hashSet ,Action<object,UpdateNodePointArgs> bindFunc)
         {
             if (plug is null)
                 return;

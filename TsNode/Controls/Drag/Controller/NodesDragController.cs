@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using TsNode.Controls.Node;
-using TsNode.Extensions;
 using TsNode.Foundations;
 using TsNode.Interface;
 
-namespace TsNode.Controls.Drag
+namespace TsNode.Controls.Drag.Controller
 {
     /// <summary>
     /// NodeDragControllerのセットアップデータ
@@ -19,11 +16,8 @@ namespace TsNode.Controls.Drag
         //! ノードの相対座標を計算するためのコントロール
         public IInputElement BaseControl { get; }
 
-        //! マウスイベント
-        public MouseEventArgs Args  { get; }
-
         //! ドラッグ対象ノード
-        public NodeControl[]  Nodes { get; }
+        public INodeControl[]  Nodes { get; }
 
         //! スナップグリッド利用フラグ
         public bool UseSnapGrid { get; set; } = true;
@@ -34,27 +28,29 @@ namespace TsNode.Controls.Drag
         //! ノードのドラッグ完了コマンド
         //! コマンド引数として CompletedCreateConnectionEventArgs が渡される
         public ICommand CompletedCommand { get; }
+        
+        public InfiniteScrollViewer InfiniteScrollViewer { get; }
 
         //! 最低限の引数はコンストラクタでセットアップする必要がある
-        public NodeDragControllerSetupArgs(IInputElement basecontrol,
-                                    MouseEventArgs mouseEventArgs,
-                                    NodeControl[] nodes,
-                                    ICommand completedCommand = null)
+        public NodeDragControllerSetupArgs(IInputElement baseControl,
+                                    INodeControl[] nodes,
+                                    ICommand completedCommand = null , 
+                                    InfiniteScrollViewer scrollViewer = null)
         {
-            BaseControl = basecontrol;
-            Args = mouseEventArgs;
+            BaseControl = baseControl;
             Nodes = nodes;
             CompletedCommand = completedCommand;
+            InfiniteScrollViewer = scrollViewer;
         }
     }
 
     /// <summary>
     /// ノードのドラッグを行うコントローラ
     /// </summary>
-    public class NodeDragController : IDragController
+    public class NodesDragController : IDragController
     {
         // ドラッグする前のノードの座標を覚える
-        private readonly IReadOnlyDictionary<NodeControl, Point> _originalPoints;
+        private readonly IReadOnlyDictionary<INodeControl, Point> _originalPoints;
 
         // ノードの移動処理にスナップグリッド使用するかどうか
         private readonly bool _useSnapGrid;
@@ -63,7 +59,7 @@ namespace TsNode.Controls.Drag
         private readonly int _gridSize;
 
         // 移動を行うノード一覧
-        private readonly NodeControl[] _selectedNodes;
+        private readonly INodeControl[] _selectedNodes;
 
         // ノードの座標計算を行うためのコントロール(Canvas等が指定可能)
         private readonly IInputElement _inputElement;
@@ -78,38 +74,38 @@ namespace TsNode.Controls.Drag
         private readonly InfiniteScrollViewer _scrollViewer;
 
         // コンストラクタ / ドラッグ開始
-        public NodeDragController(NodeDragControllerSetupArgs setupArgs)
+        public NodesDragController(NodeDragControllerSetupArgs setupArgs)
         {
-            if (setupArgs.Args.LeftButton == MouseButtonState.Pressed)
-            {
-                _isDrag = true;
-                
-                _originalPoints = setupArgs.Nodes.ToDictionary(x => x , x => new Point(x.X, x.Y));
-            }
-
+            _originalPoints = setupArgs.Nodes.ToDictionary(x => x , x => new Point(x.X, x.Y));
+            
             _completedNodeMove = setupArgs.CompletedCommand;
             _selectedNodes = setupArgs.Nodes;
             _useSnapGrid = setupArgs.UseSnapGrid;
-            _inputElement = setupArgs.BaseControl;
             _gridSize = setupArgs.GridSize;
-            if (_selectedNodes.Any())
-            {
-                var control = _selectedNodes.First().FindVisualParentWithType<InfiniteScrollViewer>();
-                if (Mouse.Captured == null)
-                {
-                    _isCaptured = _inputElement.CaptureMouse();
-                }
-                _scrollViewer = control;
-            }
+            _inputElement = setupArgs.BaseControl;
+            _scrollViewer = setupArgs.InfiniteScrollViewer;
         }
 
         public bool CanDragStart(DragControllerEventArgs args)
         {
-            return _selectedNodes.Any() && _isDrag;
+            return _selectedNodes.Any() && args.Button == MouseButton.Left;
+        }
+
+        public void OnStartDrag(DragControllerEventArgs args)
+        {
+            _isDrag = true;
+            
+            if (_inputElement is null)
+                return;
+            
+            if (Mouse.Captured == null)
+            {
+                _isCaptured = _inputElement.CaptureMouse();
+            }
         }
 
         // ドラッグ中の処理
-        public void OnDrag(DragControllerEventArgs args)
+        public void OnDragMoving(DragControllerEventArgs args)
         {
             if (_isDrag is false)
                 return;
@@ -190,7 +186,7 @@ namespace TsNode.Controls.Drag
             _scrollViewer.TranslateY(offset.Y *  _scrollViewer.ScrollRate);
  }
         
-        public void DragEnd()
+        public void OnDragEnd()
         {
             Completed();
         }

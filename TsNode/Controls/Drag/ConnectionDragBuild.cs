@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Windows.Input;
 using TsNode.Controls.Connection;
+using TsNode.Controls.Drag.Controller;
 using TsNode.Controls.Node;
 using TsNode.Controls.Plug;
 using TsNode.Interface;
@@ -12,7 +13,7 @@ namespace TsNode.Controls.Drag
         public int Priority { get; }
 
         private readonly DragControllerBuilder _builder;
-        private readonly PlugControl[] _clickedPlugs;
+        private readonly IPlugControl[] _clickedPlugs;
         private readonly SourcePlugType _sourcePlugType;
 
         private ConnectionItemsControl CreatingConnectionItemsControl { get; }
@@ -27,7 +28,7 @@ namespace TsNode.Controls.Drag
             _clickedPlugs = get_mouse_over_plugs(_builder.SelectedNodes, out _sourcePlugType);
         }
 
-        private PlugControl[] get_mouse_over_plugs(NodeControl[] nodes, out SourcePlugType sourcePlugType)
+        private IPlugControl[] get_mouse_over_plugs(INodeControl[] nodes, out SourcePlugType sourcePlugType)
         {
             sourcePlugType = SourcePlugType.Output;
             var plugs = nodes
@@ -49,14 +50,12 @@ namespace TsNode.Controls.Drag
 
         public bool TryBuild()
         {
-            return _builder.MouseEventArgs.LeftButton == MouseButtonState.Pressed && _clickedPlugs.Any();
+            return _builder.MouseButton == MouseButton.Left && _clickedPlugs.Any();
         }
 
         public IDragController Build()
         {
             var setupArgs = new ConnectionCreateControllerSetupArgs(
-                _builder.InputElement,
-                _builder.MouseEventArgs,
                 _builder.Nodes,
                 _clickedPlugs,
                 CreatingConnectionItemsControl,

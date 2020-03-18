@@ -21,13 +21,21 @@ namespace TsNode.Interface
             Delta = delta;
             Button = button;
         }
+
+        public DragControllerEventArgs CreateUpdatedArgs(Point current)
+        {
+            return new DragControllerEventArgs(StartPoint , current , current - CurrentPoint , Button);
+        }
     }
     
     public interface IDragController
     {
         bool CanDragStart(DragControllerEventArgs args);
-        void OnDrag(DragControllerEventArgs args);
-        void DragEnd();
+        
+        void OnStartDrag(DragControllerEventArgs args);
+        
+        void OnDragMoving(DragControllerEventArgs args);
+        void OnDragEnd();
         void Cancel();
     }
 }

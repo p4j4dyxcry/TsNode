@@ -16,7 +16,7 @@ namespace TsNode.Controls.Node
     [TemplatePart(Name = "PART_InputPlugItemsControl", Type = typeof(PlugItemsControl))]
     [TemplatePart(Name = "PART_OutputPlugItemsControl", Type = typeof(PlugItemsControl))]
 
-    public class NodeControl : ContentControl , ISelectable
+    public class NodeControl : ContentControl , ISelectable , INodeControl
     {
         public static readonly DependencyProperty IsSelectedProperty = DependencyProperty.Register(
             nameof(IsSelected), typeof(bool), typeof(NodeControl), new PropertyMetadata(default(bool)));
@@ -67,7 +67,7 @@ namespace TsNode.Controls.Node
         private static readonly string PART_OutputPlugItemsControl = nameof(PART_OutputPlugItemsControl);
 
         //! 入力プラグを取得する
-        public IEnumerable<PlugControl> GetInputPlugs()
+        public IEnumerable<IPlugControl> GetInputPlugs()
         {
             if (_inputPlugItemsControl is null)
             {
@@ -79,7 +79,7 @@ namespace TsNode.Controls.Node
         }
 
         //! 出力プラグを取得する
-        public IEnumerable<PlugControl> GetOutputPlugs()
+        public IEnumerable<IPlugControl> GetOutputPlugs()
         {
             if (_outputPlugItemsControl is null)
             {
