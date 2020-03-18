@@ -32,6 +32,8 @@ namespace TsNode.Test
 
             var controller = BuildController(nodes, nodeDragCompletedCommand);
 
+            Assert.IsType<NodesDragController>(controller);
+            
             DoDrag( controller , new Point(10,10) );
             
             controller.OnDragEnd();

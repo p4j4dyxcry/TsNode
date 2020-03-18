@@ -82,6 +82,8 @@ namespace TsNode.Controls.Drag.Controller
         
         public void OnStartDrag(DragControllerEventArgs args)
         {
+            _canceled = false;
+            
             if (Args.Panel is null)
                 return;
 
@@ -118,7 +120,7 @@ namespace TsNode.Controls.Drag.Controller
             if (args.Button != MouseButton.Left)
                 cancel_internal(true);
 
-            if (_mouseCaptured is false)
+            if (_mouseCaptured is false && Args.Panel != null)
                 _mouseCaptured = Args.Panel.CaptureMouse();
             
             var currentPoint = args.CurrentPoint;

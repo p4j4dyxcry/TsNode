@@ -100,5 +100,11 @@ namespace TsNode.Test
             Assert.Equal(1,EasingHelper.EaseOut(1));
             Assert.Equal(0,EasingHelper.EaseOut(0));
         }
+        
+        [Fact]
+        public void RectHitTest()
+        {
+            Assert.True(new Rect(0,100,50,50).HitTest(new Rect(0,0,150,150)));
+        }
     }
 }

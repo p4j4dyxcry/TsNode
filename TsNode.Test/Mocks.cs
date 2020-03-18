@@ -105,7 +105,11 @@ namespace TsNode.Test
                 X = x,
                 Y = y,
                 IsSelected = isSelected,
-            });
+            })
+            {
+                ActualWidth = 50,
+                ActualHeight = 50,
+            };
         }
 
         public static ICommand Command<T>(Action<T> action)
