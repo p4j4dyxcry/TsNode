@@ -35,12 +35,12 @@ namespace TsNode.Extensions
             return Math.Max(min, Math.Min(value, max));
         }
 
-        public static bool HitTest(this Rect self, Rect target)
+        public static bool HitTest(this Rect a, Rect b)
         {
-            return
-                Math.Abs(self.X - target.X) < self.Width / 2 + target.Height / 2
-                &&
-                Math.Abs(self.Y - target.Y) < self.Height / 2 + target.Height / 2;
+            return a.Left <= b.Right  && 
+                   b.Left <= a.Right  &&
+                   a.Top  <= b.Bottom &&
+                   b.Top  <= a.Bottom;
         }
     }
 }
