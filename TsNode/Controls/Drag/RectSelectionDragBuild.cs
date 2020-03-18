@@ -29,15 +29,15 @@ namespace TsNode.Controls.Drag
 
         public IDragController Build()
         {
-            var setupArgs = new SelectionRectDragControllerSetupArgs(
-                _panel, 
+            var setupArgs = new RectSelectionControllerSetupArgs(
                 _dragControllerBuilder.Nodes, 
-                _dragControllerBuilder.ConnectionShapes)
+                _dragControllerBuilder.ConnectionShapes,
+                _panel)
             {
                 SelectionChangedCommand = _dragControllerBuilder.SelectionChangedCommand,
                 RectangleStyle = SelectionRectangleStyle
             };
-            return new SelectionRectDragController(setupArgs);
+            return new RectSelectionController(setupArgs);
         }
     }
 }

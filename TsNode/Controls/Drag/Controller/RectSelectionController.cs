@@ -14,16 +14,16 @@ using TsNode.Interface;
 
 namespace TsNode.Controls.Drag.Controller
 {
-    public class SelectionRectDragControllerSetupArgs
+    public class RectSelectionControllerSetupArgs
     {
-        public SelectionRectDragControllerSetupArgs(Panel baseControl, INodeControl[] nodes, ConnectionShape[] connections)
+        public RectSelectionControllerSetupArgs(INodeControl[] nodes, ConnectionShape[] connections , Panel panel = null)
         {
-            BaseControl = baseControl;
             Nodes = nodes;
             Connections = connections;
+            Panel = panel;
         }
 
-        public Panel BaseControl { get; }
+        public Panel Panel { get; }
         public INodeControl[] Nodes { get; }
         public ConnectionShape[] Connections { get; }
 
@@ -31,39 +31,22 @@ namespace TsNode.Controls.Drag.Controller
         public ICommand SelectionChangedCommand { get; set; }
     }
 
-    public class SelectionRectDragController : IDragController
+    public class RectSelectionController : IDragController
     {
         private Rect _rect;
+        private RectSelectionControllerSetupArgs Args { get; }
 
-        private readonly Panel _panel;
-        private readonly INodeControl[] _nodes;
-        private readonly ConnectionShape[] _connections;
         private bool _canceled;
 
-        private static readonly Rectangle Rectangle = new Rectangle();
+        private Rectangle _rectangleView;
         private static Style _defaultStyle ;
         private bool _mouseCaptured = false;
         private ICommand SelectionChangedCommand { get; }
 
-        public SelectionRectDragController(SelectionRectDragControllerSetupArgs args)
+        public RectSelectionController(RectSelectionControllerSetupArgs args)
         {
-            _nodes = args.Nodes;
-            _connections = args.Connections;
-            _panel = args.BaseControl;
+            Args = args;
             SelectionChangedCommand = args.SelectionChangedCommand;
-
-            //! オプション引数としてStyleが渡されている場合はStyleを適用する
-            if (args.BaseControl.Style != null)
-            {
-               Debug.Assert(args.RectangleStyle.TargetType == typeof(Rectangle));
-               Rectangle.Style = args.RectangleStyle;
-            }
-            else // デフォルトスタイルを利用する
-            {
-                if (_defaultStyle is null)
-                    _defaultStyle = make_default_style();
-                Rectangle.Style = _defaultStyle;
-            }
         }
 
         private Style make_default_style()
@@ -99,11 +82,29 @@ namespace TsNode.Controls.Drag.Controller
         
         public void OnStartDrag(DragControllerEventArgs args)
         {
-            Canvas.SetLeft(Rectangle, args.StartPoint.X);
-            Canvas.SetTop(Rectangle, args.StartPoint.Y);
-            Rectangle.Width = 1;
-            Rectangle.Height = 1;
-            _panel.Children.Add(Rectangle);
+            if (Args.Panel is null)
+                return;
+
+            _rectangleView = new Rectangle();
+            
+            //! オプション引数としてStyleが渡されている場合はStyleを適用する
+            if (Args.RectangleStyle != null)
+            {
+                Debug.Assert(Args.RectangleStyle.TargetType == typeof(Rectangle));
+                _rectangleView.Style = Args.RectangleStyle;
+            }
+            else // デフォルトスタイルを利用する
+            {
+                if (_defaultStyle is null)
+                    _defaultStyle = make_default_style();
+                _rectangleView.Style = _defaultStyle;
+            }
+            
+            Canvas.SetLeft(_rectangleView, args.StartPoint.X);
+            Canvas.SetTop(_rectangleView, args.StartPoint.Y);
+            _rectangleView.Width = 1;
+            _rectangleView.Height = 1;
+            Args.Panel.Children.Add(_rectangleView);
         }
 
         public void OnDragMoving(DragControllerEventArgs args)
@@ -118,7 +119,7 @@ namespace TsNode.Controls.Drag.Controller
                 cancel_internal(true);
 
             if (_mouseCaptured is false)
-                _mouseCaptured = _panel.CaptureMouse();
+                _mouseCaptured = Args.Panel.CaptureMouse();
             
             var currentPoint = args.CurrentPoint;
 
@@ -129,10 +130,13 @@ namespace TsNode.Controls.Drag.Controller
                 _rect.Width = Math.Max(currentPoint.X, args.StartPoint.X) - _rect.X;
                 _rect.Height = Math.Max(currentPoint.Y, args.StartPoint.Y) - _rect.Y;
 
-                Canvas.SetLeft(Rectangle,_rect.X);
-                Canvas.SetTop(Rectangle, _rect.Y);
-                Rectangle.Width  = _rect.Width;
-                Rectangle.Height = _rect.Height;
+                if (_rectangleView != null)
+                {
+                    Canvas.SetLeft(_rectangleView,_rect.X);
+                    Canvas.SetTop(_rectangleView, _rect.Y);
+                    _rectangleView.Width  = _rect.Width;
+                    _rectangleView.Height = _rect.Height;                    
+                }
             }
         }
 
@@ -143,19 +147,23 @@ namespace TsNode.Controls.Drag.Controller
 
         public void OnSelect()
         {
-            var selectNodes = _panel.GetHitTestChildrenWithRect<NodeControl>(_rect).ToArray();
+            var selectNodes = Args.Nodes.Where(x => x.ToRect().HitTest(_rect)).ToArray();
 
             if (selectNodes.Any())
             {
-                var changed = SelectHelper.OnlySelect(_nodes.OfType<ISelectable>().Concat(_connections), selectNodes);
+                var changed = SelectHelper.OnlySelect(Args.Nodes.OfType<ISelectable>().Concat(Args.Connections), selectNodes);
                 SelectionChangedCommand?.Execute(new SelectionChangedEventArgs(changed));
                 return;
             }
-            var selectConnections = _connections.Where(x => x.HitTestRect(_rect)).ToArray();
+
+            if (Args.Connections.Any() is false)
+                return;
+            
+            var selectConnections = Args.Connections.Where(x => x.HitTestRect(_rect)).ToArray();
 
             if (selectConnections.Any())
             {
-                var changed = SelectHelper.OnlySelect(_nodes.OfType<ISelectable>().Concat(_connections), selectConnections);
+                var changed = SelectHelper.OnlySelect(Args.Nodes.OfType<ISelectable>().Concat(Args.Connections), selectConnections);
                 SelectionChangedCommand?.Execute(new SelectionChangedEventArgs(changed));
             }
         }
@@ -167,11 +175,15 @@ namespace TsNode.Controls.Drag.Controller
 
             _canceled = true;
 
-            if (_panel.Children.Contains(Rectangle))
-                _panel.Children.Remove(Rectangle);
+            if (Args.Panel != null)
+            {
+                if (Args.Panel.Children.Contains(_rectangleView))
+                    Args.Panel.Children.Remove(_rectangleView);
 
-            if(_mouseCaptured)
-                this._panel.ReleaseMouseCapture();
+                if(_mouseCaptured)
+                    Args.Panel.ReleaseMouseCapture();
+            }
+            
             _mouseCaptured = false;
             
             if (isSelect)

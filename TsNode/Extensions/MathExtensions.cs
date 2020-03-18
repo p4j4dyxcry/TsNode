@@ -34,5 +34,13 @@ namespace TsNode.Extensions
         {
             return Math.Max(min, Math.Min(value, max));
         }
+
+        public static bool HitTest(this Rect self, Rect target)
+        {
+            return
+                Math.Abs(self.X - target.X) < self.Width / 2 + target.Height / 2
+                &&
+                Math.Abs(self.Y - target.Y) < self.Height / 2 + target.Height / 2;
+        }
     }
 }
