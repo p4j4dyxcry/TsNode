@@ -8,6 +8,8 @@ namespace TsNode.Controls.Drag
     public class NodesDragBuild : IDragControllerBuild
     {
         public int Priority { get; }
+        
+        public InfiniteScrollViewer ScrollViewer { get; set; }
 
         private readonly DragControllerBuilder _dragControllerBuilder;
 
@@ -33,7 +35,8 @@ namespace TsNode.Controls.Drag
             var setupArgs = new NodeDragControllerSetupArgs(
                 _dragControllerBuilder.InputElement,
                 _dragControllerBuilder.SelectedNodes,
-                _dragControllerBuilder.CompletedNodeDragCommand)
+                _dragControllerBuilder.CompletedNodeDragCommand,
+                ScrollViewer)
             {
                 GridSize = SnapGridSize,
                 UseSnapGrid = UseSnapGrid,

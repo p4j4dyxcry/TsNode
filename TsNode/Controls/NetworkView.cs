@@ -18,7 +18,7 @@ using TsNode.Interface;
 
 namespace TsNode.Controls
 {
-    [TemplatePart(Name = "PART_Canvas", Type = typeof(Canvas))]
+    [TemplatePart(Name = "PART_ItemsHost", Type = typeof(Panel))]
     [TemplatePart(Name = "PART_NodeItemsControl", Type = typeof(NodeItemsControl))]
     [TemplatePart(Name = "PART_ConnectionItemsControl", Type = typeof(ConnectionItemsControl))]
     [TemplatePart(Name = "PART_CreatingConnectionItemsControl", Type = typeof(ConnectionItemsControl))]
@@ -142,7 +142,7 @@ namespace TsNode.Controls
         private NodeItemsControl _nodeItemsControl;
         private ConnectionItemsControl _connectionItemsControl;
         private ConnectionItemsControl _creatingConnectionItemsControl;
-        private Canvas _canvas;
+        private Panel _itemsHost;
         private DragEventBinder _panelBinder;
         private DragEventBinder _rootBinder;
 
@@ -158,7 +158,7 @@ namespace TsNode.Controls
 
             //! Find Controls
             _nodeItemsControl = this.FindTemplate<NodeItemsControl>("PART_NodeItemsControl");
-            _canvas = this.FindTemplate<Canvas>("PART_Canvas");
+            _itemsHost = this.FindTemplate<Panel>("PART_ItemsHost");
             _connectionItemsControl = this.FindTemplate<ConnectionItemsControl>("PART_ConnectionItemsControl");
             _creatingConnectionItemsControl =
                 this.FindTemplate<ConnectionItemsControl>("PART_CreatingConnectionItemsControl");
@@ -175,7 +175,7 @@ namespace TsNode.Controls
 
         private void _loaded()
         {
-            _panelBinder = new DragEventBinder(this.FindChildWithName<Canvas>("PART_ItemsHost"),
+            _panelBinder = new DragEventBinder(_itemsHost,
                 make_panel_drag_controller, true);
             _rootBinder = new DragEventBinder(this, make_root_middle_drag_controller, true, _panelBinder);
 
@@ -223,7 +223,7 @@ namespace TsNode.Controls
 
                 // クリックしたコネクションを集める
                 var clickedConnections = connections
-                    .Where(x => x.HitTestCircle(args.GetPosition(_canvas), 12))
+                    .Where(x => x.HitTestCircle(args.GetPosition(_itemsHost), 12))
                     .ToArray();
 
                 // 選択処理を行うセレクタを生成する
@@ -241,12 +241,14 @@ namespace TsNode.Controls
                 // ! ドラッグコントローラを作成する
                 //   複雑な条件に対応できるように
 
-                var panel = this.FindChildWithName<Canvas>("PART_ItemsHost");
-                var builder = new DragControllerBuilder(panel, MouseButton.Left, nodes, connections);
+                var builder = new DragControllerBuilder(_itemsHost, MouseButton.Left, nodes, connections);
                 return builder
                     .AddBuildTarget(new ConnectionDragBuild(builder, 0, _creatingConnectionItemsControl))
-                    .AddBuildTarget(new NodesDragBuild(builder, 1, UseGridSnap, (int) GridSize))
-                    .AddBuildTarget(new RectSelectionDragBuild(builder, 2, SelectionRectangleStyle,panel))
+                    .AddBuildTarget(new NodesDragBuild(builder, 1, UseGridSnap, (int) GridSize)
+                    {
+                        ScrollViewer = this.FindChild<InfiniteScrollViewer>(x => true)
+                    })
+                    .AddBuildTarget(new RectSelectionDragBuild(builder, 2, SelectionRectangleStyle,_itemsHost))
                     .SetConnectionCommand(StartCreateConnectionCommand, CompletedCreateConnectionCommand)
                     .SetSelectionChangedCommand(SelectionChangedCommand)
                     .SetNodeDragCompletedCommand(CompetedMoveNodeCommand)
