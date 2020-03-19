@@ -6,7 +6,7 @@
         xmlns:controls="clr-namespace:TsNode.Controls;assembly=TsNode"
         xmlns:exampleApp="clr-namespace:SandBox.ExampleApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="600" Width="800">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -21,10 +21,14 @@
 
     <Grid>
         <controls:NetworkView
+            x:Name="NetworkView"
             Background="LightGray"
             CompletedCreateConnectionCommand="{Binding ConnectedCommand}"
             Connections="{Binding Connections}"
             Nodes="{Binding Nodes}"
             StartCreateConnectionCommand="{Binding ConnectStartCommand}" />
+        <Border
+            x:Name="MiniMap"
+            Width="200" Height="200" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20"/>
     </Grid>
 </Window>

@@ -117,8 +117,20 @@ namespace ExampleApp
             };
 
             Nodes.Add(node1);
-            Nodes.Add(node2);
+            Nodes.Add(node2);   
             Nodes.Add(node3);
+
+            foreach (var i in Enumerable.Range(0,10))
+            {
+                foreach (var j in Enumerable.Range(0,5))
+                {
+                    Nodes.Add(new PresetNodeViewModel()
+                    {
+                        X = i * 300,
+                        Y = j * 300
+                    });
+                }                
+            }
 
             var connection = new PresetConnectionViewModel()
             {
