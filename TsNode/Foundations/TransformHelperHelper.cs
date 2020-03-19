@@ -1,12 +1,26 @@
 ﻿using System;
 using System.Windows;
 using TsNode.Interface;
+using TsNode.Extensions;
 
 namespace TsNode.Foundations
 {
-    internal static class TransformHolderHelper
+    public static class TransformHolderHelper
     {
-        //
+        public static TransformResult ComputeFitRect(Rect fitRect ,double width, double height)
+        {
+            fitRect = fitRect.ValidateRect(width, height);
+            
+            // compute translate
+            var centerPoint = new Point(fitRect.X + fitRect.Width / 2, fitRect.Y + fitRect.Height / 2);
+            
+            // compute scale
+            var scaleW = width / fitRect.Width;
+            var scaleH = height / fitRect.Height;
+            var newScale = Math.Min(scaleW, scaleH);
+            
+            return new TransformResult(centerPoint.X,centerPoint.Y,newScale);
+        }
     }
 
     internal static class TransformHolderExtensions
@@ -63,27 +77,6 @@ namespace TsNode.Foundations
         public static Point GetTranslateToPosition(this ITransformHolder self )
         {
             return new Point(self.TranslateMatrix.X, self.TranslateMatrix.Y);
-        }
-
-        public static TransformResult ComputeFitRect(this ITransformHolder self, Rect fitRect ,double width, double height)
-        {
-            // offset to fitRect
-            {
-                var deltaW = Math.Max(width - fitRect.Width, 0);
-                var deltaH = Math.Max(height - fitRect.Height, 0);
-                var offset = Math.Min(deltaW, deltaH) / 2;
-                fitRect.Inflate(offset, offset);                
-            }
-            
-            // compute translate
-            var centerPoint = new Point(fitRect.X + fitRect.Width / 2, fitRect.Y + fitRect.Height / 2);
-            
-            // compute scale
-            var scaleW = width / fitRect.Width;
-            var scaleH = height / fitRect.Height;
-            var newScale = Math.Min(scaleW, scaleH);
-            
-            return new TransformResult(centerPoint.X,centerPoint.Y,newScale);
         }
     }
     

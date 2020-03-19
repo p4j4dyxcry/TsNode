@@ -75,28 +75,26 @@
                     <controls1:InfiniteScrollViewer 
                         ViewRect="{Binding ItemsRect , RelativeSource={RelativeSource AncestorType=controls1:NetworkView}}"
                         ViewRectOffset="32">
-                        <Canvas x:Name="PART_Canvas">
-                            <Canvas x:Name="PART_ItemsHost">
-                                <controls1:GridRenderer
-                                    Canvas.Left="-100000"
-                                    Canvas.Top="-100000"
-                                    Width="200000"
-                                    Height="200000"
-                                    GridInterval="{TemplateBinding GridSize}"
-                                    GridThickness="0.0625"
-                                    IsDash="False"
-                                    IsDrawGrid="True"
-                                    Scale="{Binding ScaleMatrix.ScaleX, RelativeSource={RelativeSource AncestorType={x:Type controls1:NetworkView}}}" />
-                                <!--  実在するConnection  -->
-                                <connection:ConnectionItemsControl x:Name="PART_ConnectionItemsControl" ItemsSource="{TemplateBinding Connections}" />
+                        <Canvas x:Name="PART_ItemsHost" Background="Transparent" Focusable="True" FocusVisualStyle="{x:Null}">
+                            <controls1:GridRenderer
+                                Canvas.Left="-100000"
+                                Canvas.Top="-100000"
+                                Width="200000"
+                                Height="200000"
+                                GridInterval="{TemplateBinding GridSize}"
+                                GridThickness="0.0625"
+                                IsDash="False"
+                                IsDrawGrid="True"
+                                Scale="{Binding ScaleMatrix.ScaleX, RelativeSource={RelativeSource AncestorType={x:Type controls1:NetworkView}}}" />
+                            <!--  実在するConnection  -->
+                            <connection:ConnectionItemsControl x:Name="PART_ConnectionItemsControl" ItemsSource="{TemplateBinding Connections}" />
 
-                                <!--  作成中のConnection  -->
-                                <connection:ConnectionItemsControl x:Name="PART_CreatingConnectionItemsControl" />
+                            <!--  作成中のConnection  -->
+                            <connection:ConnectionItemsControl x:Name="PART_CreatingConnectionItemsControl" />
 
-                                <!--  Node  -->
-                                <node:NodeItemsControl x:Name="PART_NodeItemsControl" ItemsSource="{TemplateBinding Nodes}" />
-                            </Canvas>
-                        </Canvas>                        
+                            <!--  Node  -->
+                            <node:NodeItemsControl x:Name="PART_NodeItemsControl" ItemsSource="{TemplateBinding Nodes}" />
+                        </Canvas>                    
                     </controls1:InfiniteScrollViewer>
                 </ControlTemplate>
             </Setter.Value>

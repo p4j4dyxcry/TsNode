@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace TsNode.Extensions
 {
-    internal static class MathExtensions
+    public static class MathExtensions
     {
         public static Vector ToVector(this Point point)
         {
@@ -41,6 +41,20 @@ namespace TsNode.Extensions
                    b.Left <= a.Right  &&
                    a.Top  <= b.Bottom &&
                    b.Top  <= a.Bottom;
+        }
+        
+        
+        public static Rect ValidateRect(this Rect rect, double width, double height)
+        {
+            // offset to fitRect
+            {
+                var deltaW = Math.Max(width - rect.Width, 0);
+                var deltaH = Math.Max(height - rect.Height, 0);
+                var offset = Math.Min(deltaW, deltaH) / 2;
+                rect.Inflate(offset, offset);                
+            }
+
+            return rect;
         }
     }
 }

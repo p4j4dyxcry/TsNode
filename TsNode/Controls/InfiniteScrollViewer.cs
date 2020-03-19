@@ -147,7 +147,7 @@ namespace TsNode.Controls
 
         public void FitRect(Rect fitRect)
         {
-            var transformResult = this.ComputeFitRect(fitRect.ToOffset(ViewRectOffset), ActualWidth, ActualHeight);
+            var transformResult = TransformHolderHelper.ComputeFitRect(fitRect.ToOffset(ViewRectOffset), ActualWidth, ActualHeight);
             set_transform_origin(transformResult.X,transformResult.Y,transformResult.Scale);
         }
 
@@ -161,7 +161,7 @@ namespace TsNode.Controls
         public async Task FitRectAnimation(Rect fitRect, TimeSpan time , Func<double,double> easing = null)
         {
             var currentTransform = get_transform_origin();
-            var targetTransform = this.ComputeFitRect(fitRect.ToOffset(ViewRectOffset), ActualWidth, ActualHeight);
+            var targetTransform = TransformHolderHelper.ComputeFitRect(fitRect.ToOffset(ViewRectOffset), ActualWidth, ActualHeight);
 
             await EasingHelper.StartAnimation(t =>
             {

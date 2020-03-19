@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace TsNode.Extensions
 {
-    internal static class VisualTreeExtensions
+    public static class VisualTreeExtensions
     {
         public static TParent FindVisualParentWithType<TParent>(this DependencyObject childElement)
             where TParent : class
@@ -66,9 +66,12 @@ namespace TsNode.Extensions
             return root.FindChild<T>(x=>x.DataContext == datContext);
         }
 
-        public static T FindChild<T>(this FrameworkElement root, Func<FrameworkElement, bool> compare) 
+        public static T FindChild<T>(this FrameworkElement root, Func<FrameworkElement, bool> compare = null) 
             where T : FrameworkElement
         {
+            if (compare is null)
+                compare = x => true;
+            
             var children = Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(root)).Select(x => VisualTreeHelper.GetChild(root, x)).OfType<FrameworkElement>().ToArray();
 
             foreach (var child in children)

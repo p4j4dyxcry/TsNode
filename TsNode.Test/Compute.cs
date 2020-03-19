@@ -18,13 +18,11 @@ namespace TsNode.Test
         [Fact]
         public void FitRectNoScale()
         {
-            var holder = new TransformHolder();
-
             var rect = new Rect(0, 0, 500, 500);
             var width = 500;
             var height = 500;
             
-            var result = holder.ComputeFitRect( rect , width, height);
+            var result = TransformHolderHelper.ComputeFitRect( rect , width, height);
 
             Assert.Equal(250 , result.X);
             Assert.Equal(250 , result.Y);
@@ -40,7 +38,7 @@ namespace TsNode.Test
             var width = 500;
             var height = 500;
             
-            var result = holder.ComputeFitRect( rect , width, height);
+            var result = TransformHolderHelper.ComputeFitRect( rect , width, height);
 
             Assert.Equal(500 , result.X);
             Assert.Equal(500 , result.Y);

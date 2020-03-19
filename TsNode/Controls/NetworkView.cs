@@ -179,7 +179,7 @@ namespace TsNode.Controls
                 make_panel_drag_controller, true);
             _rootBinder = new DragEventBinder(this, make_root_middle_drag_controller, true, _panelBinder);
 
-            KeyDown += key_down;
+            _itemsHost.KeyDown += key_down;
             start_node_update_timer();
         }
 
@@ -188,7 +188,7 @@ namespace TsNode.Controls
             _panelBinder?.Dispose();
             _rootBinder?.Dispose();
 
-            KeyDown -= key_down;
+            _itemsHost.KeyDown -= key_down;
 
             stop_node_update_timer();
         }
