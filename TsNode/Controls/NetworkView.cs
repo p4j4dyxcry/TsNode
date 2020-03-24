@@ -175,8 +175,9 @@ namespace TsNode.Controls
 
         private void _loaded()
         {
-            _panelBinder = new DragEventBinder(_itemsHost,
-                make_panel_drag_controller, true);
+            _panelBinder = new DragEventBinder(_itemsHost, make_panel_drag_controller, true);
+            _panelBinder.PreviewDragStart += update_selection;
+            
             _rootBinder = new DragEventBinder(this, make_root_middle_drag_controller, true, _panelBinder);
 
             _itemsHost.KeyDown += key_down;
@@ -185,6 +186,9 @@ namespace TsNode.Controls
 
         private void _unloaded()
         {
+            if(_panelBinder != null)
+                _panelBinder.PreviewDragStart -= update_selection;
+
             _panelBinder?.Dispose();
             _rootBinder?.Dispose();
 
@@ -212,41 +216,49 @@ namespace TsNode.Controls
             }
         }
 
-        private IDragController make_panel_drag_controller(MouseEventArgs args)
+        private void update_selection(object sender , DragControllerEventArgs args)
         {
-            //! 左クリックに反応
-            if (args.LeftButton == MouseButtonState.Pressed)
+            // ミドルクリックは選択を変更しない
+            if (args.Button == MouseButton.Middle)
+                return;
+            
+            var nodes = _nodeItemsControl.GetNodes();
+            var connections = _connectionItemsControl.GetConnectionShapes();
+            var clickedNodes = _nodeItemsControl.GetNodes(x => x.IsMouseOver);
+
+            // クリックしたコネクションを集める
+            var clickedConnections = connections
+                .Where(x => x.HitTestCircle(args.CurrentPoint, 12))
+                .ToArray();
+
+            // 選択処理を行うセレクタを生成する
+            var selector = MakeControlSelector();
+
+            var selectInfo = new SelectInfo(
+                nodes.ToSelectableDataContext(),
+                clickedNodes.ToSelectableDataContext(),
+                connections.ToSelectableDataContext(),
+                clickedConnections.ToSelectableDataContext());
+
+            // 選択状態を設定する
+            selector.OnSelect(selectInfo);
+        }
+
+        private IDragController make_panel_drag_controller(DragControllerEventArgs args)
+        {
+            //! 左クリックの場合ドラッグコントローラの作成を試みる
+            if (args.Button == MouseButton.Left)
             {
                 var nodes = _nodeItemsControl.GetNodes();
-                var clickedNodes = _nodeItemsControl.GetNodes(x => x.IsMouseOver);
                 var connections = _connectionItemsControl.GetConnectionShapes();
-
-                // クリックしたコネクションを集める
-                var clickedConnections = connections
-                    .Where(x => x.HitTestCircle(args.GetPosition(_itemsHost), 12))
-                    .ToArray();
-
-                // 選択処理を行うセレクタを生成する
-                IControlSelector selector = MakeControlSelector();
-
-                var selectInfo = new SelectInfo(
-                    nodes.ToSelectableDataContext(),
-                    clickedNodes.ToSelectableDataContext(),
-                    connections.ToSelectableDataContext(),
-                    clickedConnections.ToSelectableDataContext());
-
-                // 選択状態を設定する
-                selector.OnSelect(selectInfo);
-
+                
                 // ! ドラッグコントローラを作成する
-                //   複雑な条件に対応できるように
-
                 var builder = new DragControllerBuilder(_itemsHost, MouseButton.Left, nodes, connections);
                 return builder
                     .AddBuildTarget(new ConnectionDragBuild(builder, 0, _creatingConnectionItemsControl))
                     .AddBuildTarget(new NodesDragBuild(builder, 1, UseGridSnap, (int) GridSize)
                     {
-                        ScrollViewer = this.FindChild<InfiniteScrollViewer>(x => true)
+                        ScrollViewer = this.FindChild<InfiniteScrollViewer>()
                     })
                     .AddBuildTarget(new RectSelectionDragBuild(builder, 2, SelectionRectangleStyle,_itemsHost))
                     .SetConnectionCommand(StartCreateConnectionCommand, CompletedCreateConnectionCommand)
@@ -259,9 +271,9 @@ namespace TsNode.Controls
             return null;
         }
 
-        private IDragController make_root_middle_drag_controller(MouseEventArgs args)
+        private IDragController make_root_middle_drag_controller(DragControllerEventArgs args)
         {
-            if (args.MiddleButton == MouseButtonState.Pressed)
+            if (args.Button == MouseButton.Middle)
             {
                 return new ViewportDragController(this);
             }

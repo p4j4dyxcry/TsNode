@@ -7,9 +7,12 @@ namespace TsNode.Controls.Drag
 {
     public class DragEventBinder : IDisposable
     {
+        // events
+        public EventHandler<DragControllerEventArgs> PreviewDragStart;
+        
         // readonly properties
         private readonly UIElement _target;
-        private readonly Func<MouseEventArgs, IDragController> _converter;
+        private readonly Func<DragControllerEventArgs, IDragController> _converter;
         private readonly bool _onClickFocus;
         private readonly DragEventBinder _parent;
 
@@ -18,7 +21,7 @@ namespace TsNode.Controls.Drag
         private Point _startPoint;
         private Point _prevPoint;
         
-        public DragEventBinder(UIElement target , Func<MouseEventArgs , IDragController> converter , bool onClickFocus , DragEventBinder parent = null)
+        public DragEventBinder(UIElement target , Func<DragControllerEventArgs , IDragController> converter , bool onClickFocus , DragEventBinder parent = null)
         {
             _parent = parent;
             _target = target;
@@ -39,18 +42,21 @@ namespace TsNode.Controls.Drag
                 return;
             
             try_cancel();
+            
+            _startPoint = args.GetPosition(_target);
+            _prevPoint = _startPoint;
 
-            _currentController = _converter(args);
+            var convertedArgs = convert_args(args);
+            
+            PreviewDragStart?.Invoke(this,convertedArgs);
+
+            _currentController = _converter(convertedArgs);
 
             if (_currentController == null)
             {
                 return;
             }
 
-            _startPoint = args.GetPosition(_target);
-            _prevPoint = _startPoint;
-
-            var convertedArgs = convert_args(args);
             if (_currentController.CanDragStart(convertedArgs) is false)
             {
                 try_cancel();
