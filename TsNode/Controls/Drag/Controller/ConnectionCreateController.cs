@@ -106,7 +106,7 @@ namespace TsNode.Controls.Drag.Controller
                 }
             }
 
-            if (args.Button == MouseButton.Left)
+            if (args.Button != MouseButton.Left)
             {
                 create_connection();
             }
