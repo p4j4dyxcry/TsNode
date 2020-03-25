@@ -175,6 +175,9 @@ namespace TsNode.Controls
 
         private void _loaded()
         {
+            if (is_setup_completed() is false)
+                return;
+            
             _panelBinder = new DragEventBinder(_itemsHost, make_panel_drag_controller, true);
             _panelBinder.PreviewDragStart += update_selection;
             
@@ -186,6 +189,9 @@ namespace TsNode.Controls
 
         private void _unloaded()
         {
+            if (is_setup_completed() is false)
+                return;
+            
             if(_panelBinder != null)
                 _panelBinder.PreviewDragStart -= update_selection;
 
@@ -285,6 +291,9 @@ namespace TsNode.Controls
 
         private void start_node_update_timer()
         {
+            if (is_setup_completed() is false)
+                return;
+        
             if (_nodeRectCalcTimer is null)
             {
                 _nodeRectCalcTimer = new DispatcherTimer();
@@ -321,6 +330,19 @@ namespace TsNode.Controls
             rect.Height = nodeControls.Max(x => x.Y + x.ActualHeight) - rect.Y;
 
             return rect;
+        }
+
+        private bool is_setup_completed()
+        {
+            if (_itemsHost is null)
+                return false;
+            if (_nodeItemsControl is null)
+                return false;
+            if (_connectionItemsControl is null)
+                return false;
+            if (_creatingConnectionItemsControl is null)
+                return false;
+            return true;
         }
     }
 }
