@@ -45,6 +45,15 @@ namespace TsNode.Controls.Node
             set => SetValue(YProperty, value);
         }
 
+        public static readonly DependencyProperty CanMovableProperty = DependencyProperty.Register(
+            nameof(CanMovable), typeof(bool), typeof(NodeControl), new PropertyMetadata(true));
+
+        public bool CanMovable
+        {
+            get => (bool) GetValue(CanMovableProperty);
+            set => SetValue(CanMovableProperty, value);
+        }
+
         public static void OnPointsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is NodeControl nodeControl)

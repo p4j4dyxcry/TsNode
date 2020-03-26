@@ -10,6 +10,8 @@ namespace TsNode.Interface
 
         double Y { get; set; }
         
+        bool CanMovable { get; }
+        
         bool IsMouseOver { get; }
         
         object DataContext { get; }

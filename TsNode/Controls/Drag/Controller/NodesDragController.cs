@@ -79,7 +79,7 @@ namespace TsNode.Controls.Drag.Controller
             _originalPoints = setupArgs.Nodes.ToDictionary(x => x , x => new Point(x.X, x.Y));
             
             _completedNodeMove = setupArgs.CompletedCommand;
-            _selectedNodes = setupArgs.Nodes;
+            _selectedNodes = setupArgs.Nodes.Where(x=>x.CanMovable).ToArray();
             _useSnapGrid = setupArgs.UseSnapGrid;
             _gridSize = setupArgs.GridSize;
             _inputElement = setupArgs.BaseControl;
