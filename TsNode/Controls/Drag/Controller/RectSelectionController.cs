@@ -101,9 +101,11 @@ namespace TsNode.Controls.Drag.Controller
                     _defaultStyle = make_default_style();
                 _rectangleView.Style = _defaultStyle;
             }
-            
+            _rect.X = args.StartPoint.X;
+            _rect.Y = args.StartPoint.Y;
             Canvas.SetLeft(_rectangleView, args.StartPoint.X);
             Canvas.SetTop(_rectangleView, args.StartPoint.Y);
+            
             _rectangleView.Width = 1;
             _rectangleView.Height = 1;
             Args.Panel.Children.Add(_rectangleView);
