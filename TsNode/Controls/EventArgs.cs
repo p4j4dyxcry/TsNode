@@ -11,6 +11,15 @@ namespace TsNode.Controls
         Output
     }
 
+    public enum SelectionType
+    {
+        None,
+        Single,
+        Toggle,
+        Add,
+        Rect,
+    }
+
     //! コネクションの生成開始時に発行されるイベント
     public class StartCreateConnectionEventArgs : EventArgs
     {
@@ -60,11 +69,13 @@ namespace TsNode.Controls
     //! 選択が変更されたときに発行されるイベント
     public class SelectionChangedEventArgs : EventArgs
     {
+        public SelectionType SelectionType { get; }
         public ISelectable[] ChangedItems { get; }
 
-        public SelectionChangedEventArgs(ISelectable[] changed)
+        public SelectionChangedEventArgs(ISelectable[] changed , SelectionType selectionType)
         {
             ChangedItems = changed;
+            SelectionType = selectionType;
         }
     }
 }
