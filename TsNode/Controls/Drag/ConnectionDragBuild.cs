@@ -61,6 +61,7 @@ namespace TsNode.Controls.Drag
                 CreatingConnectionItemsControl,
                 _builder.ConnectConnectionCommand,
                 _builder.StartConnectionCommand,
+                _builder.CancelConnectionCommand,
                 _sourcePlugType);
 
             return new ConnectionCreateController(setupArgs);

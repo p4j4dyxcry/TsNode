@@ -154,7 +154,7 @@ namespace TsNode.Controls.Drag.Controller
             if (selectNodes.Any())
             {
                 var changed = SelectHelper.OnlySelect(Args.Nodes.OfType<ISelectable>().Concat(Args.Connections), selectNodes);
-                SelectionChangedCommand?.Execute(new SelectionChangedEventArgs(changed));
+                SelectionChangedCommand?.Execute(new SelectionChangedEventArgs(changed,SelectionType.Rect));
                 return;
             }
 
@@ -166,7 +166,7 @@ namespace TsNode.Controls.Drag.Controller
             if (selectConnections.Any())
             {
                 var changed = SelectHelper.OnlySelect(Args.Nodes.OfType<ISelectable>().Concat(Args.Connections), selectConnections);
-                SelectionChangedCommand?.Execute(new SelectionChangedEventArgs(changed));
+                SelectionChangedCommand?.Execute(new SelectionChangedEventArgs(changed,SelectionType.Rect));
             }
         }
 

@@ -18,6 +18,7 @@ namespace TsNode.Controls
         Toggle,
         Add,
         Rect,
+        Clear,
     }
 
     //! コネクションの生成開始時に発行されるイベント
@@ -28,6 +29,19 @@ namespace TsNode.Controls
         public StartCreateConnectionEventArgs(IPlugDataContext[] startPlugs)
         {
             SenderPlugs = startPlugs;
+        }
+    }
+    
+    //! コネクションの生成キャンセル時に発行されるイベント
+    public class CanceledCreateConnectionEventArgs : EventArgs
+    {
+        public IPlugDataContext[] SenderPlugs { get; }
+        public IConnectionDataContext ConnectionDataContext { get; }
+
+        public CanceledCreateConnectionEventArgs(IPlugDataContext[] senderPlugs , IConnectionDataContext connectionDataContext)
+        {
+            ConnectionDataContext = connectionDataContext;
+            SenderPlugs = senderPlugs;
         }
     }
 

@@ -28,6 +28,9 @@ namespace TsNode.Controls.Drag.Controller
 
         //! コネクション作成完了コマンド
         public ICommand StartConnectionCreated { get; }
+        
+        //! コネクション作成キャンセルコマンド
+        public ICommand CancelConnectionCreated { get; }
 
         //! ドラッグ元プラグのタイプ
         public SourcePlugType SourcePlugType { get; }
@@ -38,6 +41,7 @@ namespace TsNode.Controls.Drag.Controller
             ConnectionItemsControl connectionItemsControl,
             ICommand connectionCreated,
             ICommand startConnectionCreated,
+            ICommand cancelConnectionCreated,
             SourcePlugType sourcePlugType)
         {
             Nodes = nodes;
@@ -45,6 +49,7 @@ namespace TsNode.Controls.Drag.Controller
             CreatingConnectionItemsControl = connectionItemsControl;
             ConnectionCreated = connectionCreated;
             StartConnectionCreated = startConnectionCreated;
+            CancelConnectionCreated = cancelConnectionCreated;
             SourcePlugType = sourcePlugType;
         }
 
@@ -61,7 +66,9 @@ namespace TsNode.Controls.Drag.Controller
         private readonly ConnectionItemsControl _connectionItemsControl;
         private readonly INodeControl[] _nodes;
         private readonly ICommand _connectionStart;
+        private readonly ICommand _connectionCreateCancel;
         private readonly ICommand _connectionCreated;
+        
         private readonly SourcePlugType _sourcePlugType;
 
         private bool _isCreated;
@@ -74,24 +81,20 @@ namespace TsNode.Controls.Drag.Controller
         public void OnStartDrag(DragControllerEventArgs args)
         {
             _connectionStart?.Execute(new StartCreateConnectionEventArgs(_sourcePlugs));
+            
+            foreach (var plug in _sourcePlugs)
+            {
+                var connection = _plugToConnectionDataContexts[plug];
+                if (_sourcePlugType == SourcePlugType.Input)
+                    connection.DestPlug = plug;
+                else
+                    connection.SourcePlug = plug;
+                _connectionItemsControl.Items.Add(connection);
+            }
         }
 
         public void OnDragMoving(DragControllerEventArgs args)
         {
-            //! 作成中仮コネクションの作成(1度だけ)
-            if (_connectionItemsControl.Items.IsEmpty && _isCreated is false)
-            {
-                foreach (var plug in _sourcePlugs)
-                {
-                    var connection = _plugToConnectionDataContexts[plug];
-                    if (_sourcePlugType == SourcePlugType.Input)
-                        connection.DestPlug = plug;
-                    else
-                        connection.SourcePlug = plug;
-                    _connectionItemsControl.Items.Add(connection);
-                }
-            }
-
             foreach (var connection in _connectionItemsControl.FindVisualChildrenWithType<ConnectionShape>())
             {
                 if (_sourcePlugType == SourcePlugType.Output)
@@ -141,6 +144,7 @@ namespace TsNode.Controls.Drag.Controller
             var connectTarget = targetPlugs.FirstOrDefault()?.DataContext as IConnectTarget
                 ?? _nodes.FirstOrDefault(x => x.IsMouseOver)?.DataContext as IConnectTarget;
 
+            var connected = false;
             if (connectTarget != null)
             {
                 if (_sourcePlugs.All(x => connectTarget.TryConnect(
@@ -155,7 +159,17 @@ namespace TsNode.Controls.Drag.Controller
                     foreach (var dragSourcePlug in _sourcePlugs)
                     {
                         _connectionCreated?.Execute(new CompletedCreateConnectionEventArgs(_plugToConnectionDataContexts[dragSourcePlug]));
+                        connected = true;
                     }
+                }
+            }
+
+            if (connected is false)
+            {
+                // ドラッグキャンセルコマンド
+                foreach (var dragSourcePlug in _sourcePlugs)
+                {
+                    _connectionCreateCancel?.Execute(new CanceledCreateConnectionEventArgs(_sourcePlugs,_plugToConnectionDataContexts[dragSourcePlug]));
                 }
             }
 
@@ -181,6 +195,7 @@ namespace TsNode.Controls.Drag.Controller
 
             _connectionItemsControl = setupArgs.CreatingConnectionItemsControl;
             _connectionCreated = setupArgs.ConnectionCreated;
+            _connectionCreateCancel = setupArgs.CancelConnectionCreated;
             _sourcePlugType = setupArgs.SourcePlugType;
             _connectionStart = setupArgs.StartConnectionCreated;
         }

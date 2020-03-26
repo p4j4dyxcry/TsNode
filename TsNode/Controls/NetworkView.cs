@@ -116,6 +116,15 @@ namespace TsNode.Controls
             set => SetValue(StartCreateConnectionCommandProperty, value);
         }
 
+        public static readonly DependencyProperty CanceledConnectionCommandProperty = DependencyProperty.Register(
+            nameof(CanceledConnectionCommand), typeof(ICommand), typeof(NetworkView), new PropertyMetadata(default(ICommand)));
+
+        public ICommand CanceledConnectionCommand
+        {
+            get => (ICommand) GetValue(CanceledConnectionCommandProperty);
+            set => SetValue(CanceledConnectionCommandProperty, value);
+        }
+
         //! コマンドの引数として[CompletedMoveNodeEventArgs]が渡される
         public static readonly DependencyProperty CompetedMoveNodeCommandProperty = DependencyProperty.Register(
             nameof(CompetedMoveNodeCommand), typeof(ICommand), typeof(NetworkView),
@@ -267,7 +276,7 @@ namespace TsNode.Controls
                         ScrollViewer = this.FindChild<InfiniteScrollViewer>()
                     })
                     .AddBuildTarget(new RectSelectionDragBuild(builder, 2, SelectionRectangleStyle,_itemsHost))
-                    .SetConnectionCommand(StartCreateConnectionCommand, CompletedCreateConnectionCommand)
+                    .SetConnectionCommand(StartCreateConnectionCommand, CompletedCreateConnectionCommand , CanceledConnectionCommand)
                     .SetSelectionChangedCommand(SelectionChangedCommand)
                     .SetNodeDragCompletedCommand(CompetedMoveNodeCommand)
                     .Build();

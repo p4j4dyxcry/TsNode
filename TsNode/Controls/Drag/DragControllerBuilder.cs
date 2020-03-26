@@ -29,6 +29,7 @@ namespace TsNode.Controls.Drag
         public ConnectionShape[] ConnectionShapes { get; }
         public INodeControl[] SelectedNodes { get; }
         public ICommand StartConnectionCommand { get; private set; }
+        public ICommand CancelConnectionCommand { get; private set; }
         public ICommand ConnectConnectionCommand { get; private set; }
         public ICommand SelectionChangedCommand { get; private set; }
         public ICommand CompletedNodeDragCommand { get; private set; }
@@ -55,10 +56,11 @@ namespace TsNode.Controls.Drag
             return this;
         }
 
-        public DragControllerBuilder SetConnectionCommand(ICommand startConnectionCommand , ICommand completedConnectionCommand)
+        public DragControllerBuilder SetConnectionCommand(ICommand startConnectionCommand , ICommand completedConnectionCommand , ICommand cancelConnectionCommand)
         {
             StartConnectionCommand = startConnectionCommand;
             ConnectConnectionCommand = completedConnectionCommand;
+            CancelConnectionCommand = cancelConnectionCommand;
             return this;
         }
 
