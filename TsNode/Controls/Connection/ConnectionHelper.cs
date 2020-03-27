@@ -4,7 +4,7 @@ using TsNode.Extensions;
 
 namespace TsNode.Controls.Connection
 {
-    internal static class ConnectionHelper
+    public static class ConnectionHelper
     {
         public struct BezierConnectionInfo
         {
@@ -16,7 +16,7 @@ namespace TsNode.Controls.Connection
         }
 
         //! ベジェ曲線のコントロールポイントを計算する
-        internal static BezierConnectionInfo CalcBezierInfo(double sourceX, double sourceY, double destX, double destY)
+        public static BezierConnectionInfo CalcBezierInfo(double sourceX, double sourceY, double destX, double destY)
         {
             var source = new Vector(sourceX, sourceY);
             var dest = new Vector(destX, destY);
@@ -55,7 +55,7 @@ namespace TsNode.Controls.Connection
         }
     
         //! ベジェ曲線のジオメトリを作成する
-        internal static Geometry MakeBezierPathGeometry(BezierConnectionInfo bezierInfo)
+        public static Geometry MakeBezierPathGeometry(BezierConnectionInfo bezierInfo)
         {
             PathFigure MakePath(Point start, Point center, Point end)
             {
