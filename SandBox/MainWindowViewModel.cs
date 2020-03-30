@@ -1,7 +1,4 @@
-﻿
-namespace SandBox
-{
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
@@ -9,7 +6,7 @@ using TsNode.Controls;
 using TsNode.Interface;
 using TsNode.Preset;
 
-namespace ExampleApp
+namespace SandBox
 {
     public class SimpleCommand<T> : ICommand
     {
@@ -20,9 +17,9 @@ namespace ExampleApp
 
         public bool CanExecute(object parameter) => true;
 
-        public void Execute(object parameter) => _action.Invoke((T)parameter);
+        public void Execute(object parameter) => _action.Invoke((T) parameter);
 
-        public void RaiseCanExecute() => CanExecuteChanged?.Invoke(this,EventArgs.Empty);
+        public void RaiseCanExecute() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public class MainWindowViewModel
@@ -30,7 +27,7 @@ namespace ExampleApp
         public ICommand ConnectedCommand { get; }
         public ICommand ConnectStartCommand { get; }
 
-        public ObservableCollection<INodeDataContext> Nodes {get;set;}
+        public ObservableCollection<INodeDataContext> Nodes { get; set; }
         public ObservableCollection<IConnectionDataContext> Connections { get; set; }
 
         public MainWindowViewModel()
@@ -40,7 +37,7 @@ namespace ExampleApp
 
             ConnectStartCommand = new SimpleCommand<StartCreateConnectionEventArgs>((args) =>
             {
-                foreach(var plug in args.SenderPlugs)
+                foreach (var plug in args.SenderPlugs)
                     DeleteConnection(plug);
             });
 
@@ -59,8 +56,8 @@ namespace ExampleApp
         {
             //!接続済みのプラグだった場合そのコネクション破棄する
             var connected = Connections.FirstOrDefault(x =>
-                             x.SourcePlug == plug ||
-                             x.SourcePlug == plug);
+                x.SourcePlug == plug ||
+                x.SourcePlug == plug);
             if (connected != null)
             {
                 Connections.Remove(connected);
@@ -117,30 +114,28 @@ namespace ExampleApp
             };
 
             Nodes.Add(node1);
-            Nodes.Add(node2);   
+            Nodes.Add(node2);
             Nodes.Add(node3);
 
-            foreach (var i in Enumerable.Range(0,10))
+            foreach (var i in Enumerable.Range(0, 10))
             {
-                foreach (var j in Enumerable.Range(0,5))
+                foreach (var j in Enumerable.Range(0, 5))
                 {
                     Nodes.Add(new PresetNodeViewModel()
                     {
                         X = i * 300,
                         Y = j * 300
                     });
-                }                
+                }
             }
 
             var connection = new PresetConnectionViewModel()
             {
-                SourcePlug =node1.OutputPlugs.First(),
-                DestPlug   = node3.InputPlugs.First(),
+                SourcePlug = node1.OutputPlugs.First(),
+                DestPlug = node3.InputPlugs.First(),
             };
-            
+
             Connections.Add(connection);
         }
     }
-}
-
 }
