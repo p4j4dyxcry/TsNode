@@ -83,7 +83,7 @@
         <None Include="App.config" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="TsNode" Version="1.0.2" />
+      <PackageReference Include="TsNode" Version="1.0.4" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
