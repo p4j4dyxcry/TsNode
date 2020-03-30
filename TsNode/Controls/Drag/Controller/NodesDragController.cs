@@ -102,11 +102,8 @@ namespace TsNode.Controls.Drag.Controller
             if (_isDrag is false)
                 return;
             
-            if (Mouse.Captured == null && _isCaptured is false)
+            if (_inputElement != null && Mouse.Captured == null && _isCaptured is false)
             {
-                if (_inputElement is null)
-                    return;
-
                 _isCaptured = _inputElement.CaptureMouse();
             }
 
