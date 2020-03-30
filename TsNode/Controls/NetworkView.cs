@@ -214,6 +214,9 @@ namespace TsNode.Controls
 
         private async void key_down(object s, KeyEventArgs args)
         {
+            if (_itemsHost.IsFocused is false)
+                return;
+            
             if (args.Key == Key.F)
             {
                 var infiniteScrollViewer = this.FindChild<InfiniteScrollViewer>(x => true);
