@@ -41,6 +41,7 @@ namespace TsNode.Test
             set => _dataContext.Y = value; 
         }
 
+        public bool CanMovable { get; set; } = true;
         public bool IsMouseOver { get; set; }
         public object DataContext => _dataContext;
         public double ActualWidth { get; set; }
