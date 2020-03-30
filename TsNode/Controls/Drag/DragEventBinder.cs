@@ -95,6 +95,8 @@ namespace TsNode.Controls.Drag
             
             if (_currentController is null)
                 return;
+            
+            _currentController.OnDragEnd();
 
             if (try_cancel())
             {
