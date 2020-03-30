@@ -95,10 +95,11 @@ namespace TsNode.Controls.Drag
             
             if (_currentController is null)
                 return;
-            
-            try_cancel();
 
-            args.Handled = true;
+            if (try_cancel())
+            {
+               args.Handled = true;
+            }
         }
 
         private DragControllerEventArgs convert_args(MouseEventArgs args)
@@ -116,13 +117,16 @@ namespace TsNode.Controls.Drag
             return new DragControllerEventArgs(_startPoint , current , current - _prevPoint, button);
         }
 
-        private void try_cancel()
+        private bool try_cancel()
         {
             if (_currentController != null)
             {
                 _currentController.Cancel();
                 _currentController = null;
+                return true;
             }
+
+            return false;
         }
 
         private void bind_events()

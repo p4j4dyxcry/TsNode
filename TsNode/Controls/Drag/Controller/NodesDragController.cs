@@ -94,14 +94,6 @@ namespace TsNode.Controls.Drag.Controller
         public void OnStartDrag(DragControllerEventArgs args)
         {
             _isDrag = true;
-            
-            if (_inputElement is null)
-                return;
-            
-            if (Mouse.Captured == null)
-            {
-                _isCaptured = _inputElement.CaptureMouse();
-            }
         }
 
         // ドラッグ中の処理
@@ -109,6 +101,14 @@ namespace TsNode.Controls.Drag.Controller
         {
             if (_isDrag is false)
                 return;
+            
+            if (Mouse.Captured == null && _isCaptured is false)
+            {
+                if (_inputElement is null)
+                    return;
+
+                _isCaptured = _inputElement.CaptureMouse();
+            }
 
             // ボタンが離れた場合はキャンセルとみなす
             if (args.Button != MouseButton.Left)
