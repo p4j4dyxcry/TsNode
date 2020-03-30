@@ -27,8 +27,8 @@
             Connections="{Binding Connections}"
             Nodes="{Binding Nodes}"
             StartCreateConnectionCommand="{Binding ConnectStartCommand}" />
-        <Border
+        <Canvas
             x:Name="MiniMap"
-            Width="200" Height="200" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20"/>
+            Width="200" Height="150" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20"/>
     </Grid>
 </Window>

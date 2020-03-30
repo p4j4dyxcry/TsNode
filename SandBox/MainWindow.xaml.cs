@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -13,8 +14,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using TsNode.Controls;
 using TsNode.Controls.Node;
 using TsNode.Extensions;
+using TsNode.Foundations;
 using TsNode.Interface;
 
 namespace SandBox
@@ -63,14 +66,44 @@ namespace SandBox
             Dictionary<INodeControl , Border> map = new Dictionary<INodeControl, Border>();
 
             var nodesControl = NetworkView.FindChild<NodeItemsControl>();
+            var scrollViewer = this.FindChild<InfiniteScrollViewer>();
             var visualBrush = new VisualBrush();
             MiniMap.Background = visualBrush;
+
+            var thumb = new Thumb()
+            {
+                Width = ActualWidth * scrollViewer.Scale ,
+                Height = ActualHeight * scrollViewer.Scale,
+                Background = Brushes.RoyalBlue,
+                Opacity = 0.5,
+                BorderBrush = Brushes.Yellow,
+                BorderThickness = new Thickness(2)
+            };
             
-            timer.Interval = TimeSpan.FromMilliseconds(1000);
+            thumb.DragDelta += (s, e) =>
+            {
+                var x = e.HorizontalChange;
+                var y = e.VerticalChange;
+
+                scrollViewer.TranslateX(-x);
+                scrollViewer.TranslateY(-y);
+
+                // Canvas.SetLeft(thumb,Canvas.GetLeft(thumb) + x);
+                // Canvas.SetTop(thumb,Canvas.GetTop(thumb) + y);
+            };
+            MiniMap.Children.Add(thumb);
+            
+            timer.Interval = TimeSpan.FromMilliseconds(30);
             timer.Tick += (s, e) =>
             {
-                var rect = NetworkView.ItemsRect.ValidateRect(ActualWidth,ActualHeight);
-                
+                var rect = NetworkView.ItemsRect.ValidateRect(ActualWidth,ActualHeight).ToOffset(scrollViewer.ViewRectOffset);
+                var point = scrollViewer.TransformPoint(0,0);
+                thumb.Width  = ActualWidth    * (1.0 / scrollViewer.Scale);
+                thumb.Height = ActualHeight   * (1.0 / scrollViewer.Scale);
+                thumb.Width  = MiniMap.Width  * (thumb.Width / rect.Width);
+                thumb.Height = MiniMap.Height * (thumb.Height / rect.Height);
+                Canvas.SetLeft(thumb,point.X / (rect.Width / MiniMap.Width));
+                Canvas.SetTop(thumb, point.Y/ (rect.Height / MiniMap.Height));
                 canvas.Width = rect.Width;
                 canvas.Height = rect.Height;
 
@@ -95,8 +128,6 @@ namespace SandBox
                     
                     Canvas.SetLeft(map[node],converted_x);
                     Canvas.SetTop(map[node],node.Y - rect.Top);
-                    
-                    Console.WriteLine($"x = {node.X} converted = {converted_x}");
                 }
 
                 foreach (var key_value in map)

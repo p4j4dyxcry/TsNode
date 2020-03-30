@@ -246,6 +246,7 @@ namespace TsNode.Controls
             
             // set scale
             {
+                this.SetValue(ScaleProperty,scale);
                 this.Scale(scale, screenCenterPoint.X, screenCenterPoint.Y);                
             }
             UpdateScrollBar();

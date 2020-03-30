@@ -23,7 +23,7 @@ namespace TsNode.Foundations
         }
     }
 
-    internal static class TransformHolderExtensions
+    public static class TransformHolderExtensions
     {
         public static Point TransformPoint(this ITransformHolder self, double x, double y)
         {
