@@ -111,13 +111,13 @@ namespace TsNode.Controls.Drag.Controller
 
             if (args.Button != MouseButton.Left)
             {
-                create_connection();
+                create_connection(args);
             }
         }
 
-        public void OnDragEnd()
+        public void OnDragEnd(DragControllerEventArgs args)
         {
-            create_connection();
+            create_connection(args);
         }
 
         public void Cancel()
@@ -131,7 +131,7 @@ namespace TsNode.Controls.Drag.Controller
             _isCreated = true;
         }
 
-        private void create_connection()
+        private void create_connection(DragControllerEventArgs args)
         {
             if (_isCreated)
                 return;
@@ -142,7 +142,7 @@ namespace TsNode.Controls.Drag.Controller
                 .ToArray();
 
             var connectTarget = targetPlugs.FirstOrDefault()?.DataContext as IConnectTarget
-                ?? _nodes.FirstOrDefault(x => x.IsMouseOver)?.DataContext as IConnectTarget;
+                ?? _nodes.FirstOrDefault(x => x.ToRect().Contains(args.CurrentPoint))?.DataContext as IConnectTarget;
 
             var connected = false;
             if (connectTarget != null)

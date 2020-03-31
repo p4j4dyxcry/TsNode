@@ -183,7 +183,7 @@ namespace TsNode.Controls.Drag.Controller
             _scrollViewer.TranslateY(offset.Y *  _scrollViewer.ScrollRate);
  }
         
-        public void OnDragEnd()
+        public void OnDragEnd(DragControllerEventArgs args)
         {
             Completed();
         }

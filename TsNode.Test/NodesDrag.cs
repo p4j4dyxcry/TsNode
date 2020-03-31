@@ -34,9 +34,9 @@ namespace TsNode.Test
 
             Assert.IsType<NodesDragController>(controller);
             
-            DoDrag( controller , new Point(10,10) );
+            var args = DoDrag( controller , new Point(10,10) );
             
-            controller.OnDragEnd();
+            controller.OnDragEnd(args.CreateEndArgs());
             
             Assert.True(executedCompleteCommand);
         }
@@ -69,8 +69,8 @@ namespace TsNode.Test
 
             var controller = BuildController(nodes, nodeDragCompletedCommand);
 
-            DoDrag( controller , new Point(10,10));
-            controller.OnDragEnd();
+            var args = DoDrag( controller , new Point(10,10));
+            controller.OnDragEnd(args.CreateEndArgs());
             
             Assert.True(executedCompleteCommand);
         }
@@ -94,8 +94,8 @@ namespace TsNode.Test
             var controller = BuildController(nodes, nodeDragCompletedCommand);
 
             // 10,10 → -5,-5 → 30,0 へ順番に動かす
-            DoDrag( controller , new Point(10,10) , new Point(-5,-5) , new Point(30,0));
-            controller.OnDragEnd();
+            var args = DoDrag( controller , new Point(10,10) , new Point(-5,-5) , new Point(30,0));
+            controller.OnDragEnd(args.CreateEndArgs());
             
             Assert.True(executedCompleteCommand);
         }
@@ -160,7 +160,7 @@ namespace TsNode.Test
         /// <param name="controller">ドラッグコントローラ</param>
         /// <param name="first">1回目のドラッグ位置</param>
         /// <param name="others">2回目以降のドラッグ位置</param>
-        private void DoDrag(IDragController controller , Point first, params Point[] others)
+        private DragControllerEventArgs DoDrag(IDragController controller , Point first, params Point[] others)
         {
             // start drag
             var startArgs = new DragControllerEventArgs(new Point(0,0),new Point(0,0),new Vector(0,0),MouseButton.Left);
@@ -176,15 +176,17 @@ namespace TsNode.Test
                 controller.OnDragMoving(firstDragArgs);
             }
             
+            var args = firstDragArgs;
             // other dragging
             {
-                var args = firstDragArgs;
                 foreach (var other in others)
                 {
                     args = args.CreateUpdatedArgs(other);
                     controller.OnDragMoving(args);
                 }
             }
+
+            return args;
         }
     }
 }

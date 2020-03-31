@@ -26,6 +26,11 @@ namespace TsNode.Interface
         {
             return new DragControllerEventArgs(StartPoint , current , current - CurrentPoint , Button);
         }
+        
+        public DragControllerEventArgs CreateEndArgs()
+        {
+            return this;
+        }
     }
     
     public interface IDragController
@@ -35,7 +40,7 @@ namespace TsNode.Interface
         void OnStartDrag(DragControllerEventArgs args);
         
         void OnDragMoving(DragControllerEventArgs args);
-        void OnDragEnd();
+        void OnDragEnd(DragControllerEventArgs args);
         void Cancel();
     }
 }

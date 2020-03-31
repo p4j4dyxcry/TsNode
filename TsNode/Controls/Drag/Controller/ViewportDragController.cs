@@ -22,7 +22,7 @@ namespace TsNode.Controls.Drag.Controller
 
         }
 
-        public void OnDragEnd()
+        public void OnDragEnd(DragControllerEventArgs args)
         {
 
         }
