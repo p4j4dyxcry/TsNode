@@ -271,7 +271,7 @@ namespace TsNode.Controls
                 var connections = _connectionItemsControl.GetConnectionShapes();
                 
                 // ! ドラッグコントローラを作成する
-                var builder = new DragControllerBuilder(_itemsHost, MouseButton.Left, nodes, connections);
+                var builder = new DragControllerBuilder(_itemsHost, MouseButton.Left, Keyboard.Modifiers , nodes, connections);
                 return builder
                     .AddBuildTarget(new ConnectionDragBuild(builder, 0, _creatingConnectionItemsControl))
                     .AddBuildTarget(new NodesDragBuild(builder, 1, UseGridSnap, (int) GridSize)

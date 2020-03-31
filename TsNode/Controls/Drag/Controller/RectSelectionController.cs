@@ -116,8 +116,8 @@ namespace TsNode.Controls.Drag.Controller
             if (_canceled)
                 return;
 
-            if (args.Button == MouseButton.Right)
-                cancel_internal(false);
+            if (args.Vector.Length is 0)
+                return;                
 
             if (args.Button != MouseButton.Left)
                 cancel_internal(true);
@@ -151,6 +151,9 @@ namespace TsNode.Controls.Drag.Controller
 
         public void OnSelect()
         {
+            if(_rect.Width is 0 && _rect.Height is 0)
+                return;
+            
             var selectNodes = Args.Nodes.Where(x => x.ToRect().HitTest(_rect)).ToArray();
 
             if (selectNodes.Any())

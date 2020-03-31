@@ -24,7 +24,7 @@ namespace TsNode.Controls.Drag
 
         public bool TryBuild()
         {
-            return _dragControllerBuilder.MouseButton == MouseButton.Left;
+            return _dragControllerBuilder.MouseButton == MouseButton.Left && _dragControllerBuilder.ModifierNone();
         }
 
         public IDragController Build()

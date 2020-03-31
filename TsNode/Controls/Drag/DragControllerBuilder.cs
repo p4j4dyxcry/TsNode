@@ -25,6 +25,7 @@ namespace TsNode.Controls.Drag
     {
         public IInputElement InputElement { get; }
         public MouseButton MouseButton { get; }
+        public ModifierKeys ModifierKeys { get; }
         public INodeControl[] Nodes { get; }
         public ConnectionShape[] ConnectionShapes { get; }
         public INodeControl[] SelectedNodes { get; }
@@ -39,6 +40,7 @@ namespace TsNode.Controls.Drag
         public DragControllerBuilder(
             IInputElement inputElement, 
             MouseButton button,
+            ModifierKeys modifierKeys,
             INodeControl[] nodes, 
             ConnectionShape[] connectionShapes)
         {
@@ -46,6 +48,7 @@ namespace TsNode.Controls.Drag
             Nodes = nodes;
             ConnectionShapes = connectionShapes;
             MouseButton = button;
+            ModifierKeys = modifierKeys;
 
             SelectedNodes = Nodes.Where(x => x.IsSelected).ToArray();
         }
@@ -76,6 +79,27 @@ namespace TsNode.Controls.Drag
             return this;
         }
 
+        public bool ModifierShift()
+        {
+            return (ModifierKeys & ModifierKeys.Shift) > 0;
+        }
+
+        public bool ModifierControl()
+        {
+            return (ModifierKeys & ModifierKeys.Control) > 0;
+        }
+
+        public bool ModifierAlt()
+        {
+            return (ModifierKeys & ModifierKeys.Alt) > 0;
+        }
+
+        public bool ModifierNone()
+        {
+            return ModifierKeys is 0;
+        }
+        
+        
         /// <summary>
         /// ドラッグコントローラを作成します
         /// 登録されたドラッグコントローラのPriority順に生成チェックを行い最初に生成に成功したコントローラを返します。
