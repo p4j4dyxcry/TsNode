@@ -69,8 +69,8 @@ namespace SandBox
             // 実装サンプル
             var node1 = new PresetNodeViewModel()
             {
-                X = 0,
-                Y = 50,
+                X = -5,
+                Y = -5,
                 InputPlugs = new ObservableCollection<IPlugDataContext>
                 {
                     new PresentPlugViewModel(),
