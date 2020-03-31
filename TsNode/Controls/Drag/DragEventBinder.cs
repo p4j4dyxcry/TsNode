@@ -18,6 +18,7 @@ namespace TsNode.Controls.Drag
 
         // properties
         private IDragController _currentController;
+        private bool _mouseCaptured = false;
         private Point _startPoint;
         private Point _prevPoint;
         
@@ -131,10 +132,43 @@ namespace TsNode.Controls.Drag
             return false;
         }
 
+        public void on_preview_mouse_up(object sender, MouseEventArgs args)
+        {
+            try_release_capture();
+        }
+        
+        public void on_preview_mouse_move(object sender, MouseEventArgs args)
+        {
+            try_capture();
+        }
+
+        public void try_capture()
+        {
+            if (_currentController is IUseMouseCaptureTarget captureTarget)
+            {
+                if (_mouseCaptured is false)
+                {
+                    captureTarget.CaptureTarget?.CaptureMouse();
+                    _mouseCaptured = true;
+                }
+            }
+        }
+
+        public void try_release_capture()
+        {
+            if (_currentController is IUseMouseCaptureTarget captureTarget)
+            {
+                if (_mouseCaptured is true)
+                    captureTarget.CaptureTarget?.ReleaseMouseCapture();
+            }
+        }
+
         private void bind_events()
         {
             _target.MouseDown += on_mouse_down;
             _target.MouseMove += on_drag;
+            _target.PreviewMouseMove += on_preview_mouse_move;
+            _target.PreviewMouseUp += on_preview_mouse_up;
             _target.MouseUp += on_mouse_up;
         }
 
@@ -142,6 +176,8 @@ namespace TsNode.Controls.Drag
         {
             _target.MouseDown -= on_mouse_down;
             _target.MouseMove -= on_drag;
+            _target.PreviewMouseMove -= on_preview_mouse_move;
+            _target.PreviewMouseUp -= on_preview_mouse_up;
             _target.MouseUp += on_mouse_up;
         }
 

@@ -32,13 +32,16 @@ namespace TsNode.Interface
             return this;
         }
     }
+
+    public interface IUseMouseCaptureTarget
+    {
+        IInputElement CaptureTarget { get; }
+    }
     
     public interface IDragController
     {
         bool CanDragStart(DragControllerEventArgs args);
-        
         void OnStartDrag(DragControllerEventArgs args);
-        
         void OnDragMoving(DragControllerEventArgs args);
         void OnDragEnd(DragControllerEventArgs args);
         void Cancel();

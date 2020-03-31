@@ -47,7 +47,7 @@ namespace TsNode.Controls.Drag.Controller
     /// <summary>
     /// ノードのドラッグを行うコントローラ
     /// </summary>
-    public class NodesDragController : IDragController
+    public class NodesDragController : IDragController , IUseMouseCaptureTarget
     {
         // ドラッグする前のノードの座標を覚える
         private readonly IReadOnlyDictionary<INodeControl, Point> _originalPoints;
@@ -69,7 +69,6 @@ namespace TsNode.Controls.Drag.Controller
 
         private bool _isDrag;
         private bool _isMoved;
-        private bool _isCaptured;
 
         private readonly InfiniteScrollViewer _scrollViewer;
 
@@ -101,11 +100,6 @@ namespace TsNode.Controls.Drag.Controller
         {
             if (_isDrag is false)
                 return;
-            
-            if (_inputElement != null && Mouse.Captured == null && _isCaptured is false)
-            {
-                _isCaptured = _inputElement.CaptureMouse();
-            }
 
             // ボタンが離れた場合はキャンセルとみなす
             if (args.Button != MouseButton.Left)
@@ -191,9 +185,6 @@ namespace TsNode.Controls.Drag.Controller
         // ドラッグ完了処理
         private void Completed()
         {
-            if(_isCaptured)
-                _inputElement.ReleaseMouseCapture();
-            
             if (_isDrag)
             {
                 _isDrag = false;
@@ -226,5 +217,7 @@ namespace TsNode.Controls.Drag.Controller
 
             return new Point(gridDelta * (x / gridDelta), gridDelta * (y / gridDelta));
         }
+
+        public IInputElement CaptureTarget => _inputElement;
     }
 }

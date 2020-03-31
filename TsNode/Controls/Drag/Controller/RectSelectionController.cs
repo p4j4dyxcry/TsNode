@@ -31,7 +31,7 @@ namespace TsNode.Controls.Drag.Controller
         public ICommand SelectionChangedCommand { get; set; }
     }
 
-    public class RectSelectionController : IDragController
+    public class RectSelectionController : IDragController , IUseMouseCaptureTarget
     {
         private Rect _rect;
         private RectSelectionControllerSetupArgs Args { get; }
@@ -40,7 +40,6 @@ namespace TsNode.Controls.Drag.Controller
 
         private Rectangle _rectangleView;
         private static Style _defaultStyle ;
-        private bool _mouseCaptured = false;
         private ICommand SelectionChangedCommand { get; }
 
         public RectSelectionController(RectSelectionControllerSetupArgs args)
@@ -122,9 +121,6 @@ namespace TsNode.Controls.Drag.Controller
             if (args.Button != MouseButton.Left)
                 cancel_internal(true);
 
-            if (_mouseCaptured is false && Args.Panel != null)
-                _mouseCaptured = Args.Panel.CaptureMouse();
-            
             var currentPoint = args.CurrentPoint;
 
             // 負のをUI座標には指定できないのでUI空間での座標系を再計算する
@@ -186,12 +182,7 @@ namespace TsNode.Controls.Drag.Controller
             {
                 if (Args.Panel.Children.Contains(_rectangleView))
                     Args.Panel.Children.Remove(_rectangleView);
-
-                if(_mouseCaptured)
-                    Args.Panel.ReleaseMouseCapture();
             }
-            
-            _mouseCaptured = false;
             
             if (isSelect)
                 OnSelect();
@@ -201,5 +192,7 @@ namespace TsNode.Controls.Drag.Controller
         {
             cancel_internal(true);
         }
+
+        public IInputElement CaptureTarget => Args.Panel;
     }
 }
