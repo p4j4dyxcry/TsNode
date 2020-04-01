@@ -9,7 +9,7 @@ namespace TsNode.Preset
     /// <summary>
     /// 実装サンプル
     /// </summary>
-    public class PresetNodeViewModel : PresetNotification, INodeDataContext
+    public class PresetNodeViewModel : PresetNotification, IConnectableNodeContext
     {
         private double _x;
 
