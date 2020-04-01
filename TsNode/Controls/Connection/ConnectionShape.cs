@@ -183,7 +183,7 @@ namespace TsNode.Controls.Connection
         // Source座標を更新する
         private void UpdateSourcePointFromNode(object sender , UpdateNodePointArgs e)
         {
-            var relativePoint = _sourcePlugControl.GetNodeFromPoint(new Point(6, 6));
+            var relativePoint = _sourcePlugControl.GetNodeFromPoint();
             SourceX = relativePoint.X + e.Point.X;
             SourceY = relativePoint.Y + e.Point.Y;
         }
@@ -191,7 +191,7 @@ namespace TsNode.Controls.Connection
         // Dest座標を更新する
         private void UpdateDestPointFromNode(object sender, UpdateNodePointArgs e)
         {
-            var relativePoint = _destPlugControl.GetNodeFromPoint(new Point(6, 6));
+            var relativePoint = _destPlugControl.GetNodeFromPoint();
             DestX = relativePoint.X + e.Point.X;
             DestY = relativePoint.Y + e.Point.Y;
         }
