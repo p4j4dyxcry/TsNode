@@ -107,7 +107,7 @@ namespace TsNode.Test
         /// <returns></returns>
         private IDragController BuildController(INodeControl[] nodes , ICommand selectionChangedCommand)
         {
-            var builder = new DragControllerBuilder(null, MouseButton.Left, nodes, Array.Empty<ConnectionShape>());
+            var builder = new DragControllerBuilder(null, MouseButton.Left, ModifierKeys.None, nodes, Array.Empty<ConnectionShape>());
             var controller = builder
                 .AddBuildTarget(new RectSelectionDragBuild(builder,1,null,null))
                 .SetSelectionChangedCommand(selectionChangedCommand)

@@ -121,7 +121,7 @@ namespace TsNode.Test
         /// <returns></returns>
         private IDragController BuildController(INodeControl[] nodes , ICommand command)
         {
-            var builder = new DragControllerBuilder(null, MouseButton.Left, nodes, Array.Empty<ConnectionShape>());
+            var builder = new DragControllerBuilder(null, MouseButton.Left, ModifierKeys.None , nodes, Array.Empty<ConnectionShape>());
             var controller = builder
                 .AddBuildTarget(new NodesDragBuild(builder, 1, false,0))
                 .SetNodeDragCompletedCommand(command)
