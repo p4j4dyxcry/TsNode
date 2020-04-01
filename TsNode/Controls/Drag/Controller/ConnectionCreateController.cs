@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using TsNode.Controls.Connection;
 using TsNode.Controls.Node;
@@ -143,7 +146,7 @@ namespace TsNode.Controls.Drag.Controller
 
             var connectTarget = targetPlugs.FirstOrDefault()?.DataContext as IConnectTarget
                 ?? _nodes
-                    .Where(x => x.ToRect().Contains(args.CurrentPoint))
+                    .Where(x => x.IsMouseOver)
                     .Select(x=>x.DataContext)
                     .OfType<IConnectTarget>()
                     .FirstOrDefault();
