@@ -86,8 +86,8 @@
                                 IsDash="False"
                                 IsDrawGrid="True"
                                 Scale="{Binding ScaleMatrix.ScaleX, RelativeSource={RelativeSource AncestorType={x:Type controls1:NetworkView}}}" />
-                            <!--  実在するConnection  -->
-                            <connection:ConnectionItemsControl x:Name="PART_ConnectionItemsControl" ItemsSource="{TemplateBinding Connections}" />
+                            <!--  実在するConnection  不要なあたり判定は処理の邪魔になるので IsHitTestVisibleをFalseにする-->
+                            <connection:ConnectionItemsControl x:Name="PART_ConnectionItemsControl" ItemsSource="{TemplateBinding Connections}" IsHitTestVisible="False"/>
 
                             <!--  作成中のConnection  -->
                             <connection:ConnectionItemsControl x:Name="PART_CreatingConnectionItemsControl" />
