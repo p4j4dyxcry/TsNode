@@ -142,7 +142,11 @@ namespace TsNode.Controls.Drag.Controller
                 .ToArray();
 
             var connectTarget = targetPlugs.FirstOrDefault()?.DataContext as IConnectTarget
-                ?? _nodes.FirstOrDefault(x => x.ToRect().Contains(args.CurrentPoint))?.DataContext as IConnectTarget;
+                ?? _nodes
+                    .Where(x => x.ToRect().Contains(args.CurrentPoint))
+                    .Select(x=>x.DataContext)
+                    .OfType<IConnectTarget>()
+                    .FirstOrDefault();
 
             var connected = false;
             if (connectTarget != null)
