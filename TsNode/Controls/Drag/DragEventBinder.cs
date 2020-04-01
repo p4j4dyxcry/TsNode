@@ -148,8 +148,8 @@ namespace TsNode.Controls.Drag
             {
                 if (_mouseCaptured is false)
                 {
-                    captureTarget.CaptureTarget?.CaptureMouse();
                     _mouseCaptured = true;
+                    captureTarget.CaptureTarget?.CaptureMouse();
                 }
             }
         }
@@ -159,7 +159,10 @@ namespace TsNode.Controls.Drag
             if (_currentController is IUseMouseCaptureTarget captureTarget)
             {
                 if (_mouseCaptured is true)
+                {
                     captureTarget.CaptureTarget?.ReleaseMouseCapture();
+                    _mouseCaptured = false;
+                }
             }
         }
 
