@@ -85,7 +85,7 @@
                                 GridThickness="0.0625"
                                 IsDash="False"
                                 IsDrawGrid="True"
-                                Scale="{Binding ScaleMatrix.ScaleX, RelativeSource={RelativeSource AncestorType={x:Type controls1:NetworkView}}}" />
+                                Scale="{Binding ScaleMatrix.ScaleX, RelativeSource={RelativeSource AncestorType={x:Type controls1:InfiniteScrollViewer}}}" />
                             <!--  実在するConnection  不要なあたり判定は処理の邪魔になるので IsHitTestVisibleをFalseにする-->
                             <connection:ConnectionItemsControl x:Name="PART_ConnectionItemsControl" ItemsSource="{TemplateBinding Connections}" IsHitTestVisible="False"/>
 
