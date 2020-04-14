@@ -25,7 +25,7 @@ namespace SandBox
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         public MainWindow()
         {
@@ -79,17 +79,31 @@ namespace SandBox
                 BorderBrush = Brushes.Yellow,
                 BorderThickness = new Thickness(2)
             };
+
+            Point start;
+            Point translate;
+            thumb.PreviewMouseDown += (s, e) =>
+            {
+                start = e.GetPosition(scrollViewer);
+                translate = scrollViewer.GetTranslateToPosition();
+                update_thumb(thumb, scrollViewer);
+            };
             
             thumb.DragDelta += (s, e) =>
             {
-                var x = e.HorizontalChange;
-                var y = e.VerticalChange;
+                var rect = NetworkView.ItemsRect.ValidateRect(ActualWidth,ActualHeight)
+                    .ToOffset(scrollViewer.ViewRectOffset);
+                var p = Mouse.GetPosition(scrollViewer) - start;
+                var x = e.HorizontalChange * (rect.Width / MiniMap.Width);
+                var y = e.VerticalChange * (rect.Height / MiniMap.Height);
 
-                scrollViewer.TranslateX(-x);
-                scrollViewer.TranslateY(-y);
+                x = MathExtensions.Clamp(x, rect.Left, rect.Right);
+                y = MathExtensions.Clamp(y, rect.Left, rect.Right);
+                
+                scrollViewer.TranslateX(- x);
+                scrollViewer.TranslateY(- y);
 
-                // Canvas.SetLeft(thumb,Canvas.GetLeft(thumb) + x);
-                // Canvas.SetTop(thumb,Canvas.GetTop(thumb) + y);
+                update_thumb(thumb, scrollViewer);
             };
             MiniMap.Children.Add(thumb);
             
@@ -139,6 +153,14 @@ namespace SandBox
             };
             
             timer.Start();
+        }
+
+        private void update_thumb(Thumb thumb , InfiniteScrollViewer scrollViewer)
+        {
+            var rect = NetworkView.ItemsRect.ValidateRect(ActualWidth,ActualHeight).ToOffset(scrollViewer.ViewRectOffset);
+            var point = scrollViewer.TransformPoint(0,0);
+            Canvas.SetLeft(thumb,point.X / (rect.Width / MiniMap.Width));
+            Canvas.SetTop(thumb, point.Y/ (rect.Height / MiniMap.Height));
         }
     }
 }
