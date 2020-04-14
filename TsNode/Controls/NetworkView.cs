@@ -314,10 +314,6 @@ namespace TsNode.Controls
                 _nodeRectCalcTimer.Tick += (s, e) =>
                 {
                     var nodes = this._nodeItemsControl.GetNodes();
-
-                    if (nodes.Length == 0)
-                        return;
-
                     SetValue(ItemsRectProperty, compute_node_rect(nodes));
                 };
             }
@@ -333,6 +329,12 @@ namespace TsNode.Controls
         private Rect compute_node_rect(IEnumerable<INodeControl> nodes)
         {
             var nodeControls = nodes as INodeControl[] ?? nodes.ToArray();
+
+            if (nodeControls.Length is 0)
+            {
+                return new Rect(ActualWidth / 2 , ActualHeight / 2 , 1,1);
+            }
+            
             var rect = new Rect()
             {
                 X = nodeControls.Min(x => x.X),
