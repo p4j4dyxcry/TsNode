@@ -80,6 +80,13 @@ namespace TsNode.Controls.Drag
             if (_currentController is null)
                 return;
 
+            // マウスクリックしていないのでキャンセル
+            if (IsMousePressed(args) is false)
+            {
+                try_cancel();
+                return;
+            }
+
             var convertArgs = convert_args(args);
             
             _currentController.OnDragMoving(convertArgs);
@@ -118,6 +125,13 @@ namespace TsNode.Controls.Drag
                 button = MouseButton.Middle;
             
             return new DragControllerEventArgs(_startPoint , current , current - _prevPoint, button);
+        }
+
+        private bool IsMousePressed( MouseEventArgs args)
+        {
+            return args.LeftButton   == MouseButtonState.Pressed || 
+                   args.RightButton  == MouseButtonState.Pressed ||
+                   args.MiddleButton == MouseButtonState.Pressed;
         }
 
         private bool try_cancel()
