@@ -163,7 +163,7 @@ namespace TsNode.Controls.Drag
                 if (_mouseCaptured is false)
                 {
                     _mouseCaptured = true;
-                    captureTarget.CaptureTarget?.CaptureMouse();
+                    captureTarget?.Capture();
                 }
             }
         }
@@ -174,7 +174,7 @@ namespace TsNode.Controls.Drag
             {
                 if (_mouseCaptured is true)
                 {
-                    captureTarget.CaptureTarget?.ReleaseMouseCapture();
+                    captureTarget?.ReleaseCapture();
                     _mouseCaptured = false;
                 }
             }

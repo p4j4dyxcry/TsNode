@@ -219,5 +219,14 @@ namespace TsNode.Controls.Drag.Controller
         }
 
         public IInputElement CaptureTarget => _inputElement;
+        public void Capture()
+        {
+            CaptureTarget?.CaptureMouse();
+        }
+
+        public void ReleaseCapture()
+        {
+            CaptureTarget?.ReleaseMouseCapture();
+        }
     }
 }

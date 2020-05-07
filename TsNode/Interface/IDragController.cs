@@ -35,7 +35,9 @@ namespace TsNode.Interface
 
     public interface IUseMouseCaptureTarget
     {
-        IInputElement CaptureTarget { get; }
+        void Capture();
+        
+        void ReleaseCapture();
     }
     
     public interface IDragController

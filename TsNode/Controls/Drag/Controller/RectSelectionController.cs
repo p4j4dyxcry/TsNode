@@ -193,6 +193,15 @@ namespace TsNode.Controls.Drag.Controller
             cancel_internal(true);
         }
 
-        public IInputElement CaptureTarget => Args.Panel;
+        public void Capture()
+        {
+            Args.Panel?.CaptureMouse();
+        }
+
+        public void ReleaseCapture()
+        {
+            cancel_internal(true);
+            Args.Panel?.ReleaseMouseCapture();
+        }
     }
 }
