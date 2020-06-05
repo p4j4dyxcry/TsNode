@@ -150,7 +150,7 @@ namespace TsNode.Controls.Connection
         private PlugControl find_plug_by_datacontext(object dataContext)
         {
             return (_cache ?? (_cache = this.FindVisualParentWithType<NetworkView>()))
-                       .FindChildWithDataContext<PlugControl>(dataContext);
+                       ?.FindChildWithDataContext<PlugControl>(dataContext);
         }
 
         // プラグの親ノードを検索し座標イベントの移動に指定したイベントを張り付ける
