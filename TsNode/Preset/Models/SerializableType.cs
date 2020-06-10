@@ -6,6 +6,9 @@ using System.Numerics;
 
 namespace TsNode.Preset.Models
 {
+    /// <summary>
+    /// タイプのシリアライズ用列挙値です。
+    /// </summary>
     public enum SerializableType
     {
         [BindType(Type = typeof(string))] String,
@@ -15,14 +18,38 @@ namespace TsNode.Preset.Models
         [BindType(Type = typeof(Vector3))]Vector3,
     }
     
+    /// <summary>
+    /// タイプと列挙地を結びつけるアトリビュートです。
+    /// </summary>
     internal class BindTypeAttribute: Attribute
     {
         public Type Type { get; set; }
     }
     
+    /// <summary>
+    /// シリアライズフォーマットです。
+    /// </summary>
+    public enum SerializeFormat
+    {
+        Xml,
+        
+#if NETCOREAPP3_1
+        Json,
+# endif
+    }
+    
+    /// <summary>
+    /// タイプのシリアライズ関連のヘルパーです。
+    /// </summary>
     internal static class TypeSerializer
     {
         private static readonly Dictionary<SerializableType, Type> AttributeTypeCache = new Dictionary<SerializableType, Type>();
+
+        /// <summary>
+        /// 列挙値から System.Type に変換します。
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static Type ToSystemType(this SerializableType type)
         {
             if (AttributeTypeCache.ContainsKey(type))
@@ -36,7 +63,12 @@ namespace TsNode.Preset.Models
             
             return AttributeTypeCache[type] = attribs[0].Type;
         }
-
+        
+        /// <summary>
+        ///  System.Type から列挙値に変換します。
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static SerializableType ToSerializableType(this Type type)
         {
             var enumName = char.ToUpper(type.Name[0]) + type.Name.Substring(1);
@@ -47,12 +79,25 @@ namespace TsNode.Preset.Models
 #endif
         }
 
+        /// <summary>
+        /// ジェネリッククラスのインスタンスを作成します。
+        /// 利用例 : SerializableType.Int.CreateInstance<IList>(typeof(List<>))を実行すると List<int>が生成される。
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="generic"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static T CreateInstance<T>(this SerializableType type , Type generic)
         {
             var propertyType = generic.MakeGenericType(type.ToSystemType());
             return (T)Activator.CreateInstance(propertyType);
         }
         
+        /// <summary>
+        /// オブジェクトを文字列に変換します。
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static string Serialize(this object obj)
         {
             if (obj is null)
@@ -64,6 +109,13 @@ namespace TsNode.Preset.Models
             return obj.ToString();
         }
 
+        /// <summary>
+        /// 文字列からオブジェクトに変換します。
+        /// ※ Boxingが発生します。
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static object Deserialize(Type type , string obj)
         {
             if (type == typeof(Vector3))

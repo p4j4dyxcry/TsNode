@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using TsNode.Preset.Models;
+
 #if NETCOREAPP3_1
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -10,30 +11,39 @@ using System.Text.Json.Serialization;
 
 namespace TsNode.Preset
 {
-    public enum SerializeFormat
-    {
-        Xml,
-        
-#if NETCOREAPP3_1
-        Json,
-# endif
-    }
-    
+    /// <summary>
+    /// TsNodeをシンプルに扱うための組み込みモデルです。
+    /// NodeEngineの利用は必須ではありません。
+    /// </summary>
     public class NodeEngine
     {
         public Network Network { get; private set; } 
         private Dictionary<string,List<PresetNode>> NodeMap { get; set; } = new Dictionary<string, List<PresetNode>>();
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public NodeEngine()
         {
             Network = new Network();
         }
 
+        /// <summary>
+        /// ViewModelを作成します。
+        /// この関数で作成されたViewModelは NodeEngineのAPI操作に対して反応し
+        /// 自動的にコレクション追加やプロパティ変更通知などが行われるようになります。
+        /// </summary>
+        /// <returns></returns>
         public PresetNetworkViewModel BuildViewModel()
         {
             return new PresetNetworkViewModel(Network);
         }
 
+        /// <summary>
+        /// NetworkModelをシリアライズします。
+        /// </summary>
+        /// <param name="serializeType"></param>
+        /// <returns></returns>
         public string Serialize(SerializeFormat serializeType)
         {
             Network.PreSerialize();
@@ -57,11 +67,19 @@ namespace TsNode.Preset
             return string.Empty;
         }
 
+        /// <summary>
+        /// NetworkModelをファイルにシリアライズして書き出します。
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="serializeFormat"></param>
         public void SerializeToFile(string filePath , SerializeFormat serializeFormat)
         {
             File.WriteAllText(filePath,Serialize(serializeFormat));
         }
 
+        /// <summary>
+        /// NetworkModelをストリームから構築します。
+        /// </summary>
         public void Deserialize(string stream , SerializeFormat format)
         {
             if (format == SerializeFormat.Xml)
@@ -84,12 +102,25 @@ namespace TsNode.Preset
             NodeMap.Clear();
         }
 
+        /// <summary>
+        /// NetworkModelをファイルから構築します。
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="format"></param>
         public void DeserializeFromFile(string filePath , SerializeFormat format)
         {
             var stream = File.ReadAllText(filePath);
             Deserialize(stream,format);
         }
         
+        /// <summary>
+        /// 引数で指定された名前を持つノードを結合します。
+        /// 引数で指定されたノードが無い場合は自動的に作成します。
+        /// また、空きプラグがないときは自動的に作成されます。
+        /// また、同名ノードが２つ以上ある場合は最初に見つかったものが処理されます。
+        /// </summary>
+        /// <param name="name1"></param>
+        /// <param name="name2"></param>
         public void Connect(string name1, string name2)
         {
             var node1 = GetOrCreateNodeInternal(name1);
@@ -106,6 +137,12 @@ namespace TsNode.Preset
             Network.Connections.Add(connection);
         }
 
+        /// <summary>
+        /// ノードを取得します。存在しない場合は新規作成して取得します。
+        /// この関数の戻り値は操作用のAPIです。
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public NodeService GetOrCreateNode(string name)
         {
             return new NodeService(GetOrCreateNodeInternal(name),Network);

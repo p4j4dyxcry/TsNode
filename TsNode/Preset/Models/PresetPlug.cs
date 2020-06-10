@@ -10,6 +10,9 @@ namespace TsNode.Preset.Models
         Output,
     }
     
+    /// <summary>
+    /// プラグのシリアライズデータです。
+    /// </summary>
     public class PlugPropertyInfo : PresetNotification , IHasGuid
     {
         public Guid Guid { get; set; }
@@ -42,6 +45,9 @@ namespace TsNode.Preset.Models
         }
     }
     
+    /// <summary>
+    /// ツールから扱うプラグのデータです。
+    /// </summary>
     public class PresetPlug : PresetNotification , IHasGuid
     {
         public Guid Guid { get; set; } = Guid.NewGuid();

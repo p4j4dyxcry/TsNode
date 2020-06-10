@@ -15,9 +15,9 @@ namespace TsNode.Preset.Foundation
 
         public static bool PublicOnly { get; set; } = true;
 
-        private static IAccessor MakeAccessor(object _object, string propertyName)
+        private static IAccessor MakeAccessor(object @object, string propertyName)
         {
-            var propertyInfo = _object.GetType().GetProperty(propertyName,
+            var propertyInfo = @object.GetType().GetProperty(propertyName,
                 BindingFlags.NonPublic | 
                 BindingFlags.Public |
                 BindingFlags.Instance);
@@ -25,13 +25,15 @@ namespace TsNode.Preset.Foundation
             if (propertyInfo == null)
                 return null;
 
-            if (_object.GetType().IsClass == false)
+            if (@object.GetType().IsClass == false)
             {
                 return new StructAccessor(propertyInfo, PublicOnly);
             }
 
             var getInfo = propertyInfo.GetGetMethod(PublicOnly is false);
             var setInfo = propertyInfo.GetSetMethod(PublicOnly is false);
+            
+            Debug.Assert(propertyInfo.DeclaringType != null);
 
             var getterDelegateType = typeof(Func<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType);
             var getter = getInfo != null ? Delegate.CreateDelegate(getterDelegateType, getInfo) : null;
@@ -44,40 +46,40 @@ namespace TsNode.Preset.Foundation
             return (IAccessor)Activator.CreateInstance(accessorType, getter, setter);
         }
 
-        private static IAccessor GetAccessor(object _object, string propertyName)
+        private static IAccessor GetAccessor(object @object, string propertyName)
         {
-            var accessors = Cache.GetOrAdd(_object.GetType(), x => new ConcurrentDictionary<string, IAccessor>());
-            return accessors.GetOrAdd(propertyName, x => MakeAccessor(_object, propertyName));
+            var accessors = Cache.GetOrAdd(@object.GetType(), x => new ConcurrentDictionary<string, IAccessor>());
+            return accessors.GetOrAdd(propertyName, x => MakeAccessor(@object, propertyName));
         }
 
-        public static void SetProperty(object _object, string property, object value)
+        public static void SetProperty(object @object, string property, object value)
         {
-            GetAccessor(_object,property)?.SetValue(_object,value);
+            GetAccessor(@object,property)?.SetValue(@object,value);
         }
 
-        public static object GetProperty(object _object , string property)
+        public static object GetProperty(object @object , string property)
         {
-            return GetAccessor(_object, property).GetValue( _object);
+            return GetAccessor(@object, property).GetValue( @object);
         }
 
-        public static Type GetPropertyType(object _object, string property)
+        public static Type GetPropertyType(object @object, string property)
         {
-            return GetAccessor(_object, property).PropertyType;
+            return GetAccessor(@object, property).PropertyType;
         }
 
-        public static T GetProperty<T>(object _object, string property)
+        public static T GetProperty<T>(object @object, string property)
         {
-            return (T)GetAccessor(_object, property).GetValue(_object);
+            return (T)GetAccessor(@object, property).GetValue(@object);
         }
 
-        public static bool ExistsGetter(object _object, string property)
+        public static bool ExistsGetter(object @object, string property)
         {
-            return GetAccessor(_object, property).HasGetter;
+            return GetAccessor(@object, property).HasGetter;
         }
 
-        public static bool ExistsSetter(object _object, string property)
+        public static bool ExistsSetter(object @object, string property)
         {
-            return GetAccessor(_object, property).HasSetter;
+            return GetAccessor(@object, property).HasSetter;
         }
 
         internal static string GetMemberName<T,TProperty>(this Expression<Func<T, TProperty>> expression)

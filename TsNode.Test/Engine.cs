@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Windows.Media;
 using TsNode.Preset;
+using TsNode.Preset.Models;
 using Xunit;
 
 namespace TsNode.Test
