@@ -13,6 +13,11 @@ namespace TsNode.Preset
         {
             return RaisePropertiesChangedIfSet(ref source, value, propertyName);
         }
+        
+        protected bool SetProperty<T>(ref T source,T value, [CallerMemberName] string propertyName = null)
+        {
+            return RaisePropertiesChangedIfSet(ref source, value, propertyName);
+        }
 
         protected bool RaisePropertiesChangedIfSet<T>(ref T source,T value, params string[] properties)
         {

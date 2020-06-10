@@ -16,4 +16,9 @@
   <ItemGroup>
     <Folder Include="Properties" />
   </ItemGroup>
+  <ItemGroup>
+    <Page Update="Preset\Controls\Vector3EditBoxStyle.xaml">
+      <Generator></Generator>
+    </Page>
+  </ItemGroup>
 </Project>

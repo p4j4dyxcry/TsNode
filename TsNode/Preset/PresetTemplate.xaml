@@ -7,25 +7,28 @@
     xmlns:local="clr-namespace:TsNode.Preset"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:plug="clr-namespace:TsNode.Controls.Plug"
+    xmlns:controls="clr-namespace:TsNode.Preset.Controls"
     mc:Ignorable="d">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Controls/Vector3EditBoxStyle.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
 
-    <!--  実装サンプルです  -->
     <DataTemplate DataType="{x:Type local:PresetNodeViewModel}">
         <Grid>
             <Border
-                BorderBrush="Black"
+                BorderBrush="{Binding HeaderColor , Converter={controls:ColorToBrushConverter}}"
                 BorderThickness="3"
                 CornerRadius="5" />
             <Border BorderThickness="3" CornerRadius="5">
-                <Grid Background="LightGray">
+                <Grid Background="{Binding BackGroundColor , Converter={controls:ColorToBrushConverter}}">
                     <StackPanel>
-                        <Border Background="#303030">
+                        <Border Background="{Binding HeaderColor , Converter={controls:ColorToBrushConverter}}">
                             <TextBlock
                                 Margin="10,2"
                                 HorizontalAlignment="Center"
                                 FontSize="12"
-                                Foreground="White"
-                                Text="Preset Node" />
+                                Foreground="{Binding HeaderTextColor , Converter={controls:ColorToBrushConverter}}"
+                                Text="{Binding Name}" />
                         </Border>
                         <Grid>
                             <plug:PlugItemsControl
