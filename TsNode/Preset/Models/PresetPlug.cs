@@ -17,7 +17,7 @@ namespace TsNode.Preset.Models
     {
         public Guid Guid { get; set; }
         public string Name { get; set; }
-        public string Value { get; set; }
+        public string DefaultValue { get; set; }
         public SerializableType PropertyType { get; set; }
         
         public IOType IoType { get; set; }
@@ -26,7 +26,7 @@ namespace TsNode.Preset.Models
         {
             var property = PropertyType.CreateInstance<Property>(typeof(Property<>));
             property.Name = Name;
-            property.Value = TypeSerializer.Deserialize(PropertyType.ToSystemType() , Value);
+            property.Value = TypeSerializer.Deserialize(PropertyType.ToSystemType() , DefaultValue);
             return new PresetPlug(property)
             {
                 Guid = Guid,
@@ -38,7 +38,7 @@ namespace TsNode.Preset.Models
             var info = new PlugPropertyInfo();
             info.Guid = plug.Guid;
             info.PropertyType = plug.Property.GetGenericType().ToSerializableType();
-            info.Value = plug.Property.Value.Serialize();
+            info.DefaultValue = plug.Property.Value.Serialize();
             info.Name = plug.Property.Name;
             info.IoType = io;
             return info;

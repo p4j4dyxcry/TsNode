@@ -4,10 +4,10 @@ using System.Linq;
 using System.Windows.Media;
 using TsNode.Controls;
 using TsNode.Interface;
+using TsNode.Preset.Foundation;
 using TsNode.Preset.Models;
-using static System.Windows.Media.ColorConverter;
 
-namespace TsNode.Preset
+namespace TsNode.Preset.ViewModels
 {
     /// <summary>
     /// 組み込みノードビューモデル

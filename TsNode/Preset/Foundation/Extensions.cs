@@ -4,9 +4,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using TsNode.Preset.Foundation;
 
-namespace TsNode.Preset
+namespace TsNode.Preset.Foundation
 {
     internal enum BindMode
     {
@@ -36,7 +35,7 @@ namespace TsNode.Preset
     }
     
     
-    public static class Extensions
+    internal static class Extensions
     {
         internal static void BindModel(this INotifyPropertyChanged sender, INotifyPropertyChanged model , BindMode bindMode = BindMode.OneWay , ISimpleValueConverter converter = null)
         {
@@ -55,7 +54,7 @@ namespace TsNode.Preset
             }
         }
         
-        public static ObservableCollection<TDest> Mapping<TSource, TDest>(this ObservableCollection<TSource> from, Func<TSource, TDest> selector)
+        internal static ObservableCollection<TDest> Mapping<TSource, TDest>(this ObservableCollection<TSource> from, Func<TSource, TDest> selector)
         {
             var collection = new ObservableCollection<TDest>(from.Select(selector));
             var pairs = new List<Tuple<TSource, TDest>>();

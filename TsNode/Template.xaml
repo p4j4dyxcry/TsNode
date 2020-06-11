@@ -9,10 +9,6 @@
     xmlns:node="clr-namespace:TsNode.Controls.Node"
     mc:Ignorable="d">
 
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="Preset/PresetTemplate.xaml" />
-    </ResourceDictionary.MergedDictionaries>
-
     <!--  Node Control  -->
     <Style TargetType="{x:Type node:NodeControl}">
         <Setter Property="X" Value="{Binding X, Mode=TwoWay}" />

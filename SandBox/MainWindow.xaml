@@ -9,16 +9,18 @@
         xmlns:plug="clr-namespace:TsNode.Controls.Plug;assembly=TsNode"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:sandBox="clr-namespace:SandBox"
+        xmlns:viewModels="clr-namespace:TsNode.Preset.ViewModels;assembly=TsNode"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="800">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/TsNode;component/Preset/PresetTemplate.xaml" />
                 <ResourceDictionary Source="/TsNode;component/Template.xaml" />
             </ResourceDictionary.MergedDictionaries>
             
             <!--  実装サンプルです  -->
-            <DataTemplate DataType="{x:Type local:PresetNodeViewModel}">
+            <DataTemplate DataType="{x:Type viewModels:PresetNodeViewModel}">
                 <Grid>
                     <Border
                         BorderBrush="Black"

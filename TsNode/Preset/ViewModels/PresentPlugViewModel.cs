@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using TsNode.Interface;
+using TsNode.Preset.Foundation;
 using TsNode.Preset.Models;
 
-namespace TsNode.Preset
+namespace TsNode.Preset.ViewModels
 {
     /// <summary>
     /// 実装サンプル

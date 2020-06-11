@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using TsNode.Controls.Node;
 using TsNode.Extensions;
@@ -6,6 +7,16 @@ using TsNode.Interface;
 
 namespace TsNode.Controls.Plug
 {
+    public enum Placement
+    {
+        Left,
+        Right,
+        
+        // unused
+        Top,
+        Bottom,
+    }
+    
     /// <summary>
     /// プラグコントロール
     /// </summary>
@@ -32,6 +43,8 @@ namespace TsNode.Controls.Plug
         private NodeControl _parentNode;
         public INodeControl ParentNode => _parentNode ?? (_parentNode = this.FindVisualParentWithType<NodeControl>());
 
+        public Placement Placement => ParentNode.GetInputPlugs().Contains(this) ? Placement.Left : Placement.Right;
+        
         // ノードから見たプラグ座標を取得する
         private Point get_node_from_point(Point from)
         {

@@ -20,5 +20,14 @@
     <Page Update="Preset\Controls\Vector3EditBoxStyle.xaml">
       <Generator></Generator>
     </Page>
+    <Page Update="Preset\Views\Node.xaml">
+      <Generator></Generator>
+    </Page>
+    <Page Update="Preset\Views\Plug.xaml">
+      <Generator></Generator>
+    </Page>
+    <Page Update="Preset\Views\Connection.xaml">
+      <Generator></Generator>
+    </Page>
   </ItemGroup>
 </Project>

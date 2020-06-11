@@ -1,0 +1,39 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:TsNode.Preset"
+                    xmlns:connection="clr-namespace:TsNode.Controls.Connection"
+                    xmlns:viewModels="clr-namespace:TsNode.Preset.ViewModels">
+    <DataTemplate DataType="{x:Type viewModels:PresetConnectionViewModel}">
+        <Border>
+            <connection:ConnectionShape
+                DataContext="{Binding}"
+                DestPlug="{Binding DestPlug}"
+                IsSelected="{Binding IsSelected, Mode=TwoWay}"
+                SourcePlug="{Binding SourcePlug}"
+                StrokeThickness="2">
+
+                <connection:ConnectionShape.Style>
+                    <Style TargetType="{x:Type connection:ConnectionShape}">
+                        <Style.Setters>
+                            <Setter Property="Stroke" Value="#a74369" />
+                        </Style.Setters>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Stroke" Value="#a74369" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                </connection:ConnectionShape.Style>
+                <connection:ConnectionShape.Effect>
+                    <DropShadowEffect
+                        BlurRadius="8"
+                        Direction="10"
+                        Opacity="1.0"
+                        ShadowDepth="0"
+                        Color="#a74369" />
+                </connection:ConnectionShape.Effect>
+            </connection:ConnectionShape>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>
