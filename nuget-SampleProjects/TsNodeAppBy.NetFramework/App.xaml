@@ -7,10 +7,10 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <!--NetworkViewのテンプレートをインポート-->
-                <ResourceDictionary Source="pack://application:,,,/TsNode;component/Template.xaml" />
+                <ResourceDictionary Source="/TsNode;component/Template.xaml" />
                 
                 <!--サンプルをインポート-->
-                <ResourceDictionary Source="pack://application:,,,/TsNode;component/Preset/Presettemplate.xaml" />
+                <ResourceDictionary Source="/TsNode;component/Preset/Presettemplate.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

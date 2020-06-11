@@ -14,7 +14,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/TsNode;component/Template.xaml" />
+                <ResourceDictionary Source="/TsNode;component/Template.xaml" />
             </ResourceDictionary.MergedDictionaries>
             
             <!--  実装サンプルです  -->
