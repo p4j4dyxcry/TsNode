@@ -153,7 +153,10 @@ namespace TsNode.Controls.Drag
         
         public void on_preview_mouse_move(object sender, MouseEventArgs args)
         {
-            try_capture();
+            if (IsMousePressed(args))
+                try_capture();
+            else
+                try_release_capture();
         }
 
         public void try_capture()
