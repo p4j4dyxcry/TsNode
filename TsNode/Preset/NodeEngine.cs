@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using TsNode.Preset.GenericAlgorithm;
 using TsNode.Preset.Models;
 using TsNode.Preset.ViewModels;
 #if NETCOREAPP3_1
 using System.Text.Json;
 using System.Text.Json.Serialization;
 #endif
+
 
 namespace TsNode.Preset
 {
@@ -146,6 +149,82 @@ namespace TsNode.Preset
         public NodeService GetOrCreateNode(string name)
         {
             return new NodeService(GetOrCreateNodeInternal(name),Network);
+        }
+
+        /// <summary>
+        /// ノードを新規作成する
+        /// </summary>
+        /// <returns></returns>
+        public NodeService NewNode()
+        {
+            var newNode = GetOrCreateNodeInternal(Guid.NewGuid().ToString());
+            return new NodeService( newNode , Network );
+        }
+
+        /// <summary>
+        /// 存在するノードをアルゴリズムに従って自動で配置する
+        /// </summary>
+        public async void AutoArrange()
+        {
+            var service = NodeConnectionCache.BuildConnectionInfos(Network);
+            var groups = NodeConnectionCache.GetConnectedGroup(Network , service.Dictionary);
+            
+            foreach (var group in groups)
+            {
+                foreach (var entry in group.Entry)
+                {
+
+                }
+            }
+            #if false
+            
+            // 遺伝的アルゴリズムの配置する試験実装
+            var selection = new EliteSelection();
+            var crossover = new OnePointCrossover();
+            var mutation = new UniformMutation(true);
+            var fitness = new Evaluation(Network);
+            var chromosome = new Dna(Network.Nodes.Count);
+            var population = new Population(40, 100, chromosome);
+            
+            var ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
+            ga.Termination = new GenerationNumberTermination(999999);
+
+            int n = 0;
+            ga.GenerationRan += (s, e) =>
+            {
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        var best = ga.BestChromosome as Dna;
+
+                        var points = best.GetPoints();
+
+                        for (int i = 0; i < points.Length; ++i)
+                        {
+                            Network.Nodes[i].X = points[i].X;
+                            Network.Nodes[i].Y = points[i].Y;
+                        }
+                        Console.WriteLine(fitness.Evaluate(best));
+                    });
+                }
+            };
+
+            await Task.Run(() =>
+            {
+                ga.Start();
+            });
+
+            {
+                var best = ga.BestChromosome as Dna;
+                var points = best.GetPoints();
+
+                for (int i = 0; i < points.Length; ++i)
+                {
+                    Network.Nodes[i].X = points[i].X;
+                    Network.Nodes[i].Y = points[i].Y;
+                }                
+            }
+            #endif
         }
 
         private PresetNode GetNodeInternal(string name)

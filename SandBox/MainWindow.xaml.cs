@@ -19,6 +19,7 @@ using TsNode.Controls.Node;
 using TsNode.Extensions;
 using TsNode.Foundations;
 using TsNode.Interface;
+using TsNode.Preset;
 
 namespace SandBox
 {
@@ -30,10 +31,27 @@ namespace SandBox
         public MainWindow()
         {
             InitializeComponent();
-            Test();
+         
+            var nodeEngine = new NodeEngine();
+            DataContext = nodeEngine.BuildViewModel();
+            
+            for (int i = 0; i < 100; ++i)
+            {
+                nodeEngine.GetOrCreateNode(i.ToString())
+                    .SetPos(i * 50, (i%2) * 50);
+            }
+            nodeEngine.Connect("1","2");
+            nodeEngine.Connect("1","3");
+            nodeEngine.Connect("1","4");
+            nodeEngine.Connect("2","5");
+
+            // 自動配置のテスト
+            nodeEngine.AutoArrange();
+
+            CreateMinimap();
         }
 
-        public async void Test()
+        public async void CreateMinimap()
         {
             await Task.Delay(300);
             

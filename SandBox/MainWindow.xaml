@@ -18,56 +18,8 @@
                 <ResourceDictionary Source="/TsNode;component/Preset/PresetTemplate.xaml" />
                 <ResourceDictionary Source="/TsNode;component/Template.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
-            <!--  実装サンプルです  -->
-            <DataTemplate DataType="{x:Type viewModels:PresetNodeViewModel}">
-                <Grid>
-                    <Border
-                        BorderBrush="Black"
-                        BorderThickness="3"
-                        CornerRadius="5" />
-                    <Border BorderThickness="3" CornerRadius="5">
-                        <Grid Background="LightGray">
-                            <b:Interaction.Behaviors>
-                                <sandBox:NodeTestBehavior/>
-                            </b:Interaction.Behaviors>
-                            <StackPanel>
-                                <Border Background="#303030">
-                                    <TextBlock
-                                        Margin="10,2"
-                                        HorizontalAlignment="Center"
-                                        FontSize="12"
-                                        Foreground="White"
-                                        Text="Preset Node" />
-                                </Border>
-                                <WrapPanel>
-                                    <TextBox Width="50" Margin="5"/>
-                                    <CheckBox/>
-                                </WrapPanel>
-                                <Grid>
-                                    <plug:PlugItemsControl
-                                        x:Name="PART_InputPlugItemsControl"
-                                        Margin="-9,8,0,8"
-                                        HorizontalAlignment="Left"
-                                        ItemsSource="{Binding InputPlugs}" />
-                                    <plug:PlugItemsControl
-                                        x:Name="PART_OutputPlugItemsControl"
-                                        Margin="0,8,-9,8"
-                                        HorizontalAlignment="Right"
-                                        ItemsSource="{Binding OutputPlugs}" />
-                                </Grid>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-                </Grid>
-            </DataTemplate>
-            
         </ResourceDictionary>
     </Window.Resources>
-
-    <Window.DataContext>
-        <exampleApp:MainWindowViewModel />
-    </Window.DataContext>
 
     <Grid>
         <controls:NetworkView

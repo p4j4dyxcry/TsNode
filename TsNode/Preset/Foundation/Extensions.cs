@@ -64,8 +64,12 @@ namespace TsNode.Preset.Foundation
                 pairs.Add(new Tuple<TSource, TDest>(from[i],collection[i]));
             }
 
+            var deleteFromCollectionChanged = false;
             from.CollectionChanged += (s, e) =>
             {
+                if (deleteFromCollectionChanged)
+                    return;
+                
                 if (e.Action == NotifyCollectionChangedAction.Add)
                 {
                     var startIndex = 0;
@@ -86,12 +90,31 @@ namespace TsNode.Preset.Foundation
 
                 if (e.Action == NotifyCollectionChangedAction.Remove)
                 {
+                    deleteFromCollectionChanged = true;
                     var source = (TSource) e.OldItems[0];
                     var item = pairs.First(x => ReferenceEquals(x.Item1 , source));
                     pairs.Remove(item);
                     collection.Remove(item.Item2);
+                    deleteFromCollectionChanged = false;
                 };
             };
+
+            collection.CollectionChanged += (s, e) =>
+            {
+                if (deleteFromCollectionChanged)
+                    return;
+                
+                if (e.Action == NotifyCollectionChangedAction.Remove)
+                {
+                    deleteFromCollectionChanged = true;
+                    var source = (TDest) e.OldItems[0];
+                    var item = pairs.First(x => ReferenceEquals(x.Item2, source));
+                    pairs.Remove(item);
+                    from.Remove(item.Item1);
+                    deleteFromCollectionChanged = false;
+                }
+            };
+            
             return collection;
         }
     }

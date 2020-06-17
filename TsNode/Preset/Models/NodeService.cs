@@ -107,5 +107,7 @@ namespace TsNode.Preset.Models
             }
             _network.Nodes.Remove(_model);
         }
+
+        public string Handle => _model.Name;
     }
 }
