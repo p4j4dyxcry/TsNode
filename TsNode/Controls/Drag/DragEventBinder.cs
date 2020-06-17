@@ -198,7 +198,7 @@ namespace TsNode.Controls.Drag
             _target.MouseMove -= on_drag;
             _target.PreviewMouseMove -= on_preview_mouse_move;
             _target.PreviewMouseUp -= on_preview_mouse_up;
-            _target.MouseUp += on_mouse_up;
+            _target.MouseUp -= on_mouse_up;
         }
 
         private bool check_parent_event_doing()
