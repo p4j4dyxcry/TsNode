@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Xml.Serialization;
-using TsNode.Preset.GenericAlgorithm;
 using TsNode.Preset.Models;
+using TsNode.Preset.Service;
 using TsNode.Preset.ViewModels;
 #if NETCOREAPP3_1
 using System.Text.Json;
 using System.Text.Json.Serialization;
 #endif
-
 
 namespace TsNode.Preset
 {
@@ -21,6 +21,12 @@ namespace TsNode.Preset
     public class NodeEngine
     {
         public Network Network { get; private set; } 
+
+        /// <summary>
+        ///  自動配置の際に利用する仮のノードサイズ
+        /// </summary>
+        public Size CalculateTempSize { get; private set; } = new Size(150,100);
+        
         private Dictionary<string,List<PresetNode>> NodeMap { get; set; } = new Dictionary<string, List<PresetNode>>();
 
         /// <summary>
@@ -164,67 +170,73 @@ namespace TsNode.Preset
         /// <summary>
         /// 存在するノードをアルゴリズムに従って自動で配置する
         /// </summary>
-        public async void AutoArrange()
+        public void AutoArrange()
         {
             var service = NodeConnectionCache.BuildConnectionInfos(Network);
             var groups = NodeConnectionCache.GetConnectedGroup(Network , service.Dictionary);
-            
+
+            var singles = groups.Where(x => x.Group.Length is 1).Select(x=>x.Entry[0].Node).ToArray();
+            groups = groups.Where(x => x.Group.Length > 1).ToArray();
+
+            // グループごとの配置はYをズラすようにしています。
+            var currentY = 0d;
             foreach (var group in groups)
             {
-                foreach (var entry in group.Entry)
-                {
+                ArrangeGroup(group,0,currentY);
+                currentY = group.CalcRect().Bottom + CalculateTempSize.Height;
+            }
+            ArrangeSingleNodes(singles,0,currentY);
 
+        }
+
+        /// <summary>
+        /// 接続数が0のまとめます。
+        /// </summary>
+        /// <param name="singleNodes"></param>
+        /// <param name="startX"></param>
+        /// <param name="startY"></param>
+        private void ArrangeSingleNodes(PresetNode[] singleNodes , double startX , double startY)
+        {
+            var boxSize = Math.Sqrt(singleNodes.Length) * CalculateTempSize.Width;
+            var currentX = startX;
+            var currentY = startY;
+            
+            foreach (var single in singleNodes)
+            {
+                if (currentX >= boxSize)
+                {
+                    currentX = 0;
+                    currentY += CalculateTempSize.Width;
+                }
+                else
+                {
+                    currentX += CalculateTempSize.Height;
+                }
+
+                single.X = currentX;
+                single.Y = currentY;
+            }
+        }
+
+        /// <summary>
+        /// 接続されているノード群を整列します。
+        /// </summary>
+        /// <param name="group"></param>
+        /// <param name="startX"></param>
+        /// <param name="startY"></param>
+        private void ArrangeGroup(NodeGroupInfo group,double startX , double startY)
+        {
+            for (var i = 0; i < group.Depth; ++i)
+            {
+                var current = group.GetByDepth(i);
+                var y = startY + (CalculateTempSize.Height / 2) * -current.Length;
+                foreach (var entry in current)
+                {
+                    entry.Node.X = startX + i * CalculateTempSize.Width;
+                    entry.Node.Y = y;
+                    y += CalculateTempSize.Height;
                 }
             }
-            #if false
-            
-            // 遺伝的アルゴリズムの配置する試験実装
-            var selection = new EliteSelection();
-            var crossover = new OnePointCrossover();
-            var mutation = new UniformMutation(true);
-            var fitness = new Evaluation(Network);
-            var chromosome = new Dna(Network.Nodes.Count);
-            var population = new Population(40, 100, chromosome);
-            
-            var ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
-            ga.Termination = new GenerationNumberTermination(999999);
-
-            int n = 0;
-            ga.GenerationRan += (s, e) =>
-            {
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        var best = ga.BestChromosome as Dna;
-
-                        var points = best.GetPoints();
-
-                        for (int i = 0; i < points.Length; ++i)
-                        {
-                            Network.Nodes[i].X = points[i].X;
-                            Network.Nodes[i].Y = points[i].Y;
-                        }
-                        Console.WriteLine(fitness.Evaluate(best));
-                    });
-                }
-            };
-
-            await Task.Run(() =>
-            {
-                ga.Start();
-            });
-
-            {
-                var best = ga.BestChromosome as Dna;
-                var points = best.GetPoints();
-
-                for (int i = 0; i < points.Length; ++i)
-                {
-                    Network.Nodes[i].X = points[i].X;
-                    Network.Nodes[i].Y = points[i].Y;
-                }                
-            }
-            #endif
         }
 
         private PresetNode GetNodeInternal(string name)

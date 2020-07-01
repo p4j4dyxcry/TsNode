@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 
-namespace TsNode.Preset.GenericAlgorithm
+namespace TsNode.Preset.Service
 {
     /// <summary>
     /// 4分木空間のあたり判定用

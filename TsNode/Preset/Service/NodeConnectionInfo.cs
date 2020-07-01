@@ -3,27 +3,89 @@ using System.Linq;
 using System.Windows;
 using TsNode.Preset.Models;
 
-namespace TsNode.Preset.GenericAlgorithm
+namespace TsNode.Preset.Service
 {
     public class NodeGroupInfo
     {
         public ConnectionInfo[] Entry { get; }
         
         public ConnectionInfo[] Group { get; }
+
+        private readonly IDictionary<PresetNode, ConnectionInfo> _dictionary;
         
-        public Rect Rect { get; }
+        public int Depth { get; }
+
+        public ConnectionInfo[] GetByDepth(int depth)
+        {
+            if (depth is 0)
+                return Entry;
+
+            var visit = new HashSet<PresetNode>();
+
+            IEnumerable<ConnectionInfo> current = Entry;
+            for (int i = 0; i < depth; ++i)
+            {
+                current = current.SelectMany(x=>GetNext(x,visit));
+            }
+
+            return current.ToArray();
+        }
+        
+        private IEnumerable<ConnectionInfo> GetNext(ConnectionInfo info , HashSet<PresetNode> visited)
+        {
+            foreach (var output in info.Outputs)
+            {
+                if( visited.Contains(output))
+                    continue;
+                visited.Add(output);
+                yield return _dictionary[output];
+            }
+        }
+
+        public void Transform(double x, double y)
+        {
+            foreach (var group in Group)
+            {
+                group.Node.X += x;
+                group.Node.Y += y;
+            }
+        }
 
         public NodeGroupInfo(ConnectionInfo[] entry, ConnectionInfo[] group)
         {
             Entry = entry;
             Group = group;
-            
-            Rect = new Rect()
+
+            _dictionary = Group.ToDictionary(x => x.Node, x => x);
+            foreach (var info in Group)
             {
-                X = Group.Min(x=>x.Node.X),
-                Y = Group.Min(x=>x.Node.Y),
-                Width = Group.Max(x=>x.Node.X),
-                Height = Group.Max(x=>x.Node.Y),
+                _dictionary[info.Node] = info;
+            }
+            
+            var visit = new HashSet<PresetNode>();
+
+            ConnectionInfo[] current = Entry;
+            while (current.Any())
+            {
+                Depth++;
+                current = current.SelectMany(x=>GetNext(x,visit)).ToArray();
+            }
+            CalcRect();
+        }
+
+        public Rect CalcRect()
+        {
+            var minX = Group.Min(x => x.Node.X);
+            var minY = Group.Min(x => x.Node.Y);
+            var maxX = Group.Max(x => x.Node.X);
+            var maxY = Group.Max(x => x.Node.Y);
+            
+            return new Rect()
+            {
+                X = minX,
+                Y = minY,
+                Width = maxX - minX + 150,
+                Height = maxY - minY + 150,
             };
         }
     }
@@ -108,12 +170,14 @@ namespace TsNode.Preset.GenericAlgorithm
             foreach (var node in network.Nodes)
             {
                 var inputs = node.InputPlugs
+                    .Where( x => plugToConnection.ContainsKey(x))
                     .Select(x => plugToConnection[x])
                     .Select(x => plugToNode[x.SourcePlug])
                     .Distinct()
                     .ToArray();
 
                 var outputs = node.OutputPlugs
+                    .Where( x => plugToConnection.ContainsKey(x))
                     .Select(x => plugToConnection[x])
                     .Select(x => plugToNode[x.DestPlug])
                     .Distinct()
@@ -181,12 +245,13 @@ namespace TsNode.Preset.GenericAlgorithm
                 yield break;
             
             founds.Add(node);
+            yield return node;
 
             var info = dictionary[node];
 
             foreach (var input in info.Inputs)
             {
-                var foundItems = FindConnected(input, dictionary, founds);
+                var foundItems = FindConnected(input, dictionary, founds).ToArray();
                 foreach (var found in foundItems)
                 {
                     yield return found;
@@ -195,7 +260,7 @@ namespace TsNode.Preset.GenericAlgorithm
 
             foreach (var output in info.Outputs)
             {
-                var foundItems = FindConnected(output, dictionary, founds);
+                var foundItems = FindConnected(output, dictionary, founds).ToArray();
                 foreach (var found in foundItems)
                 {
                     yield return found;

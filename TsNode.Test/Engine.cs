@@ -96,5 +96,23 @@ namespace TsNode.Test
             Assert.Equal(engine.Network.Nodes.SelectMany(x=>x.OutputPlugs).Count() , engine2.Network.Nodes.SelectMany(x=>x.OutputPlugs).Count());
             
         }
+
+        [Fact]
+        public void Test()
+        {
+            var nodeEngine = new NodeEngine();
+            var root = nodeEngine.GetOrCreateNode("Root")
+                .SetColor(Colors.Gold)
+                .AddInputPlug("Plug1", 10)
+                .AddInputPlug("Plug2", "string")
+                .AddInputPlug("Plug3", 50f)
+                .AddInputPlug("Plug3", 100d)
+                .AddInputPlug("Plug3", false);
+
+            nodeEngine.Connect("Root","Child1");
+            
+            // 自動配置のテスト
+            nodeEngine.AutoArrange();
+        }
     }
 }
