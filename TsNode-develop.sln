@@ -10,8 +10,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandBox", "SandBox\SandBox.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TsNode.Test", "TsNode.Test\TsNode.Test.csproj", "{03B1D74C-C7B5-49D3-B5C8-395715B6F0EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NodeEngineSample", "NodeEngineSample\NodeEngineSample.csproj", "{51A87EDF-6B12-42C4-ADE9-79A539866C95}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,9 +36,5 @@ Global
 		{03B1D74C-C7B5-49D3-B5C8-395715B6F0EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03B1D74C-C7B5-49D3-B5C8-395715B6F0EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03B1D74C-C7B5-49D3-B5C8-395715B6F0EC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{51A87EDF-6B12-42C4-ADE9-79A539866C95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{51A87EDF-6B12-42C4-ADE9-79A539866C95}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{51A87EDF-6B12-42C4-ADE9-79A539866C95}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{51A87EDF-6B12-42C4-ADE9-79A539866C95}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
