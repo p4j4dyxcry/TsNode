@@ -1,18 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using TsNode.Controls;
 using TsNode.Controls.Node;
@@ -35,20 +28,24 @@ namespace SandBox
             var nodeEngine = new NodeEngine();
             DataContext = nodeEngine.BuildViewModel();
             
-            for (int i = 0; i < 100; ++i)
-            {
-                nodeEngine.GetOrCreateNode(i.ToString())
-                    .SetPos(i * 50, (i%2) * 50);
-            }
-            nodeEngine.Connect("1","2");
-            nodeEngine.Connect("1","3");
-            nodeEngine.Connect("1","4");
-            nodeEngine.Connect("2","5");
-
+            nodeEngine.Connect("Root","Child1");
+            nodeEngine.Connect("Root","Child2");
+            nodeEngine.Connect("Root","Child3");
+            nodeEngine.Connect("Child2","Child4");
+            nodeEngine.Connect("Child2","Child5");
+            nodeEngine.Connect("Child3","Child6");
+            nodeEngine.Connect("Child4","Child7");
+            nodeEngine.Connect("Child7","Child8");
+            
             // 自動配置のテスト
             nodeEngine.AutoArrange();
+            
+            // 配置されたノードにフィットさせる
+            NetworkView.FitToSelectionNode(0);
 
+            // ミニマップテスト
             CreateMinimap();
+
         }
 
         public async void CreateMinimap()
