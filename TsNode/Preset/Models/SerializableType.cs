@@ -44,6 +44,7 @@ namespace TsNode.Preset.Models
     internal static class TypeSerializer
     {
         private static readonly Dictionary<SerializableType, Type> AttributeTypeCache = new Dictionary<SerializableType, Type>();
+        private static readonly Dictionary<Type, SerializableType> TypeAttributeCache = new Dictionary<Type, SerializableType>();
 
         /// <summary>
         /// 列挙値から System.Type に変換します。
@@ -60,8 +61,16 @@ namespace TsNode.Preset.Models
 
             var attribs = fieldInfo.GetCustomAttributes(typeof(BindTypeAttribute), false) as BindTypeAttribute[];
             Debug.Assert(attribs != null);
-            
-            return AttributeTypeCache[type] = attribs[0].Type;
+
+            RegisterCache(attribs[0].Type,type);
+
+            return attribs[0].Type;
+        }
+
+        private static void RegisterCache(Type type, SerializableType serializableType)
+        {
+            AttributeTypeCache[serializableType] = type;
+            TypeAttributeCache[type] = serializableType;
         }
         
         /// <summary>
@@ -71,12 +80,24 @@ namespace TsNode.Preset.Models
         /// <returns></returns>
         public static SerializableType ToSerializableType(this Type type)
         {
-            var enumName = char.ToUpper(type.Name[0]) + type.Name.Substring(1);
-#if NETCOREAPP3_1
-            return Enum.Parse<SerializableType>(enumName);
-#else
-            return (SerializableType)Enum.Parse(typeof(SerializableType), enumName);
-#endif
+            if (TypeAttributeCache.ContainsKey(type))
+                return TypeAttributeCache[type];
+            
+            foreach (var value in Enum.GetNames(typeof(SerializableType)))
+            {
+                var fieldInfo = typeof(SerializableType).GetField(value);
+                Debug.Assert(fieldInfo != null);
+
+                var attributes = fieldInfo.GetCustomAttributes(typeof(BindTypeAttribute), false) as BindTypeAttribute[];
+                Debug.Assert(attributes != null);
+                RegisterCache(attributes[0].Type,(SerializableType)Enum.Parse(typeof(SerializableType), value));
+            }
+            if (TypeAttributeCache.ContainsKey(type))
+                return TypeAttributeCache[type];
+
+            Debug.Assert(false);
+            
+            return default;
         }
 
         /// <summary>

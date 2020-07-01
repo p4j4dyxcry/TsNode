@@ -12,7 +12,7 @@ namespace TsNode.Test
         public ScaleTransform ScaleMatrix { get; } = new ScaleTransform();
         public TranslateTransform TranslateMatrix { get; } = new TranslateTransform();
     }
-    
+
     public class Compute
     {
         [Fact]

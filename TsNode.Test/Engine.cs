@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
+using System.Numerics;
 using System.Windows.Media;
 using TsNode.Preset;
 using TsNode.Preset.Models;
@@ -98,21 +100,33 @@ namespace TsNode.Test
         }
 
         [Fact]
-        public void Test()
+        public void SerializeTest2()
         {
             var nodeEngine = new NodeEngine();
-            var root = nodeEngine.GetOrCreateNode("Root")
+            nodeEngine.GetOrCreateNode("Root")
                 .SetColor(Colors.Gold)
                 .AddInputPlug("Plug1", 10)
                 .AddInputPlug("Plug2", "string")
-                .AddInputPlug("Plug3", 50f)
-                .AddInputPlug("Plug3", 100d)
-                .AddInputPlug("Plug3", false);
+                .AddInputPlug("Plug4", 50f)
+                .AddInputPlug("Plug5", 100d)
+                .AddInputPlug("Plug6", false)
+                .AddOutputPlug("Plug7", 20)
+                .AddOutputPlug("Plug8", "string2")
+                .AddOutputPlug("Plug9", 70f)
+                .AddOutputPlug("Plug10", 120d)
+                .AddOutputPlug("Plug11", true)
+                .AddInputPlug("Plug12", new Vector3(0, 1, 2));
 
             nodeEngine.Connect("Root","Child1");
             
             // 自動配置のテスト
             nodeEngine.AutoArrange();
+            
+            nodeEngine.SerializeToFile("output.json",SerializeFormat.Json);
+            nodeEngine.SerializeToFile("output.xml",SerializeFormat.Xml);
+            
+            File.Delete("output.json");
+            File.Delete("output.xml");
         }
     }
 }
