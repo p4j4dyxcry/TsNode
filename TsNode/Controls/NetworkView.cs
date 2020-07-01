@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -212,26 +213,37 @@ namespace TsNode.Controls
             stop_node_update_timer();
         }
 
-        private async void key_down(object s, KeyEventArgs args)
+        private void key_down(object s, KeyEventArgs args)
         {
             if (_itemsHost.IsFocused is false)
                 return;
             
             if (args.Key == Key.F)
             {
-                var infiniteScrollViewer = this.FindChild<InfiniteScrollViewer>(x => true);
-
-                if (infiniteScrollViewer is null)
-                    return;
-
-                var nodes = this._nodeItemsControl.GetNodes().ToArray();
-                if (nodes.Any(x => x.IsSelected))
-                    nodes = nodes.Where(x => x.IsSelected).ToArray();
-                var rect = compute_node_rect(nodes);
+                FitToSelectionNode(200);
                 args.Handled = true;
-
-                await infiniteScrollViewer.FitRectAnimation(rect, TimeSpan.FromMilliseconds(200));
             }
+        }
+
+        public async void FitToSelectionNode(int animationMs)
+        {
+            var infiniteScrollViewer = this.FindChild<InfiniteScrollViewer>(x => true);
+
+            int timeout = 5;
+            while (infiniteScrollViewer is null)
+            {
+                await Task.Delay(1);
+                infiniteScrollViewer = this.FindChild<InfiniteScrollViewer>(x => true);
+ 
+                if (--timeout is 0)
+                    return;
+            }
+            var nodes = this._nodeItemsControl.GetNodes().ToArray();
+            if (nodes.Any(x => x.IsSelected))
+                nodes = nodes.Where(x => x.IsSelected).ToArray();
+            var rect = compute_node_rect(nodes);
+
+            await infiniteScrollViewer.FitRectAnimation(rect, TimeSpan.FromMilliseconds(animationMs));
         }
 
         private void update_selection(object sender , DragControllerEventArgs args)
